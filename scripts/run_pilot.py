@@ -34,11 +34,10 @@ def episode_cost_usd(model: str, prompt_tokens: int,
         return 0.0
     try:
         import litellm
-        return litellm.model_cost and litellm.completion_cost(
-            model=model,
-            prompt="x" * 0, completion="x" * 0,
-            prompt_tokens=prompt_tokens,
-            completion_tokens=completion_tokens) or 0.0
+        in_cost, out_cost = litellm.cost_per_token(
+            model=model, prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens)
+        return in_cost + out_cost
     except Exception:
         return 0.0  # tokens are always logged; price can be applied later
 
@@ -70,6 +69,13 @@ def run(args: argparse.Namespace) -> Path:
                     crng = random.Random(f"{arc.arc_id}|{corrupt_mode}")
                     for ep in arc.episodes:
                         task = ep.task
+                        checker = getattr(M, task.checker)
+                        # delta scoring: success must be CAUSED by this
+                        # episode, not inherited from earlier world state
+                        # (e.g. an agent that already processed the refund
+                        # during the plant episode)
+                        pre_satisfied = checker(world.snapshot(),
+                                                **task.checker_args)
                         if corrupt_rate > 0:
                             corrupt_records(memory, corrupt_rate, crng,
                                             mode=corrupt_mode)
@@ -84,8 +90,9 @@ def run(args: argparse.Namespace) -> Path:
                             task_id=task.task_id, model=args.model,
                             log_dir=out_dir / "traces",
                             api_base=args.api_base)
-                        checker = getattr(M, task.checker)
-                        success = checker(world.snapshot(), **task.checker_args)
+                        success = (not pre_satisfied and
+                                   checker(world.snapshot(),
+                                           **task.checker_args))
                         mem_had_fact = (task.dependent and task.gold_fact_value
                                         in result.memory_block)
                         row = {
@@ -95,6 +102,7 @@ def run(args: argparse.Namespace) -> Path:
                             "arc_id": arc.arc_id, "episode_index": ep.index,
                             "task_id": task.task_id, "kind": task.kind,
                             "dependent": task.dependent, "success": success,
+                            "pre_satisfied": pre_satisfied,
                             "memory_had_fact": mem_had_fact,
                             "memory_utilized": (mem_had_fact and
                                 M.memory_utilized(result.tool_calls,

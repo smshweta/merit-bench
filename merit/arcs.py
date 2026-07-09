@@ -137,7 +137,9 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                     f"Hello, this is customer {cid}, about order {oid}: "
                     f"the item arrived damaged. Your "
                     f"colleague agreed I'll get a partial refund of exactly "
-                    f"{agreed} cents. Please send me a message confirming "
+                    f"{agreed} cents. Do NOT process the refund yet — I still "
+                    f"need to confirm with my bank, and I'll follow up when "
+                    f"I'm ready. For now, just send me a message confirming "
                     f"this agreed amount of {agreed} cents for order {oid}."],
                 checker="check_message_sent",
                 checker_args={"customer_id": cid, "must_contain": str(agreed)})

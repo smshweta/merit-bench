@@ -68,6 +68,17 @@ def test_generated_arcs_pass_leak_check():
     generate_suite(n_arcs=10, dep_ratio=0.5)  # raises LeakError on failure
 
 
+def test_refund_plant_forbids_early_processing():
+    # Gate-run finding: eager agents processed the refund during the PLANT
+    # episode, contaminating the world state so the probe checker passed
+    # with no memory at all. The plant script must forbid early processing.
+    for arc in generate_suite(n_arcs=10, dep_ratio=1.0):
+        for ep in arc.episodes:
+            for msg in ep.task.user_messages:
+                if "partial refund of exactly" in msg:
+                    assert "Do NOT process the refund yet" in msg
+
+
 # ---------------- simulated user ----------------
 
 def test_scripted_user_is_verbatim_and_deterministic():
@@ -163,3 +174,6 @@ def test_mock_pilot_end_to_end(tmp_path):
     assert tsr("C1", dep=True, corrupt="stale") <= tsr("C1", dep=True)
     # independent tasks solvable without memory
     assert tsr("C0", dep=False) == 1.0
+    # delta scoring: success inherited from earlier world state never counts
+    assert all("pre_satisfied" in r for r in rows)
+    assert not any(r["success"] and r["pre_satisfied"] for r in rows)
