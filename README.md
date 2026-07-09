@@ -28,14 +28,37 @@ python scripts/smoke_episode.py     # runs ONE live episode (~$0.01)
 - ReAct tool loop + JSONL trace logging + token metering (`merit/runner.py`).
 - MUR value-tracer (`merit/metrics.py`).
 
+## Run the pilot
+
+```bash
+# 1. Offline validation pilot — $0, no API key, ~10 s. Runs the ENTIRE
+#    pipeline (arcs, leak check, all 6 conditions, corruption sweeps,
+#    scoring, metering) with a deterministic rule-based mock agent.
+python scripts/run_pilot.py --arcs 10 --episodes 5 --seeds 3 --corrupt
+python scripts/analyze.py runs/pilot/results.jsonl
+
+# 2. Real pilot (Protocol Phase 2) — same commands, one flag (~$5–20):
+export OPENAI_API_KEY=...   # or ANTHROPIC_API_KEY etc.
+python scripts/run_pilot.py --model gpt-4.1-mini --arcs 10 --episodes 5 \
+    --seeds 1 --corrupt
+python scripts/analyze.py runs/pilot/results.jsonl
+```
+
+**Mock results validate the harness only** — checkers, leak check, corruption
+injector, MUR tracer, bootstrap analysis. They are not evidence about LLM
+agents and must never be reported as experimental results.
+
 ## Roadmap (tracked as issues)
 
-- [ ] Arc generator with parameterized dependent-task ratio + leak check
-- [ ] LLM-simulated user (temperature 0, cached)
+- [x] Arc generator with parameterized dependent-task ratio + leak check (`merit/arcs.py`)
+- [x] Simulated user: scripted deterministic mode + cached LLM mode (`merit/user_sim.py`)
+- [x] Corruption injector: stale / contradiction / distractor, all stores (`merit/memory.py`)
+- [x] Pilot runner + $0 mock pipeline validation (`scripts/run_pilot.py`, `merit/mockmodel.py`)
+- [x] Analysis: paired bootstrap clustered by arc, H1–H4 readout, CAMU (`scripts/analyze.py`)
+- [ ] Real pilot: 1 domain × 6 conditions × 1 cheap model × 50 episodes (needs API key)
 - [ ] Embedding retrieval for C2; LLM summarization for C3; LLM extraction for C4
 - [ ] Domains D2 (IT ops), D3 (personal assistant)
-- [ ] Pilot: 1 domain × 6 conditions × 1 model × 50 episodes
-- [ ] Analysis notebook: paired bootstrap clustered by arc, CAMU
+- [ ] Phase 0 calibration: reproduce a Mem0/LoCoMo slice result
 
 ## License
 

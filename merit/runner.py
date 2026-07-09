@@ -35,14 +35,17 @@ class EpisodeResult:
     completion_tokens: int = 0
     wall_seconds: float = 0.0
     transcript: str = ""
+    memory_block: str = ""  # what memory.read returned (for MUR / Ignore Rate)
 
 
 def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
                 task_id: str, model: str | None = None,
                 log_dir: str | Path = "runs") -> EpisodeResult:
-    import litellm  # imported here so tests that don't call LLMs need no key
-
-    model = model or os.environ.get("MERIT_MODEL", "gpt-4.1-mini")
+    model = model or os.environ.get("MERIT_MODEL", "mock")
+    if model == "mock":
+        from . import mockmodel as llm  # $0 deterministic pipeline validation
+    else:
+        import litellm as llm  # imported here so offline tests need no key
     episode_id = uuid.uuid4().hex[:8]
     t0 = time.time()
 
@@ -52,7 +55,8 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
     messages = [{"role": "system",
                  "content": SYSTEM_PROMPT.format(memory_block=mem_section)}]
 
-    result = EpisodeResult(episode_id=episode_id, task_id=task_id, success=None)
+    result = EpisodeResult(episode_id=episode_id, task_id=task_id, success=None,
+                           memory_block=memory_block)
     transcript_parts: list[str] = [f"[memory shown]\n{memory_block}"]
 
     for user_msg in user_messages:
@@ -60,8 +64,8 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
         transcript_parts.append(f"[user] {user_msg}")
 
         for _ in range(MAX_TURNS):
-            resp = litellm.completion(model=model, messages=messages,
-                                      tools=TOOL_SCHEMAS, temperature=0)
+            resp = llm.completion(model=model, messages=messages,
+                                  tools=TOOL_SCHEMAS, temperature=0)
             usage = resp.usage
             result.prompt_tokens += usage.prompt_tokens
             result.completion_tokens += usage.completion_tokens

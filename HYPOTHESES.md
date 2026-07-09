@@ -4,7 +4,7 @@
 operationalizations but not the direction of these hypotheses. Any post-hoc analyses
 will be explicitly labeled exploratory in the paper.**
 
-Date of preregistration: <fill in on commit day>
+Date of preregistration: 2026-07-08
 Author: Shweta Mishra
 
 ## Primary hypotheses
