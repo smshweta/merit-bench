@@ -40,8 +40,13 @@ class EpisodeResult:
 
 def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
                 task_id: str, model: str | None = None,
-                log_dir: str | Path = "runs") -> EpisodeResult:
+                log_dir: str | Path = "runs",
+                api_base: str | None = None) -> EpisodeResult:
+    """api_base: for local/self-hosted OpenAI-compatible servers, e.g.
+    Ollama: model='openai/qwen3:8b', api_base='http://localhost:11434/v1'
+    (requires a dummy OPENAI_API_KEY, e.g. 'ollama')."""
     model = model or os.environ.get("MERIT_MODEL", "mock")
+    api_base = api_base or os.environ.get("MERIT_API_BASE")
     if model == "mock":
         from . import mockmodel as llm  # $0 deterministic pipeline validation
     else:
@@ -64,8 +69,10 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
         transcript_parts.append(f"[user] {user_msg}")
 
         for _ in range(MAX_TURNS):
+            extra = {"api_base": api_base} if (api_base and model != "mock") \
+                else {}
             resp = llm.completion(model=model, messages=messages,
-                                  tools=TOOL_SCHEMAS, temperature=0)
+                                  tools=TOOL_SCHEMAS, temperature=0, **extra)
             usage = resp.usage
             result.prompt_tokens += usage.prompt_tokens
             result.completion_tokens += usage.completion_tokens

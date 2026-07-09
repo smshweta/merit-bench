@@ -82,7 +82,8 @@ def run(args: argparse.Namespace) -> Path:
                             world=world, memory=memory,
                             user_messages=user.turns(),
                             task_id=task.task_id, model=args.model,
-                            log_dir=out_dir / "traces")
+                            log_dir=out_dir / "traces",
+                            api_base=args.api_base)
                         checker = getattr(M, task.checker)
                         success = checker(world.snapshot(), **task.checker_args)
                         mem_had_fact = (task.dependent and task.gold_fact_value
@@ -122,6 +123,11 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--model", default="mock",
                    help="'mock' ($0 pipeline validation) or any LiteLLM model")
+    p.add_argument("--api-base", default=None,
+                   help="OpenAI-compatible server URL for local models, e.g. "
+                        "Ollama: --model openai/qwen3:8b "
+                        "--api-base http://localhost:11434/v1 "
+                        "(set OPENAI_API_KEY=ollama)")
     p.add_argument("--arcs", type=int, default=10)
     p.add_argument("--episodes", type=int, default=5)
     p.add_argument("--seeds", type=int, default=1)
