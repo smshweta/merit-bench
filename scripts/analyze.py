@@ -41,12 +41,13 @@ def by_arc(rows) -> dict[str, list[dict]]:
 
 def boot_ci_delta(rows_a: list[dict], rows_b: list[dict], key,
                   n_boot: int = N_BOOT, seed: int = 0):
-    """Bootstrap CI for mean(key(a)) - mean(key(b)), resampling ARCS with
-    replacement (the preregistered clustering unit)."""
+    """Bootstrap CI + two-sided p for mean(key(a)) - mean(key(b)),
+    resampling ARCS with replacement (the preregistered clustering unit)."""
     arcs_a, arcs_b = by_arc(rows_a), by_arc(rows_b)
     shared = sorted(set(arcs_a) & set(arcs_b))
     if not shared:
-        return float("nan"), (float("nan"), float("nan"))
+        nan = float("nan")
+        return nan, (nan, nan), nan
     rng = random.Random(seed)
     point = (mean(key(r) for a in shared for r in arcs_a[a])
              - mean(key(r) for a in shared for r in arcs_b[a]))
@@ -59,7 +60,22 @@ def boot_ci_delta(rows_a: list[dict], rows_b: list[dict], key,
     deltas.sort()
     lo = deltas[int(0.025 * n_boot)]
     hi = deltas[int(0.975 * n_boot)]
-    return point, (lo, hi)
+    # two-sided bootstrap p with the +1 continuity correction
+    p_le = (sum(d <= 0 for d in deltas) + 1) / (n_boot + 1)
+    p_ge = (sum(d >= 0 for d in deltas) + 1) / (n_boot + 1)
+    return point, (lo, hi), min(1.0, 2 * min(p_le, p_ge))
+
+
+def holm(pvals: dict) -> dict:
+    """Holm–Bonferroni step-down adjustment over one hypothesis family
+    (preregistered in HYPOTHESES.md). Returns adjusted p per key."""
+    items = sorted((p, k) for k, p in pvals.items() if p == p)  # drop NaN
+    adjusted, running = {}, 0.0
+    m = len(items)
+    for i, (p, k) in enumerate(items):
+        running = max(running, (m - i) * p)
+        adjusted[k] = min(1.0, running)
+    return adjusted
 
 
 def fmt_ci(point, ci) -> str:
@@ -99,31 +115,34 @@ def main(path: str) -> None:
               f"{mean(r['success'] for r in ind):8.3f} {mur:6.3f} "
               f"{ign:7.3f} {toks:8.0f} {cost:8.4f}")
 
-    # ---------- H1 / H2 ----------
+    # ---------- H1 / H2 (Holm–Bonferroni within each family) ----------
     c0_dep = sel(clean, "C0", True)
     c0_ind = sel(clean, "C0", False)
-    print("\nH1 (memory helps on DEPENDENT tasks): ΔTSR vs C0, "
-          "paired bootstrap 95% CI, clustered by arc")
-    for c in conditions:
-        if c == "C0":
-            continue
-        p, ci = boot_ci_delta(sel(clean, c, True), c0_dep,
-                              key=lambda r: r["success"])
-        print(f"  {c} - C0: {fmt_ci(p, ci)} {sig(ci)}")
+    for label, dep, c0_rows in (
+            ("H1 (memory helps on DEPENDENT tasks)", True, c0_dep),
+            ("H2 (distraction cost on INDEPENDENT tasks)", False, c0_ind)):
+        print(f"\n{label}: ΔTSR vs C0, paired bootstrap 95% CI, "
+              f"clustered by arc, Holm-adjusted p")
+        results, pvals = {}, {}
+        for c in conditions:
+            if c == "C0":
+                continue
+            point, ci, p = boot_ci_delta(sel(clean, c, dep), c0_rows,
+                                         key=lambda r: r["success"])
+            results[c], pvals[c] = (point, ci, p), p
+        adj = holm(pvals)
+        for c, (point, ci, p) in results.items():
+            a = adj.get(c, float("nan"))
+            mark = "*" if a < 0.05 else " "
+            print(f"  {c} - C0: {fmt_ci(point, ci)}  p={p:.4f} "
+                  f"holm={a:.4f} {mark}")
 
-    print("\nH2 (distraction cost on INDEPENDENT tasks): ΔTSR vs C0")
-    for c in conditions:
-        if c == "C0":
-            continue
-        p, ci = boot_ci_delta(sel(clean, c, False), c0_ind,
-                              key=lambda r: r["success"])
-        print(f"  {c} - C0: {fmt_ci(p, ci)} {sig(ci)}")
-
-    # ---------- H3: Stale-Memory Harm ----------
+    # ---------- H3: Stale-Memory Harm (Holm within family) ----------
     corrupted = [r for r in rows if r["corrupt_mode"] != "none"]
     if corrupted:
         print("\nH3 (Stale-Memory Harm = TSR_clean - TSR_corrupted, "
-              "dependent tasks)")
+              "dependent tasks, Holm-adjusted p)")
+        results, pvals = {}, {}
         for c in conditions:
             if c == "C0":
                 continue
@@ -135,10 +154,16 @@ def main(path: str) -> None:
                            and r["corrupt_rate"] == rate]
                     if not cor:
                         continue
-                    p, ci = boot_ci_delta(sel(clean, c, True), cor,
-                                          key=lambda r: r["success"])
-                    print(f"  {c} {mode:13} ρ={rate}: SMH = {fmt_ci(p, ci)} "
-                          f"{sig(ci)}")
+                    point, ci, p = boot_ci_delta(sel(clean, c, True), cor,
+                                                 key=lambda r: r["success"])
+                    results[(c, mode, rate)] = (point, ci, p)
+                    pvals[(c, mode, rate)] = p
+        adj = holm(pvals)
+        for (c, mode, rate), (point, ci, p) in results.items():
+            a = adj.get((c, mode, rate), float("nan"))
+            mark = "*" if a < 0.05 else " "
+            print(f"  {c} {mode:13} ρ={rate}: SMH = {fmt_ci(point, ci)}  "
+                  f"p={p:.4f} holm={a:.4f} {mark}")
 
     # ---------- H4: CAMU ----------
     print("\nH4 (CAMU = ΔTSR_dep per Δ$ vs C0; rankings TSR vs CAMU)")
