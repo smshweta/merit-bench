@@ -53,7 +53,26 @@ python scripts/run_pilot.py --model gpt-4.1-mini --domain d1 \
 python scripts/analyze.py runs/pilot-clean/results.jsonl   # any results file
 ```
 
-## 4. Local / open-weight models
+## 4. Figures (paper Figures 1–4)
+
+```bash
+python scripts/figures.py        # writes docs/figures/fig{1..4}.{pdf,png}
+```
+
+The script maps pre-difficulty-ladder runs to their (domain, difficulty)
+cell explicitly; sweep rows carry the fields.
+
+## 5. MUR human audit (paper §3.5)
+
+```bash
+python scripts/mur_audit.py sample   # 100-episode stratified sample ->
+                                     # runs/mur_audit/{audit_sheet.html,
+                                     #                labels.csv, key.csv}
+# two annotators fill labels.csv from audit_sheet.html (blind to key.csv)
+python scripts/mur_audit.py score runs/mur_audit/labels.csv   # Cohen's kappa
+```
+
+## 6. Local / open-weight models
 
 Any OpenAI-compatible server works, e.g. Ollama:
 
