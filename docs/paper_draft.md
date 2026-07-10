@@ -275,13 +275,19 @@ paired bootstrap clustered by arc).
 
 ### 5.2 The difficulty ladder dissociates architectures
 
-Dependent-task TSR (D1 / D2 / D3):
+Dependent-task TSR (D1 / D2 / D3; Figure 1):
 
 | Tier | C1 replay | C2 retrieval | C3 summary | C4 facts | C5 hybrid |
 |---|---|---|---|---|---|
 | easy | 1.00 / 1.00 / 0.90 | 0.95 / 1.00 / 0.95 | 0.55 / 0.65 / 0.40 | 1.00 / 0.60 / 0.90 | 0.95 / 1.00 / 1.00 |
 | medium | 0.55 / 1.00 / 0.90 | 0.30 / 0.85 / 0.90 | 0.30 / 0.40 / 0.50 | 0.85 / 1.00 / 0.80 | 0.85 / 1.00 / 1.00 |
 | hard | 1.00 / 1.00 / 1.00 | 0.60 / 0.25 / 0.20 | 0.00 / 0.15 / 0.00 | 1.00 / 0.90 / 1.00 | 0.70 / 0.45 / 0.75 |
+
+![Figure 1](figures/fig1_difficulty_ladder.png)
+*Figure 1: Dependent-task TSR across the difficulty ladder, per memory
+condition and domain. The hard (updated-fact) tier separates stores that
+overwrite (C4) or replay chronology (C1) from retrieval-based stores (C2,
+C5) and lossy summaries (C3).*
 
 Three dissociations: (1) **Updated facts break retrieval memory**: C2 falls
 to 0.20–0.60 on hard while C4 stays at 0.90–1.00 — retrieval surfaces stale
@@ -297,25 +303,37 @@ composing it are different capabilities.
 
 On the hard tier, pooling domains, the correct (latest) value was present in
 C2's retrieved block in 45 probe episodes; the agent acted on it in 21
-(**Ignore Rate 0.53**). Even C4/C1, whose memory blocks are clean, show
-Ignore Rates up to 0.44 in D3's multi-fact episodes. This is Blind spot 2
-made measurable: memory-system accuracy overstates end-task benefit unless
-utilization is measured.
+(**Ignore Rate 0.53**). Even C1/C4, whose memory blocks are clean, show
+Ignore Rates up to 0.45 in multi-fact (medium-tier) episodes (Figure 2). This
+is Blind spot 2 made measurable: memory-system accuracy overstates end-task
+benefit unless utilization is measured.
+
+![Figure 2](figures/fig2_ignore_rate.png)
+*Figure 2: Ignore Rate — the fraction of dependent episodes where every gold
+value was present in the memory block but the agent did not act on it — by
+condition and domain on the medium and hard tiers. Numbers above bars are
+episode counts with memory present (bars at zero are shown by their count
+only).*
 
 ### 5.4 Stale-memory harm
 
-On D1 with stale corruption at ρ=0.3, TSR on dependent tasks drops by
+On D1 with stale corruption at ρ=0.3 (Figure 3), TSR on dependent tasks drops by
 0.05–0.25 depending on condition; the largest and only Holm-significant harms
 in the pilot are on the hybrid C5 (SMH +0.20 at ρ=0.1, +0.25 at ρ=0.3),
 while C4 shows the smallest harm (≤0.05) — consistent with update-on-write
 limiting the blast radius of stale records. Contradiction and distractor
 corruption produce smaller, mostly non-significant harms at pilot scale.
+
+![Figure 3](figures/fig3_stale_memory_harm.png)
+*Figure 3: Stale-memory harm (TSR clean − corrupted, dependent tasks, D1) by
+condition, corruption mode, and corruption rate ρ; error bars are paired
+bootstrap 95% CIs clustered by arc.*
 [FULL RUN: corruption sweeps on all domains with verification-rate
 analysis.]
 
 ### 5.5 Cost and marginal utility
 
-Per-episode cost on D1-easy: C0 $0.00046, C4 $0.00052, C5 $0.00076, C2
+Per-episode cost on D1-easy (Figure 4): C0 $0.00046, C4 $0.00052, C5 $0.00076, C2
 $0.00078, C3 $0.00088, C1 $0.00129 (2,986 tokens/episode — 3.4× C0). CAMU
 ranking inverts the accuracy ranking (H4 supported in all three domains):
 C4 delivers ~17,300 percentage points of dependent-task success per marginal
@@ -325,6 +343,12 @@ dollar on D1 vs ~1,200 for C1; in D2, C4's marginal cost was *negative*
 per task for all conditions — memory pays for itself at trivially low task
 values *when it works*; the practitioner-relevant differences are in
 robustness (§5.2–5.4), not raw affordability, at these model prices.
+
+![Figure 4](figures/fig4_cost_frontier.png)
+*Figure 4: Metered cost per episode vs dependent-task TSR at the easy tier.
+C4 sits at or near the Pareto frontier in all domains; in D2 and D3 its
+compact fact notes make it cheaper than several alternatives while C1 full
+replay pays a 2–3× token premium for the same or lower TSR.*
 
 ### 5.6 What the pilot cannot yet say
 
