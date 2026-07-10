@@ -135,8 +135,8 @@ dialogues. LongMemEval (Wu et al., 2025) covers information extraction,
 multi-session reasoning, temporal reasoning, knowledge updates, and
 abstention over ~115K-token histories. BEAM (Tavakoli et al., 2026) scales
 conversational probing to 10M tokens. HaluMem (2025) evaluates hallucination
-at the level of memory operations (extraction, updating, QA). RealMem (2026)
-moves toward project-oriented interaction. All are *answer-producing*
+at the level of memory operations (extraction, updating, QA). RealMem
+(Bian et al., 2026) moves toward project-oriented interaction. All are *answer-producing*
 evaluations; MERIT is *action-producing*: success is a predicate over the
 final state of a mutable world, and the knowledge-update dimension that
 LongMemEval and HaluMem probe conversationally becomes, in MERIT's hard tier,
@@ -438,8 +438,9 @@ are public; we invite memory-system authors to evaluate against MERIT.
   arXiv:2310.08560.
 - Rasmussen, P., et al. (2025). Zep: A Temporal Knowledge Graph Architecture
   for Agent Memory. arXiv:2501.13956.
-- RealMem (2026). Benchmarking LLMs in Real-World Memory-Driven Interaction.
-  arXiv:2601.06966. [VERIFY author list before submission]
+- Bian, H., Yao, Z., Hu, S., Xu, Z., Zhang, S., Guo, Y., Yang, Z., Han, X.,
+  Wang, H., Chen, R. (2026). RealMem: Benchmarking LLMs in Real-World
+  Memory-Driven Interaction. arXiv:2601.06966.
 - Tavakoli, M., Salemi, A., Ye, C., Abdalla, M., Zamani, H., Mitchell, J.R.
   (2026). Beyond a Million Tokens: Benchmarking and Enhancing Long-Term
   Memory in LLMs (BEAM). ICLR 2026. arXiv:2510.27246.
