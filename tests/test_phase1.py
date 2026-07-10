@@ -155,7 +155,7 @@ def test_mock_pilot_end_to_end(tmp_path):
     from run_pilot import run
 
     args = argparse.Namespace(
-        model="mock", api_base=None,
+        model="mock", api_base=None, domain="d1", difficulty="easy",
         arcs=4, episodes=5, seeds=1, dep_ratio=0.5,
         conditions="C0,C1,C4", corrupt=True,
         corrupt_modes="stale", user_mode="scripted", out=str(tmp_path))

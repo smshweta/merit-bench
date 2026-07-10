@@ -274,17 +274,25 @@ def _good_version(rng: random.Random, world_json: str) -> str:
 
 
 def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
-                 dep_ratio: float = 0.5) -> D2Arc:
-    """Deterministic given (arc_id, seed, n_episodes, dep_ratio)."""
-    rng = random.Random((seed, arc_id).__repr__())
+                 dep_ratio: float = 0.5, difficulty: str = "easy") -> D2Arc:
+    """Deterministic given (arc_id, seed, n_episodes, dep_ratio, difficulty).
+    Difficulty tiers mirror D1: easy = single fact; medium = one plant with
+    BOTH a config fix and a rollback target, probe requires both; hard = the
+    rollback target is later REVISED and the probe needs the latest value."""
+    rng = random.Random((seed, arc_id, difficulty).__repr__()
+                        if difficulty != "easy"
+                        else (seed, arc_id).__repr__())
     world = D2World.create(seed=seed)
     world_json = world.dump_json()
     services = list(SERVICES)
     rng.shuffle(services)
 
     arc = D2Arc(arc_id=arc_id, seed=seed)
+    taboo = world_json  # grows with each gold: values unique arc-wide
     n_dep = round(dep_ratio * (n_episodes - 1))
-    probe_positions = sorted(rng.sample(range(1, n_episodes), n_dep))
+    first_probe = 2 if difficulty == "hard" else 1
+    n_dep = min(n_dep, n_episodes - first_probe)
+    probe_positions = sorted(rng.sample(range(first_probe, n_episodes), n_dep))
 
     pending: dict[int, TaskSpec] = {}
     svc_iter = iter(services)
@@ -292,9 +300,83 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
     for pos in probe_positions:
         svc = next(svc_iter)
         plant_pos = rng.randrange(0, pos)
+        if difficulty == "medium":
+            key = rng.choice(CONFIG_KEYS)
+            val = _fix_value(rng, taboo)
+            taboo += "|" + val
+            gv = _good_version(rng, taboo)
+            taboo += "|" + gv
+            plant = TaskSpec(
+                task_id=f"{arc_id}-e{plant_pos}-plant-combo",
+                dependent=False, kind="I_note",
+                user_messages=[
+                    f"Postmortem for {svc}: full remediation is two steps — "
+                    f"a config change and a rollback. Do NOT apply anything "
+                    f"yet, we are in a change freeze. Just update the ticket "
+                    f"confirming the planned fix: {key}={val} for {svc}, "
+                    f"and noting the rollback target {gv} for {svc}."],
+                checker="check_ticket_updated",
+                checker_args={"service": svc, "must_contain": val})
+            probe = TaskSpec(
+                task_id=f"{arc_id}-e{pos}-probe-combo",
+                dependent=True, kind="T_combo",
+                user_messages=[
+                    f"The change freeze on {svc} is lifted — please apply "
+                    f"the FULL remediation we agreed on the ticket: both the "
+                    f"config change and the rollback."],
+                checker="check_config_and_version",
+                checker_args={"service": svc, "key": key,
+                              "expected_value": val, "expected_version": gv},
+                gold_fact_value=val, gold_fact_values=[val, gv],
+                plant_episode=plant_pos)
+            pending[plant_pos] = _merge(pending.get(plant_pos), plant)
+            pending[pos] = _merge(pending.get(pos), probe)
+            continue
+        if difficulty == "hard":
+            gv1 = _good_version(rng, taboo)
+            taboo += "|" + gv1
+            gv2 = _good_version(rng, taboo)
+            taboo += "|" + gv2
+            plant_pos = rng.randrange(0, pos - 1)
+            upd_pos = rng.randrange(plant_pos + 1, pos)
+            plant = TaskSpec(
+                task_id=f"{arc_id}-e{plant_pos}-plant-ver",
+                dependent=False, kind="I_note",
+                user_messages=[
+                    f"Postmortem update for {svc}: the current release is "
+                    f"faulty. Do NOT roll back yet — approval is pending. "
+                    f"Just update the ticket noting the rollback target "
+                    f"{gv1} for {svc}."],
+                checker="check_ticket_updated",
+                checker_args={"service": svc, "must_contain": gv1})
+            update = TaskSpec(
+                task_id=f"{arc_id}-e{upd_pos}-update-ver",
+                dependent=False, kind="I_note",
+                user_messages=[
+                    f"Revision on the {svc} postmortem: QA found the earlier "
+                    f"target also affected. The correct rollback target "
+                    f"{gv2} for {svc} replaces the previous one. Still do "
+                    f"NOT roll back yet; just update the ticket noting the "
+                    f"rollback target {gv2} for {svc}."],
+                checker="check_ticket_updated",
+                checker_args={"service": svc, "must_contain": gv2})
+            probe = TaskSpec(
+                task_id=f"{arc_id}-e{pos}-probe-ver-upd",
+                dependent=True, kind="T_ver_upd",
+                user_messages=[
+                    f"Approval came through for {svc} — roll it back now to "
+                    f"the CURRENT rollback target from the ticket."],
+                checker="check_version_deployed",
+                checker_args={"service": svc, "expected_version": gv2},
+                gold_fact_value=gv2, plant_episode=plant_pos)
+            pending[plant_pos] = _merge(pending.get(plant_pos), plant)
+            pending[upd_pos] = _merge(pending.get(upd_pos), update)
+            pending[pos] = _merge(pending.get(pos), probe)
+            continue
         if rng.random() < 0.5:
             key = rng.choice(CONFIG_KEYS)
-            val = _fix_value(rng, world_json)
+            val = _fix_value(rng, taboo)
+            taboo += "|" + val
             plant = TaskSpec(
                 task_id=f"{arc_id}-e{plant_pos}-plant-cfg",
                 dependent=False, kind="I_note",
@@ -318,7 +400,8 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                               "expected_value": val},
                 gold_fact_value=val, plant_episode=plant_pos)
         else:
-            gv = _good_version(rng, world_json)
+            gv = _good_version(rng, taboo)
+            taboo += "|" + gv
             plant = TaskSpec(
                 task_id=f"{arc_id}-e{plant_pos}-plant-ver",
                 dependent=False, kind="I_note",
@@ -380,8 +463,10 @@ def _merge(existing: TaskSpec | None, new: TaskSpec) -> TaskSpec:
 
 
 def generate_suite(n_arcs: int = 10, episodes_per_arc: int = 5,
-                   dep_ratio: float = 0.5, base_seed: int = 0) -> list[D2Arc]:
+                   dep_ratio: float = 0.5, base_seed: int = 0,
+                   difficulty: str = "easy") -> list[D2Arc]:
     return [generate_arc(arc_id=f"d2-arc{base_seed}-{i:03d}",
                          seed=base_seed * 10_000 + i,
-                         n_episodes=episodes_per_arc, dep_ratio=dep_ratio)
+                         n_episodes=episodes_per_arc, dep_ratio=dep_ratio,
+                         difficulty=difficulty)
             for i in range(n_arcs)]

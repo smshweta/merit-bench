@@ -144,6 +144,8 @@ class StructuredFacts(MemoryBase):
         # D3 personal assistant
         (re.compile(r'usual room is (Room \d+[A-Z])'),
          "usual_room", "user", 1),
+        (re.compile(r'usual meeting time is (\d\d:\d\d)'),
+         "usual_time", "user", 1),
         (re.compile(r'dinner with (\w+) at (.+? on \w+ at \d\d:\d\d)'),
          "dinner", 1, 2),
     ]

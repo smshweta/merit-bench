@@ -31,12 +31,14 @@ CACHE_DIR = Path(os.environ.get("MERIT_USER_CACHE", ".user_cache"))
 class SimulatedUser:
     def __init__(self, script: list[str], persona_idx: int = 0,
                  mode: str = "scripted", model: str | None = None,
-                 forbidden: str = "") -> None:
+                 forbidden: str | list[str] = "") -> None:
         self.script = script
         self.persona = PERSONAS[persona_idx % len(PERSONAS)]
         self.mode = mode
         self.model = model
-        self.forbidden = forbidden  # gold fact value that must NOT be uttered
+        # gold fact value(s) that must NOT be uttered by a paraphrase
+        self.forbidden = ([forbidden] if isinstance(forbidden, str)
+                          else list(forbidden))
 
     def turns(self) -> list[str]:
         if self.mode == "scripted":
@@ -65,12 +67,12 @@ class SimulatedUser:
                 {"role": "user", "content": scripted}])
         text = resp.choices[0].message.content.strip()
 
-        # paraphrase leak check: forbidden value must not appear unless it was
-        # already in the scripted turn (plants legitimately contain it)
-        if self.forbidden and self.forbidden not in scripted \
-                and self.forbidden in text:
-            raise AssertionError(
-                f"user_sim leak: paraphrase introduced forbidden value "
-                f"{self.forbidden!r}")
+        # paraphrase leak check: forbidden values must not appear unless they
+        # were already in the scripted turn (plants legitimately contain them)
+        for value in self.forbidden:
+            if value and value not in scripted and value in text:
+                raise AssertionError(
+                    f"user_sim leak: paraphrase introduced forbidden value "
+                    f"{value!r}")
         cached.write_text(json.dumps({"text": text}))
         return text

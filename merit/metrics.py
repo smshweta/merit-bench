@@ -25,6 +25,15 @@ def check_message_sent(snapshot: dict, customer_id: str,
                for m in snapshot["messages"])
 
 
+def check_refund_and_message(snapshot: dict, order_id: str,
+                             expected_cents: int, customer_id: str,
+                             must_contain: str) -> bool:
+    """Difficulty=medium combo: BOTH the agreed refund and the address
+    confirmation message must be correct."""
+    return (check_refund_issued(snapshot, order_id, expected_cents)
+            and check_message_sent(snapshot, customer_id, must_contain))
+
+
 # ---------- D2 (IT ops) checkers ----------
 
 def check_config_set(snapshot: dict, service: str, key: str,
@@ -44,6 +53,15 @@ def check_ticket_updated(snapshot: dict, service: str,
                          must_contain: str) -> bool:
     return any(t["service"] == service and must_contain in t["body"]
                for t in snapshot["tickets"])
+
+
+def check_config_and_version(snapshot: dict, service: str, key: str,
+                             expected_value: str,
+                             expected_version: str) -> bool:
+    """Difficulty=medium combo: BOTH the config fix and the rollback must
+    have been applied."""
+    return (check_config_set(snapshot, service, key, expected_value)
+            and check_version_deployed(snapshot, service, expected_version))
 
 
 # ---------- D3 (personal assistant) checkers ----------
@@ -67,10 +85,12 @@ def check_preference_set(snapshot: dict, key: str,
 
 # ---------- MUR value-tracer ----------
 
-def memory_utilized(tool_calls: list[dict], gold_fact_value: str) -> bool:
-    """Did the gold fact's value appear in any executed tool call's arguments?
-    Conservative string containment; validated by human audit in Phase 4."""
-    for tc in tool_calls:
-        if gold_fact_value in str(tc.get("args", {})):
-            return True
-    return False
+def memory_utilized(tool_calls: list[dict],
+                    gold_fact_value: str | list[str]) -> bool:
+    """Did EVERY gold fact value appear in some executed tool call's
+    arguments? Conservative string containment; validated by human audit in
+    Phase 4. Accepts a single value or (multi-fact probes) a list."""
+    golds = ([gold_fact_value] if isinstance(gold_fact_value, str)
+             else list(gold_fact_value))
+    args_blob = " | ".join(str(tc.get("args", {})) for tc in tool_calls)
+    return all(g in args_blob for g in golds)

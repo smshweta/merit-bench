@@ -1,4 +1,4 @@
-"""Phase 2 pilot runner.
+"""Phase 2 pilot runner (all domains, all difficulty tiers).
 
 Runs arcs × conditions × seeds × corruption settings, scores every episode
 programmatically, and appends one JSON row per scored episode to the results
@@ -8,7 +8,7 @@ the real pilot (e.g. --model gpt-4.1-mini, key via env).
 Usage:
   python scripts/run_pilot.py                          # offline mock pilot
   python scripts/run_pilot.py --model gpt-4.1-mini \
-      --arcs 10 --episodes 5 --seeds 1 --dep-ratio 0.5 # real pilot (~$5-20)
+      --domain d2 --difficulty hard --arcs 10          # real pilot
 """
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from merit import metrics as M
-from merit.arcs import generate_suite
+from merit.domains import DOMAINS
 from merit.memory import CONDITIONS, corrupt_records
 from merit.runner import run_episode
 from merit.user_sim import SimulatedUser
@@ -43,6 +43,7 @@ def episode_cost_usd(model: str, prompt_tokens: int,
 
 
 def run(args: argparse.Namespace) -> Path:
+    domain = DOMAINS[args.domain]
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     results_path = out_dir / "results.jsonl"
@@ -55,8 +56,10 @@ def run(args: argparse.Namespace) -> Path:
                                 for r in (0.1, 0.3)]
 
     for seed in range(args.seeds):
-        arcs = generate_suite(n_arcs=args.arcs, episodes_per_arc=args.episodes,
-                              dep_ratio=args.dep_ratio, base_seed=seed)
+        arcs = domain.generate_suite(
+            n_arcs=args.arcs, episodes_per_arc=args.episodes,
+            dep_ratio=args.dep_ratio, base_seed=seed,
+            difficulty=args.difficulty)
         for cond_key, cond_cls in CONDITIONS.items():
             if cond_key not in args.conditions.split(","):
                 continue
@@ -72,8 +75,6 @@ def run(args: argparse.Namespace) -> Path:
                         checker = getattr(M, task.checker)
                         # delta scoring: success must be CAUSED by this
                         # episode, not inherited from earlier world state
-                        # (e.g. an agent that already processed the refund
-                        # during the plant episode)
                         pre_satisfied = checker(world.snapshot(),
                                                 **task.checker_args)
                         if corrupt_rate > 0:
@@ -83,20 +84,27 @@ def run(args: argparse.Namespace) -> Path:
                             script=task.user_messages,
                             persona_idx=ep.index,
                             mode=args.user_mode,
-                            forbidden=task.gold_fact_value)
+                            forbidden=task.golds())
                         result = run_episode(
                             world=world, memory=memory,
                             user_messages=user.turns(),
                             task_id=task.task_id, model=args.model,
                             log_dir=out_dir / "traces",
-                            api_base=args.api_base)
+                            api_base=args.api_base,
+                            tool_funcs=domain.tool_funcs,
+                            tool_schemas=domain.tool_schemas,
+                            system_prompt=domain.system_prompt)
                         success = (not pre_satisfied and
                                    checker(world.snapshot(),
                                            **task.checker_args))
-                        mem_had_fact = (task.dependent and task.gold_fact_value
-                                        in result.memory_block)
+                        golds = task.golds()
+                        mem_had_fact = (task.dependent and golds and
+                                        all(g in result.memory_block
+                                            for g in golds))
                         row = {
                             "seed": seed, "condition": cond_key,
+                            "domain": domain.name,
+                            "difficulty": args.difficulty,
                             "corrupt_mode": corrupt_mode,
                             "corrupt_rate": corrupt_rate,
                             "arc_id": arc.arc_id, "episode_index": ep.index,
@@ -105,8 +113,7 @@ def run(args: argparse.Namespace) -> Path:
                             "pre_satisfied": pre_satisfied,
                             "memory_had_fact": mem_had_fact,
                             "memory_utilized": (mem_had_fact and
-                                M.memory_utilized(result.tool_calls,
-                                                  task.gold_fact_value)),
+                                M.memory_utilized(result.tool_calls, golds)),
                             "prompt_tokens": result.prompt_tokens,
                             "completion_tokens": result.completion_tokens,
                             "cost_usd": episode_cost_usd(
@@ -136,6 +143,9 @@ def main() -> None:
                         "Ollama: --model openai/qwen3:8b "
                         "--api-base http://localhost:11434/v1 "
                         "(set OPENAI_API_KEY=ollama)")
+    p.add_argument("--domain", default="d1", choices=sorted(DOMAINS))
+    p.add_argument("--difficulty", default="easy",
+                   choices=["easy", "medium", "hard"])
     p.add_argument("--arcs", type=int, default=10)
     p.add_argument("--episodes", type=int, default=5)
     p.add_argument("--seeds", type=int, default=1)

@@ -227,23 +227,87 @@ def _place(rng: random.Random, world_json: str) -> str:
             return p
 
 
+def _quarter_time(rng: random.Random, world_json: str) -> str:
+    """A :15/:45 time absent from the world (seeded events are :00,
+    generated probes :30)."""
+    while True:
+        t = f"{rng.randint(9, 16):02d}:{rng.choice(['15', '45'])}"
+        if t not in world_json:
+            return t
+
+
 def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
-                 dep_ratio: float = 0.5) -> D3Arc:
-    """Deterministic given (arc_id, seed, n_episodes, dep_ratio)."""
-    rng = random.Random((seed, arc_id).__repr__())
+                 dep_ratio: float = 0.5, difficulty: str = "easy") -> D3Arc:
+    """Deterministic given (arc_id, seed, n_episodes, dep_ratio, difficulty).
+    Difficulty tiers: easy = single fact (room) or the already-multi-fact
+    dinner; medium = usual room AND usual meeting time, probe requires both;
+    hard = the usual room CHANGES mid-arc and the probe needs the latest."""
+    rng = random.Random((seed, arc_id, difficulty).__repr__()
+                        if difficulty != "easy"
+                        else (seed, arc_id).__repr__())
     world = D3World.create(seed=seed)
     world_json = world.dump_json()
 
     arc = D3Arc(arc_id=arc_id, seed=seed)
+    taboo = world_json  # grows with each gold: values unique arc-wide
     n_dep = round(dep_ratio * (n_episodes - 1))
-    probe_positions = sorted(rng.sample(range(1, n_episodes), n_dep))
+    first_probe = 2 if difficulty == "hard" else 1
+    n_dep = min(n_dep, n_episodes - first_probe)
+    probe_positions = sorted(rng.sample(range(first_probe, n_episodes), n_dep))
 
     pending: dict[int, TaskSpec] = {}
+    # the usual-room/usual-time facts are SINGLETONS (one per user): a second
+    # pair would overwrite the first in any keyed store and contradict it in
+    # replay. So at most ONE room pair per arc; every other dependent pair is
+    # a dinner keyed to a DISTINCT person (sampled without replacement).
+    persons = iter(rng.sample(PEOPLE, k=min(n_dep, len(PEOPLE))))
+    room_pair_used = False
+
+    def _dinner_time(taboo_s: str) -> str:
+        while True:
+            t = f"{rng.randint(18, 20):02d}:{rng.choice(['15', '45'])}"
+            if t not in taboo_s:
+                return t
 
     for pos in probe_positions:
         plant_pos = rng.randrange(0, pos)
-        if rng.random() < 0.5:
-            room = _room(rng, world_json)
+        use_room = (not room_pair_used and difficulty != "hard"
+                    and (difficulty == "medium" or rng.random() < 0.5))
+        if use_room and difficulty == "medium":
+            room_pair_used = True
+            room = _room(rng, taboo)
+            taboo += "|" + room
+            gold_time = _quarter_time(rng, taboo)
+            taboo += "|" + gold_time
+            title = rng.choice(["design sync", "vendor call", "retro"])
+            day = rng.choice(DAYS)
+            plant = TaskSpec(
+                task_id=f"{arc_id}-e{plant_pos}-plant-roomtime",
+                dependent=False, kind="I_note",
+                user_messages=[
+                    f"Two standing rules for my meetings from now on: my "
+                    f"usual room is {room}, and my usual meeting time is "
+                    f"{gold_time}. Don't save these anywhere or change any "
+                    f"events; just send me an email confirming my usual "
+                    f"room is {room} and my usual meeting time is "
+                    f"{gold_time}."],
+                checker="check_email_sent",
+                checker_args={"must_contain": room})
+            probe = TaskSpec(
+                task_id=f"{arc_id}-e{pos}-probe-roomtime",
+                dependent=True, kind="T_roomtime",
+                user_messages=[
+                    f"Please book a {title} with Dana on {day} at my usual "
+                    f"time in my usual room."],
+                checker="check_event_created",
+                checker_args={"day": day, "time": gold_time,
+                              "expected_location": room},
+                gold_fact_value=room, gold_fact_values=[room, gold_time],
+                plant_episode=plant_pos)
+        elif use_room:
+            room_pair_used = True
+            room = _room(rng, taboo)
+            taboo += "|" + room
             title = rng.choice(["design sync", "vendor call", "retro"])
             day = rng.choice(DAYS)
             time = f"{rng.randint(9, 16):02d}:30"
@@ -267,11 +331,57 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                 checker_args={"day": day, "time": time,
                               "expected_location": room},
                 gold_fact_value=room, plant_episode=plant_pos)
-        else:
-            place = _place(rng, world_json)
-            person = rng.choice(PEOPLE)
+        elif difficulty == "hard":
+            person = next(persons)
+            place1 = _place(rng, taboo)
+            taboo += "|" + place1
+            place2 = _place(rng, taboo)
+            taboo += "|" + place2
             day = rng.choice(DAYS)
-            time = f"{rng.randint(18, 20):02d}:30"
+            time = _dinner_time(taboo)
+            taboo += "|" + time
+            plant_pos = rng.randrange(0, pos - 1)
+            upd_pos = rng.randrange(plant_pos + 1, pos)
+            plant = TaskSpec(
+                task_id=f"{arc_id}-e{plant_pos}-plant-dinner",
+                dependent=False, kind="I_note",
+                user_messages=[
+                    f"I just promised {person} dinner but can't add it to "
+                    f"the calendar yet — waiting on the babysitter. Don't "
+                    f"create the event; just send me an email confirming "
+                    f"dinner with {person} at {place1} on {day} at {time}."],
+                checker="check_email_sent",
+                checker_args={"must_contain": place1})
+            update = TaskSpec(
+                task_id=f"{arc_id}-e{upd_pos}-update-dinner",
+                dependent=False, kind="I_note",
+                user_messages=[
+                    f"Heads up — my dinner with {person} moved: same day "
+                    f"and time, different spot. Don't add it to the "
+                    f"calendar yet; just send me an email confirming "
+                    f"dinner with {person} at {place2} on {day} at {time}."],
+                checker="check_email_sent",
+                checker_args={"must_contain": place2})
+            probe = TaskSpec(
+                task_id=f"{arc_id}-e{pos}-probe-dinner-upd",
+                dependent=True, kind="T_dinner_upd",
+                user_messages=[
+                    f"The babysitter is confirmed — please add my dinner "
+                    f"with {person} to the calendar now, using the CURRENT "
+                    f"details from your notes."],
+                checker="check_event_created",
+                checker_args={"day": day, "time": time,
+                              "expected_location": place2},
+                gold_fact_value=place2, plant_episode=plant_pos)
+            pending[upd_pos] = _merge(pending.get(upd_pos), update)
+        else:
+            person = next(persons)
+            place = _place(rng, taboo)
+            taboo += "|" + place
+            day = rng.choice(DAYS)
+            time = _dinner_time(taboo)
+            taboo += "|" + time
+            golds = [place, time] if difficulty == "medium" else None
             plant = TaskSpec(
                 task_id=f"{arc_id}-e{plant_pos}-plant-dinner",
                 dependent=False, kind="I_note",
@@ -286,13 +396,14 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                 task_id=f"{arc_id}-e{pos}-probe-dinner",
                 dependent=True, kind="T_dinner",
                 user_messages=[
-                    "The babysitter is confirmed — please add the dinner I "
-                    "told you about to my calendar, with the right place, "
-                    "day, and time."],
+                    f"The babysitter is confirmed — please add my dinner "
+                    f"with {person} to my calendar, with the right place, "
+                    f"day, and time."],
                 checker="check_event_created",
                 checker_args={"day": day, "time": time,
                               "expected_location": place},
-                gold_fact_value=place, plant_episode=plant_pos)
+                gold_fact_value=place, gold_fact_values=golds,
+                plant_episode=plant_pos)
         pending[plant_pos] = _merge(pending.get(plant_pos), plant)
         pending[pos] = _merge(pending.get(pos), probe)
 
@@ -348,8 +459,10 @@ def _merge(existing: TaskSpec | None, new: TaskSpec) -> TaskSpec:
 
 
 def generate_suite(n_arcs: int = 10, episodes_per_arc: int = 5,
-                   dep_ratio: float = 0.5, base_seed: int = 0) -> list[D3Arc]:
+                   dep_ratio: float = 0.5, base_seed: int = 0,
+                   difficulty: str = "easy") -> list[D3Arc]:
     return [generate_arc(arc_id=f"d3-arc{base_seed}-{i:03d}",
                          seed=base_seed * 10_000 + i,
-                         n_episodes=episodes_per_arc, dep_ratio=dep_ratio)
+                         n_episodes=episodes_per_arc, dep_ratio=dep_ratio,
+                         difficulty=difficulty)
             for i in range(n_arcs)]
