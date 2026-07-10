@@ -124,19 +124,35 @@ class StructuredFacts(MemoryBase):
         self.corrupted_keys: set[tuple[str, str]] = set()  # ground truth only
 
     # (pattern, attribute, entity_group, value_group)
+    # entity_group may be a literal string (e.g. "user") when the fact's
+    # owner has no ID in the text (D3 personal-assistant facts).
     _PATTERNS = [
+        # D1 customer support
         (re.compile(r'"customer_id":\s*"([^"]+)".*?"address":\s*"([^"]+)"'),
          "address", 1, 2),
         (re.compile(r'"order_id":\s*"([^"]+)".*?"refunded_cents":\s*(\d+)'),
          "refunded_cents", 1, 2),
         (re.compile(r'agreed amount of (\d+) cents for order (ORD-\d+)'),
          "agreed_refund_cents", 2, 1),
+        # D2 IT ops
+        (re.compile(r'planned fix: (\w+=\d+) for ([a-z-]+-api)'),
+         "planned_fix", 2, 1),
+        (re.compile(r'rollback target (v[\d.]+) for ([a-z-]+-api)'),
+         "rollback_target", 2, 1),
+        (re.compile(r'"service":\s*"([^"]+)".*?"version":\s*"(v[\d.]+)"'),
+         "version", 1, 2),
+        # D3 personal assistant
+        (re.compile(r'usual room is (Room \d+[A-Z])'),
+         "usual_room", "user", 1),
+        (re.compile(r'dinner with (\w+) at (.+? on \w+ at \d\d:\d\d)'),
+         "dinner", 1, 2),
     ]
 
     def write(self, episode_id: str, transcript: str) -> None:
         for pattern, attr, eg, vg in self._PATTERNS:
             for m in pattern.finditer(transcript):
-                entity, value = m.group(eg), m.group(vg)
+                entity = eg if isinstance(eg, str) else m.group(eg)
+                value = m.group(vg)
                 self.facts[(entity, attr)] = (value, episode_id)
 
     def read(self, current_context: str, budget_chars: int = 4000) -> str:
@@ -166,7 +182,7 @@ class Hybrid(MemoryBase):
 
 # ---------------- corruption injector ----------------
 
-_ENTITY_RE = re.compile(r"\b(CUST-\d+|ORD-\d+)\b")
+_ENTITY_RE = re.compile(r"\b(CUST-\d+|ORD-\d+|[a-z]+-api|Room \d+[A-Z])\b")
 
 _DISTRACTOR_TEMPLATES = [
     "{e} asked whether gift wrapping is available for future orders.",

@@ -41,12 +41,19 @@ class EpisodeResult:
 def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
                 task_id: str, model: str | None = None,
                 log_dir: str | Path = "runs",
-                api_base: str | None = None) -> EpisodeResult:
+                api_base: str | None = None,
+                tool_funcs: dict | None = None,
+                tool_schemas: list | None = None,
+                system_prompt: str | None = None) -> EpisodeResult:
     """api_base: for local/self-hosted OpenAI-compatible servers, e.g.
     Ollama: model='openai/qwen3:8b', api_base='http://localhost:11434/v1'
     (requires a dummy OPENAI_API_KEY, e.g. 'ollama')."""
     model = model or os.environ.get("MERIT_MODEL", "mock")
     api_base = api_base or os.environ.get("MERIT_API_BASE")
+    if tool_funcs is None or tool_schemas is None:
+        from .tools import TOOL_FUNCS, TOOL_SCHEMAS
+        tool_funcs = tool_funcs or TOOL_FUNCS
+        tool_schemas = tool_schemas or TOOL_SCHEMAS
     if model == "mock":
         from . import mockmodel as llm  # $0 deterministic pipeline validation
     else:
@@ -57,8 +64,10 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
     memory_block = memory.read(current_context=" ".join(user_messages))
     mem_section = (f"Relevant notes from previous sessions:\n{memory_block}"
                    if memory_block else "You have no notes from previous sessions.")
+    if system_prompt is None:
+        system_prompt = SYSTEM_PROMPT
     messages = [{"role": "system",
-                 "content": SYSTEM_PROMPT.format(memory_block=mem_section)}]
+                 "content": system_prompt.format(memory_block=mem_section)}]
 
     result = EpisodeResult(episode_id=episode_id, task_id=task_id, success=None,
                            memory_block=memory_block)
@@ -72,7 +81,7 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
             extra = {"api_base": api_base} if (api_base and model != "mock") \
                 else {}
             resp = llm.completion(model=model, messages=messages,
-                                  tools=TOOL_SCHEMAS, temperature=0, **extra)
+                                  tools=tool_schemas, temperature=0, **extra)
             usage = resp.usage
             result.prompt_tokens += usage.prompt_tokens
             result.completion_tokens += usage.completion_tokens
@@ -86,9 +95,13 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
             for tc in msg.tool_calls:
                 fn = tc.function.name
                 args = json.loads(tc.function.arguments or "{}")
-                out = (TOOL_FUNCS[fn](world, **args)
-                       if fn in TOOL_FUNCS
-                       else json.dumps({"error": f"unknown tool {fn}"}))
+                try:
+                    out = (tool_funcs[fn](world, **args)
+                           if fn in tool_funcs
+                           else json.dumps({"error": f"unknown tool {fn}"}))
+                except TypeError as e:
+                    # bad/missing arguments: report to the model, don't crash
+                    out = json.dumps({"error": f"invalid arguments: {e}"})
                 result.tool_calls.append({"name": fn, "args": args, "out": out})
                 transcript_parts.append(f"[tool {fn}] args={args} -> {out}")
                 messages.append({"role": "tool", "tool_call_id": tc.id,
