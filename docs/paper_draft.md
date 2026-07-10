@@ -257,7 +257,7 @@ scored episodes, $4.61 in API cost** (~$0.0008/episode). Harness: Python,
 LiteLLM for provider-agnostic calls and metering; SQLite worlds; scripted
 simulated users (LLM paraphrase mode with a paraphrase-leak check on D1).
 The mock-model mode replays the entire grid deterministically at $0 and is
-exercised by 56 unit tests, including generation determinism, leak checks,
+exercised by 62 unit tests, including generation determinism, leak checks,
 and end-to-end pipeline invariants. [FULL RUN: + frontier API model +
 open-weight model via vLLM, 3 seeds, ≥30 arcs, corruption + LLM users on all
 domains.]
