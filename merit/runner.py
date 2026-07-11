@@ -58,6 +58,9 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
         from . import mockmodel as llm  # $0 deterministic pipeline validation
     else:
         import litellm as llm  # imported here so offline tests need no key
+        # transient network blips must not kill a multi-hour grid run;
+        # applies to every litellm completion/embedding call process-wide
+        llm.num_retries = 5
     episode_id = uuid.uuid4().hex[:8]
     t0 = time.time()
 
