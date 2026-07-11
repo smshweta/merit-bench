@@ -13,16 +13,19 @@ MEMLLM=gpt-4.1-mini
 
 # run one cell; on failure wipe the partial dir and retry once
 # (results.jsonl is append-only, so a rerun must start from a fresh dir)
+# stderr goes to ${out}.stderr.log — kept outside the out dir so the
+# attempt-1 traceback survives the attempt-2 wipe
 cell() { # $1 model  $2 extra-args  $3 out-dir  $4... run_pilot args
   out=$3
   for attempt in 1 2; do
     if [ -d "$out" ] && [ "$attempt" = 2 ]; then rm -rf "$out"; fi
-    if env PYTHONPATH=. .venv/bin/python scripts/run_pilot.py \
+    echo "--- attempt $attempt $(date)" >> "$out.stderr.log"
+    if env PYTHONPATH=. PYTHONUNBUFFERED=1 .venv/bin/python scripts/run_pilot.py \
         --model "$1" --memory-llm $MEMLLM $2 \
-        --domain "$4" --difficulty "$5" --out "$out"; then
+        --domain "$4" --difficulty "$5" --out "$out" 2>> "$out.stderr.log"; then
       return 0
     fi
-    echo "!!! cell $out failed (attempt $attempt)"
+    echo "!!! cell $out failed (attempt $attempt), see $out.stderr.log"
   done
   return 1
 }

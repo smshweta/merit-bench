@@ -10,11 +10,12 @@ cd "$(dirname "$0")/.."
 for dom in d1 d2 d3; do
   for tier in easy medium hard; do
     echo "=== phasec gptoss $dom-$tier $(date)"
-    env PYTHONPATH=. .venv/bin/python scripts/run_pilot.py \
+    env PYTHONPATH=. PYTHONUNBUFFERED=1 .venv/bin/python scripts/run_pilot.py \
       --model openai/gpt-oss:20b --api-base http://localhost:11434/v1 \
       --memory-llm gpt-4.1-mini \
       --domain "$dom" --difficulty "$tier" \
-      --out "runs/phasec/gptoss-$dom-$tier"
+      --out "runs/phasec/gptoss-$dom-$tier" \
+      2>> "runs/phasec/gptoss-$dom-$tier.stderr.log"
   done
 done
 echo "=== phasec local done $(date)"
