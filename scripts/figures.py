@@ -1,15 +1,18 @@
-"""Paper figures from pilot/sweep results.jsonl.
+"""Paper figures from pilot/Phase B results.jsonl.
 
-Produces docs/figures/fig{1..4}.{pdf,png}:
+Produces docs/figures/fig{1..5}.{pdf,png}:
   fig1  difficulty ladder: dependent-task TSR by tier, per condition, per domain
-  fig2  Ignore Rate on the hard tier, per condition x domain
-  fig3  stale-memory harm on D1 with paired-bootstrap 95% CIs (clustered by arc)
-  fig4  cost vs dependent-task TSR at the easy tier (the CAMU picture)
+  fig2  starter vs real implementations (C2-C5), medium and hard tiers
+  fig3  Ignore Rate on medium/hard tiers, per condition x domain
+  fig4  stale-memory harm on D1 with paired-bootstrap 95% CIs (clustered by arc)
+  fig5  cost vs dependent-task TSR at the easy tier (the CAMU picture)
 
-Pre-Phase-A runs lack domain/difficulty fields, so RUNS maps each file to its
-(domain, difficulty) cell explicitly; sweep rows carry the fields and are
-trusted as-is. The clean/corrupt contrast for fig3 stays within pilot-full so
-the pairing-by-arc assumption of the bootstrap holds.
+Figures 1-4 use the Phase B runs (real memory implementations, --memory-llm);
+fig5 contrasts them with the starter-implementation runs. Pre-Phase-A starter
+runs lack domain/difficulty fields, so STARTER_RUNS maps each file to its
+(domain, difficulty) cell explicitly; later rows carry the fields and are
+trusted as-is. The clean/corrupt contrast for fig3 stays within one run dir
+so the pairing-by-arc assumption of the bootstrap holds.
 
 Usage: PYTHONPATH=. .venv/bin/python scripts/figures.py
 """
@@ -31,7 +34,13 @@ from analyze import boot_ci_delta, mean  # noqa: E402
 OUT = Path("docs/figures")
 
 # (path, domain, difficulty) — domain/difficulty None means "trust row fields"
-RUNS = [
+RUNS = [(f"runs/phaseb/{dom}-{tier}/results.jsonl", None, None)
+        for dom in ("d1", "d2", "d3") for tier in ("easy", "medium", "hard")]
+CORRUPT_RUN = ("runs/phaseb/d1-corrupt/results.jsonl", None, None)
+
+# starter-implementation runs (keyword retrieval, truncation summary,
+# pattern extraction) — fig5 only
+STARTER_RUNS = [
     ("runs/pilot-clean/results.jsonl", "d1", "easy"),
     ("runs/pilot-d2-v2/results.jsonl", "d2", "easy"),
     ("runs/sweep/d3-easy/results.jsonl", None, None),
@@ -42,7 +51,6 @@ RUNS = [
     ("runs/sweep/d2-hard/results.jsonl", None, None),
     ("runs/sweep/d3-hard/results.jsonl", None, None),
 ]
-CORRUPT_RUN = ("runs/pilot-full/results.jsonl", "d1", "easy")
 
 CONDS = ["C0", "C1", "C2", "C3", "C4", "C5"]
 COND_LABEL = {
@@ -145,7 +153,7 @@ def fig2_ignore(cells: dict) -> None:
     fig.legend(handles, [DOMAIN_LABEL[d] for d in DOMAINS], frameon=False,
                loc="upper center", ncol=3, handlelength=1.0,
                bbox_to_anchor=(0.5, 1.12))
-    save(fig, "fig2_ignore_rate")
+    save(fig, "fig3_ignore_rate")
 
 
 def fig3_smh() -> None:
@@ -183,7 +191,7 @@ def fig3_smh() -> None:
                     loc="upper left", handlelength=1.0)
     fig.suptitle("D1, paired bootstrap 95% CI clustered by arc", fontsize=7.5,
                  color="#6b6b66", y=1.06)
-    save(fig, "fig3_stale_memory_harm")
+    save(fig, "fig4_stale_memory_harm")
 
 
 def fig4_cost(cells: dict) -> None:
@@ -215,22 +223,61 @@ def fig4_cost(cells: dict) -> None:
         ax.set_ylim(-0.05, 1.05)
         ax.grid(axis="x", visible=False)
     axes[0].set_ylabel("dependent-task TSR (easy)")
-    save(fig, "fig4_cost_frontier")
+    save(fig, "fig5_cost_frontier")
 
 
-def main() -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
+def fig5_starter_vs_real(cells: dict, starter: dict) -> None:
+    conds = ["C2", "C3", "C4", "C5"]
+    tiers = ["medium", "hard"]
+    fig, axes = plt.subplots(2, 3, figsize=(6.5, 3.6), sharey=True,
+                             sharex=True)
+    for row, tier in enumerate(tiers):
+        for col, dom in enumerate(DOMAINS):
+            ax = axes[row][col]
+            for k, c in enumerate(conds):
+                ys = [mean(r["success"] for r in dep_clean(src[dom, tier])
+                           if r["condition"] == c)
+                      for src in (starter, cells)]
+                xs = [i + (k - 1.5) * 0.02 for i in range(2)]
+                ax.plot(xs, ys, marker="o", markersize=4, color=COLOR[c],
+                        label=COND_LABEL[c], clip_on=False)
+            if row == 0:
+                ax.set_title(DOMAIN_LABEL[dom])
+            if col == 2:
+                ax.yaxis.set_label_position("right")
+                ax.set_ylabel(tier, rotation=270, va="bottom")
+            ax.set_xticks([0, 1])
+            ax.set_xticklabels(["starter", "real"])
+            ax.set_ylim(-0.03, 1.03)
+            ax.set_xlim(-0.25, 1.25)
+            ax.grid(axis="x", visible=False)
+    axes[0][0].set_ylabel("dependent-task TSR")
+    axes[1][0].set_ylabel("dependent-task TSR")
+    fig.legend(*axes[0][0].get_legend_handles_labels(), loc="upper center",
+               ncol=4, frameon=False, bbox_to_anchor=(0.5, 1.06),
+               columnspacing=1.2, handlelength=1.4)
+    save(fig, "fig2_starter_vs_real")
+
+
+def build_cells(runs) -> dict:
     cells: dict[tuple[str, str], list[dict]] = defaultdict(list)
-    for path, dom, tier in RUNS:
+    for path, dom, tier in runs:
         for r in load(path, dom, tier):
             cells[r["domain"], r["difficulty"]].append(r)
     for dom in DOMAINS:
         for t in TIERS:
             assert cells[dom, t], f"missing cell {dom}/{t}"
+    return cells
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    cells = build_cells(RUNS)
     fig1_ladder(cells)
     fig2_ignore(cells)
     fig3_smh()
     fig4_cost(cells)
+    fig5_starter_vs_real(cells, build_cells(STARTER_RUNS))
 
 
 if __name__ == "__main__":

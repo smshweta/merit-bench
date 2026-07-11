@@ -42,9 +42,20 @@ for spec in d1:medium d1:hard d2:medium d2:hard d3:medium d3:hard; do
     --out "runs/sweep/${spec%%:*}-${spec##*:}"
 done
 
-# corruption sweep + LLM-paraphrased users on D1 (paper §5.4)
+# corruption sweep + LLM-paraphrased users on D1 (paper §5.5, starter gen)
 python scripts/run_pilot.py --model gpt-4.1-mini --domain d1 \
   --corrupt --user-mode llm --out runs/pilot-full
+```
+
+The commands above are the **starter-implementation generation** (keyword
+retrieval, truncation summaries, pattern extraction). The
+**real-implementation generation** — embedding retrieval, LLM summarization,
+LLM extraction (`--memory-llm`), which §5 reports as the headline numbers —
+reruns the identical grid plus the D1 corruption sweep in one driver
+(~4,500 episodes, ~$4.50, ~4.5 h):
+
+```bash
+sh scripts/run_phaseb.sh    # writes runs/phaseb/<cell>/ per cell
 ```
 
 ## 3. Analysis (CIs, Holm-adjusted p, CAMU)
@@ -53,14 +64,16 @@ python scripts/run_pilot.py --model gpt-4.1-mini --domain d1 \
 python scripts/analyze.py runs/pilot-clean/results.jsonl   # any results file
 ```
 
-## 4. Figures (paper Figures 1–4)
+## 4. Figures (paper Figures 1–5)
 
 ```bash
-python scripts/figures.py        # writes docs/figures/fig{1..4}.{pdf,png}
+python scripts/figures.py        # writes docs/figures/fig{1..5}.{pdf,png}
 ```
 
-The script maps pre-difficulty-ladder runs to their (domain, difficulty)
-cell explicitly; sweep rows carry the fields.
+Figures 1 and 3–5 use the real-implementation runs (`runs/phaseb/`);
+Figure 2 contrasts them with the starter generation. The script maps
+pre-difficulty-ladder runs to their (domain, difficulty) cell explicitly;
+later rows carry the fields.
 
 ## 5. MUR human audit (paper §3.5)
 

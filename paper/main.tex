@@ -22,11 +22,12 @@ Long-Term Memory in Tool-Using LLM Agents}
 \author{Shweta Mishra\\
 Independent Research\\
 \texttt{1196shweta@gmail.com}}
-\date{July 2026 --- preprint v0.9\thanks{All numbers in \S5 are measured
-results from the pilot study (5{,}440 scored episodes, one model). The full
-preregistered study (3 models $\times$ 3 seeds $\times$ ${\ge}30$ arcs) is in
-progress; this preprint releases the benchmark, harness, and pilot findings.
-Passages marked \fullrun{\ldots} will be updated with the larger study.
+\date{July 2026 --- preprint v1.0\thanks{All numbers in \S5 are measured
+results from the two-generation pilot (9{,}940 scored episodes, one model):
+starter memory implementations, then real ones (embedding retrieval, LLM
+summarization, LLM extraction) on the identical grid. The full preregistered
+study (3 models $\times$ 3 seeds $\times$ ${\ge}30$ arcs) is in progress;
+passages marked \fullrun{\ldots} will be updated with the larger study.
 Code, traces, and preregistration: \url{https://github.com/smshweta/merit-bench}.}}
 
 \begin{document}
@@ -49,20 +50,28 @@ non-re-derivable by an automated leak check; (ii)~a three-tier
 \textbf{difficulty ladder} --- single-fact, multi-fact, and \emph{updated-fact}
 recall; (iii)~controlled \textbf{memory corruption} (stale, contradiction,
 distractor); and (iv)~full token and dollar accounting for every memory
-operation. In a pilot study (6 memory conditions $\times$ 3 domains $\times$
-3 difficulty tiers, 5{,}440 scored episodes, \texttt{gpt-4.1-mini}), memory
-conditions lift dependent-task success from a leak-verified floor of 0.00 (no
-memory) to 0.90--1.00 on single-fact tasks (all Holm-adjusted $p \le 0.001$).
-The tiers dissociate architectures sharply: when a remembered fact is
-\emph{updated} mid-arc, retrieval memory collapses (success 0.20--0.60; it
-acts on the correct value only 47\% of the times that value is retrieved),
-while a structured fact store with update-on-write semantics stays at
-0.90--1.00 --- yet the \emph{hybrid} of the two is worse than the fact store
-alone (0.45--0.75). Under explicit cost accounting, the most accurate
-condition (full replay) is the least economical: the structured store
-delivers equal or better dependent-task success at ${\sim}14\times$ higher
-marginal utility per dollar. We release the benchmark, harness, and all
-traces for reproducible, cost-aware comparison of agent memory systems.
+operation. In a two-generation pilot (6 memory conditions $\times$ 3 domains
+$\times$ 3 difficulty tiers, run first with starter implementations and then
+with real ones --- embedding retrieval, LLM summarization, LLM extraction ---
+9{,}940 scored episodes, \texttt{gpt-4.1-mini}), memory conditions lift
+dependent-task success from a leak-verified floor of 0.00 (no memory) to
+0.55--1.00 (all Holm-adjusted $p \le 0.001$). The tiers dissociate
+architectures sharply: when a remembered fact is \emph{updated} mid-arc,
+embedding retrieval collapses (success 0.35--0.70; the agent acts on the
+correct value only 55\% of the times that value is retrieved), while stores
+that overwrite --- a structured fact store with update-on-write semantics,
+and, notably, LLM summarization, which rewrites its summary each episode ---
+reach 0.70--1.00; the \emph{hybrid} of fact store and retrieval is worse
+than the fact store alone in all three domains (0.50--0.80). The
+implementation swap is itself diagnostic: LLM summarization rescues the
+summary condition on updated facts (0.00--0.15 $\to$ 0.70--1.00), while
+swapping pattern extraction for LLM extraction \emph{costs} the fact store
+up to 60 points in one domain --- implementation quality is a first-class
+variable, and \merit{} measures it. Under explicit cost accounting with
+memory-side calls metered, full replay is never the economical choice: the
+best condition per domain delivers 2.7--3.9$\times$ its marginal utility per
+dollar. We release the benchmark, harness, and all traces for reproducible,
+cost-aware comparison of agent memory systems.
 \end{abstract}
 
 \section{Introduction}
@@ -96,7 +105,7 @@ configuration) is not just unhelpful; it produces a \emph{confidently wrong
 action}. No existing benchmark quantifies this failure mode under controlled
 corruption, nor the more basic failure our pilot surfaces: agents that
 demonstrably hold the correct fact in context and still do not act on it
-(Ignore Rate up to 0.53).
+(Ignore Rate 0.45--0.53 across implementations).
 
 \paragraph{Blind spot 3: Cost is reported, but marginal utility is not.}
 Memory systems report token counts alongside accuracy, but the decision
@@ -122,11 +131,13 @@ to measure Stale-Memory Harm.
 \item \textbf{Three metrics absent from prior evaluations}: Memory
 Utilization Rate (MUR), Ignore Rate, and Cost-Adjusted Marginal Utility
 (CAMU), computed automatically by the harness (\S\ref{sec:metrics}).
-\item \textbf{A pilot study} of 6 memory conditions $\times$ 3 domains
-$\times$ 3 difficulty tiers (5{,}440 scored episodes) with preregistered
-hypotheses and statistics (paired bootstrap clustered by arc;
+\item \textbf{A two-generation pilot study} of 6 memory conditions $\times$
+3 domains $\times$ 3 difficulty tiers (9{,}940 scored episodes) --- the full
+grid run twice, with starter implementations and with real ones --- with
+preregistered hypotheses and statistics (paired bootstrap clustered by arc;
 Holm--Bonferroni), demonstrating that the benchmark separates memory
-architectures that are indistinguishable under single-fact recall.
+architectures that are indistinguishable under single-fact recall, and
+separates \emph{architecture} from \emph{implementation quality}.
 \fullrun{3 models $\times$ 3 seeds $\times$ ${\ge}30$ arcs}
 \item \textbf{Open-source release} of the benchmark, harness, and all
 traces, with a deterministic \$0 mock-model mode that validates the full
@@ -216,7 +227,9 @@ unique arc-wide. \textbf{Delta scoring} marks an episode successful only if
 its checker predicate flips from false to true \emph{during} that episode ---
 in early gate runs, eager agents processed refunds during plant episodes, and
 probes then ``succeeded'' off inherited world state; delta scoring eliminates
-this world-state leak channel entirely (0 contaminated episodes in 5{,}440).
+this world-state leak channel entirely (across 9{,}940 episodes, the 6 probes
+that arrived with their checker already satisfied score as failures, never as
+inherited successes).
 
 \subsection{Domains}
 
@@ -246,13 +259,16 @@ overwrite (update-on-write) and stores that accumulate (replay, retrieval).
 
 \textbf{Memory conditions}, one interface (\texttt{write(episode)},
 \texttt{read(context)}): C0 none; C1 full replay of prior transcripts; C2
-retrieval (pilot: keyword-overlap retrieval; \fullrun{embedding retrieval});
-C3 rolling summary (pilot: extractive truncation; \fullrun{LLM
-summarization}); C4 structured fact store with update-on-write (pilot:
-pattern-based extraction; \fullrun{LLM extraction}); C5 hybrid (C4 + C2). All
-conditions share the same agent scaffold (ReAct-style tool loop;
-\citealp{react}), prompts (except the memory block), tools, and decoding
-(temperature 0).
+retrieval (starter: keyword-overlap; real: embedding retrieval,
+\texttt{text-embedding-3-small}); C3 rolling summary (starter: extractive
+truncation; real: LLM summarization); C4 structured fact store with
+update-on-write (starter: pattern-based extraction; real: LLM extraction);
+C5 hybrid (C4 + C2). Each condition ran in both an inexpensive
+\textbf{starter} implementation and a \textbf{real} one (memory-side
+LLM/embedding calls, fully metered); the grid was run once per generation
+(\S\ref{sec:swap} compares them). All conditions share the same agent
+scaffold (ReAct-style tool loop; \citealp{react}), prompts (except the
+memory block), tools, and decoding (temperature 0).
 
 \subsection{Metrics}\label{sec:metrics}
 
@@ -261,8 +277,9 @@ conditions share the same agent scaffold (ReAct-style tool loop;
 by dependent/independent.
 \item \textbf{MUR}: among dependent episodes where all gold values were
 present in the retrieved memory block, the fraction where every gold value
-appears in the executed tool-call arguments (value tracing). \fullrun{validated
-by a 100-episode human audit with a second annotator; Cohen's $\kappa$}
+appears in the executed tool-call arguments (value tracing). A frozen,
+stratified 100-episode audit sample is committed to the repository;
+two-annotator labeling (Cohen's $\kappa$) is in progress.
 \item \textbf{Ignore Rate} $= 1 - \mathrm{MUR}$ on episodes with correct
 memory present.
 \item \textbf{SMH}: $\mathrm{TSR}(\text{clean}) -
@@ -283,16 +300,21 @@ preregistration record).
 
 \section{Experimental Setup (Pilot)}
 
-Model: \texttt{gpt-4.1-mini} (pinned; temperature 0). Scale: 10 arcs
-$\times$ 5 episodes per (domain $\times$ difficulty $\times$ condition);
-dependent-task ratio 0.5; corruption sweep (3 modes $\times$ $\rho \in \{0.1,
-0.3\}$) and LLM-paraphrased users on D1. Totals: \textbf{5{,}440 scored
-episodes, \$4.61 in API cost} (${\sim}\$0.0008$/episode). Harness: Python,
-LiteLLM for provider-agnostic calls and metering; SQLite worlds; scripted
-simulated users (LLM paraphrase mode with a paraphrase-leak check on D1). The
-mock-model mode replays the entire grid deterministically at \$0 and is
-exercised by 62 unit tests, including generation determinism, leak checks,
-and end-to-end pipeline invariants. \fullrun{+ frontier API model +
+Model: \texttt{gpt-4.1-mini} (pinned; temperature 0) on both the agent side
+and, in the real-implementation generation, the memory side (embeddings:
+\texttt{text-embedding-3-small}). Scale per generation: 10 arcs $\times$ 5
+episodes per (domain $\times$ difficulty $\times$ condition); dependent-task
+ratio 0.5; corruption sweep (3 modes $\times$ $\rho \in \{0.1, 0.3\}$) with
+LLM-paraphrased users on D1. Totals: \textbf{9{,}940 scored episodes, \$9.13
+in API cost} --- starter generation 5{,}440 episodes / \$4.61, real
+generation 4{,}500 episodes / \$4.52 (${\sim}\$0.001$/episode including
+memory-side calls, which are metered into all cost figures). Harness:
+Python, LiteLLM for provider-agnostic calls and metering; SQLite worlds;
+scripted simulated users (LLM paraphrase mode with a paraphrase-leak check
+on D1). The mock-model mode replays the entire grid deterministically at \$0
+and is exercised by 62 unit tests, including generation determinism, leak
+checks, and end-to-end pipeline invariants. Unless marked otherwise, \S5
+reports the real-implementation generation. \fullrun{+ frontier API model +
 open-weight model via vLLM, 3 seeds, ${\ge}30$ arcs, corruption + LLM users
 on all domains}
 
@@ -301,27 +323,28 @@ on all domains}
 \subsection{Memory helps on dependent tasks; the floor is real}
 
 C0 scored \textbf{0.000} on dependent tasks in all nine (domain $\times$
-difficulty) cells --- the leak check holds; there is no route to the gold facts
-except memory. On independent tasks C0 scores 0.88--1.00, confirming task
-solvability. Every memory condition beats C0 on dependent tasks in every
-domain at easy difficulty ($\Delta$TSR $+0.55$ to $+1.00$; all Holm-adjusted
-$p \le 0.001$, paired bootstrap clustered by arc).
+difficulty) cells, in both generations --- the leak check holds; there is no
+route to the gold facts except memory. On independent tasks C0 scores
+0.83--1.00, confirming task solvability. Every memory condition beats C0 on
+dependent tasks in every domain at easy difficulty ($\Delta$TSR $+0.55$ to
+$+1.00$; all Holm-adjusted $p \le 0.001$, paired bootstrap clustered by
+arc).
 
 \subsection{The difficulty ladder dissociates architectures}\label{sec:ladder}
 
 \begin{table}[t]
 \centering
-\caption{Dependent-task TSR by difficulty tier and memory condition
-(D1~/~D2~/~D3). See also Figure~\ref{fig:ladder}.}
+\caption{Dependent-task TSR by difficulty tier and memory condition, real
+implementations (D1~/~D2~/~D3). See also Figure~\ref{fig:ladder}.}
 \label{tab:ladder}
 \small
 \begin{tabular}{lccccc}
 \toprule
 Tier & C1 replay & C2 retrieval & C3 summary & C4 facts & C5 hybrid \\
 \midrule
-easy   & 1.00 / 1.00 / 0.90 & 0.95 / 1.00 / 0.95 & 0.55 / 0.65 / 0.40 & 1.00 / 0.60 / 0.90 & 0.95 / 1.00 / 1.00 \\
-medium & 0.55 / 1.00 / 0.90 & 0.30 / 0.85 / 0.90 & 0.30 / 0.40 / 0.50 & 0.85 / 1.00 / 0.80 & 0.85 / 1.00 / 1.00 \\
-hard   & 1.00 / 1.00 / 1.00 & 0.60 / 0.25 / 0.20 & 0.00 / 0.15 / 0.00 & 1.00 / 0.90 / 1.00 & 0.70 / 0.45 / 0.75 \\
+easy   & 1.00 / 1.00 / 0.90 & 0.90 / 1.00 / 0.90 & 0.95 / 1.00 / 0.70 & 1.00 / 0.55 / 0.80 & 0.95 / 0.80 / 1.00 \\
+medium & 0.60 / 1.00 / 0.95 & 0.30 / 0.95 / 1.00 & 0.30 / 1.00 / 0.90 & 0.80 / 0.40 / 0.75 & 0.80 / 1.00 / 0.95 \\
+hard   & 1.00 / 0.95 / 1.00 & 0.70 / 0.35 / 0.45 & 1.00 / 0.70 / 1.00 & 0.95 / 0.75 / 1.00 & 0.80 / 0.60 / 0.50 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -330,110 +353,168 @@ hard   & 1.00 / 1.00 / 1.00 & 0.60 / 0.25 / 0.20 & 0.00 / 0.15 / 0.00 & 1.00 / 0
 \centering
 \includegraphics[width=\textwidth]{figures/fig1_difficulty_ladder.pdf}
 \caption{Dependent-task TSR across the difficulty ladder, per memory
-condition and domain. The hard (updated-fact) tier separates stores that
-overwrite (C4) or replay chronology (C1) from retrieval-based stores (C2, C5)
-and lossy summaries (C3).}
+condition and domain (real implementations). The hard (updated-fact) tier
+separates memories that overwrite state --- the fact store (C4) and, notably,
+LLM summarization (C3), which rewrites its summary each episode --- and
+chronological replay (C1) from retrieval-based memories (C2, C5).}
 \label{fig:ladder}
 \end{figure}
 
 Table~\ref{tab:ladder} and Figure~\ref{fig:ladder} show three dissociations:
-(1)~\textbf{Updated facts break retrieval memory}: C2 falls to 0.20--0.60 on
-hard while C4 stays at 0.90--1.00 --- retrieval surfaces stale and fresh values
-side by side with no recency signal, while update-on-write overwrites.
-(2)~\textbf{Hybrid is worse than its better half} on hard (0.45--0.75 vs.\
-C4's 0.90--1.00): the retrieval half re-imports the staleness the fact store
-had eliminated. (3)~\textbf{Full replay is update-immune but
-composition-limited}: C1 resolves recency from chronology (1.00 on hard) yet
-drops to 0.55 on D1-medium despite containing every fact --- possessing
-information and composing it are different capabilities.
+(1)~\textbf{Updated facts break retrieval memory --- including embedding
+retrieval}: C2 falls to 0.35--0.70 on hard while C1 stays at 0.95--1.00 and
+C4 at 0.75--1.00 --- retrieval surfaces stale and fresh values side by side
+with no recency signal, while update-on-write overwrites and replay resolves
+recency from chronology. (2)~\textbf{Hybrid is worse than its better half}
+on hard in all three domains (0.50--0.80 vs.\ C4's 0.75--1.00): the
+retrieval half re-imports the staleness the fact store had eliminated.
+(3)~\textbf{Full replay is update-immune but composition-limited}: C1 drops
+to 0.60 on D1-medium despite containing every fact --- possessing information
+and composing it are different capabilities. A fourth pattern emerged only
+with real implementations: \textbf{LLM summarization behaves like
+update-on-write} (1.00 / 0.70 / 1.00 on hard), because regenerating the
+summary each episode naturally keeps the latest value --- an architectural
+kinship invisible in the starter generation (\S\ref{sec:swap}).
+
+\subsection{Starter vs real implementations: the swap is diagnostic}
+\label{sec:swap}
+
+Upgrading C2--C5 in place, on the identical grid, moves conditions in both
+directions (Figure~\ref{fig:swap}):
+
+\begin{itemize}
+\item \textbf{C3 summary, truncation $\to$ LLM:} 0.00 / 0.15 / 0.00 $\to$
+\textbf{1.00 / 0.70 / 1.00} on hard. The starter result was a floor set by
+the implementation, not the architecture: truncation drops facts (starter
+MUR $= 1.0$ on the episodes it retained), while an LLM summarizer that
+rewrites state each episode is update-robust by construction.
+\item \textbf{C4 facts, patterns $\to$ LLM extraction:} D2 falls from 1.00
+to \textbf{0.40} on medium (0.60 $\to$ 0.55 easy, 0.90 $\to$ 0.75 hard)
+while D1/D3 roughly hold. The hand-tuned patterns the starter needed per
+domain (\S\ref{sec:discussion}) were not dead weight; the generic LLM
+extractor misses IT-ops facts they caught. Extraction quality is a real tax
+on structured memory, payable in either engineering effort or metered tokens
+--- and now visible in the benchmark.
+\item \textbf{C2 retrieval, keyword $\to$ embedding:} modest gains
+everywhere ($+0.10$ to $+0.25$ on hard), but the hard-tier collapse persists
+--- the failure is the architecture's missing recency arbitration, not
+retrieval quality.
+\end{itemize}
+
+The two generations bound an implementation-sensitivity band per
+architecture; the band is wide (up to 1.00 TSR for C3 on updated facts),
+which is itself an argument for action-level evaluation over memory-system
+benchmarking.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig2_starter_vs_real.pdf}
+\caption{Dependent-task TSR, starter vs real implementation of each memory
+condition (C2--C5), on the medium (top) and hard (bottom) tiers. LLM
+summarization rescues C3 on updated facts; LLM extraction costs C4 up to 60
+points in D2; embedding retrieval does not fix C2's hard-tier collapse.}
+\label{fig:swap}
+\end{figure}
 
 \subsection{Agents ignore memories they hold}
 
 On the hard tier, pooling domains, the correct (latest) value was present in
-C2's retrieved block in 45 probe episodes; the agent acted on it in 21
-(\textbf{Ignore Rate 0.53}). Even C1/C4, whose memory blocks are clean, show
-Ignore Rates up to 0.45 in multi-fact (medium-tier) episodes
-(Figure~\ref{fig:ignore}). This is Blind spot~2 made measurable:
-memory-system accuracy overstates end-task benefit unless utilization is
-measured.
+C2's retrieved block in 55 probe episodes; the agent acted on it in 30
+(\textbf{Ignore Rate 0.45}; 0.53 in the starter generation --- upgrading
+retrieval quality barely moves it). Even C1, whose memory block is a clean
+full transcript, ignores up to 0.50 of held facts in multi-fact
+(medium-tier) episodes (Figure~\ref{fig:ignore}). This is Blind spot~2 made
+measurable: memory-system accuracy overstates end-task benefit unless
+utilization is measured.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/fig2_ignore_rate.pdf}
+\includegraphics[width=\textwidth]{figures/fig3_ignore_rate.pdf}
 \caption{Ignore Rate --- the fraction of dependent episodes where every gold
 value was present in the memory block but the agent did not act on it --- by
-condition and domain on the medium and hard tiers. Numbers above bars are
-episode counts with memory present (bars at zero are shown by their count
-only).}
+condition and domain on the medium and hard tiers (real implementations).
+Numbers above bars are episode counts with memory present (bars at zero are
+shown by their count only).}
 \label{fig:ignore}
 \end{figure}
 
 \subsection{Stale-memory harm}
 
-On D1 with stale corruption at $\rho = 0.3$ (Figure~\ref{fig:smh}), TSR on
-dependent tasks drops by 0.05--0.25 depending on condition; the largest and
-only Holm-significant harms in the pilot are on the hybrid C5 (SMH $+0.20$ at
-$\rho = 0.1$, $+0.25$ at $\rho = 0.3$), while C4 shows the smallest harm
-(${\le}0.05$) --- consistent with update-on-write limiting the blast radius of
-stale records. Contradiction and distractor corruption produce smaller,
-mostly non-significant harms at pilot scale. \fullrun{corruption sweeps on
-all domains with verification-rate analysis}
+On D1 with stale corruption (Figure~\ref{fig:smh}), the largest and only
+Holm-significant harm is again on the hybrid C5 (SMH $+0.25$ at $\rho =
+0.3$, Holm-adjusted $p = 0.030$) --- replicating the starter-generation
+result with real implementations. One shift is instructive: C4 with LLM
+extraction shows stale harm of $+0.20$ (raw $p = 0.013$, not surviving Holm)
+where regex-C4's harm was ${\le}0.05$ --- the LLM extractor ingests corrupted
+records that the rigid patterns rejected, another face of the
+extraction-quality tax (\S\ref{sec:swap}). Contradiction and distractor
+corruption produce small, non-significant effects at pilot scale.
+\fullrun{corruption sweeps on all domains with verification-rate analysis}
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/fig3_stale_memory_harm.pdf}
-\caption{Stale-memory harm (TSR clean $-$ corrupted, dependent tasks, D1) by
-condition, corruption mode, and corruption rate $\rho$; error bars are paired
-bootstrap 95\% CIs clustered by arc.}
+\includegraphics[width=\textwidth]{figures/fig4_stale_memory_harm.pdf}
+\caption{Stale-memory harm (TSR clean $-$ corrupted, dependent tasks, D1,
+real implementations) by condition, corruption mode, and corruption rate
+$\rho$; error bars are paired bootstrap 95\% CIs clustered by arc.}
 \label{fig:smh}
 \end{figure}
 
 \subsection{Cost and marginal utility}
 
-Per-episode cost on D1-easy (Figure~\ref{fig:cost}): C0 \$0.00046, C4
-\$0.00052, C5 \$0.00076, C2 \$0.00078, C3 \$0.00088, C1 \$0.00129 (2{,}986
-tokens/episode --- $3.4\times$ C0). CAMU ranking inverts the accuracy ranking
-(H4 supported in all three domains): C4 delivers ${\sim}17{,}300$ percentage
-points of dependent-task success per marginal dollar on D1 vs.\
-${\sim}1{,}200$ for C1; in D2, C4's marginal cost was \emph{negative}
-(compact fact notes shrank prompts below the no-memory baseline) while adding
-$+60$ points. Break-even task values at pilot prices are fractions of a cent
-per task for all conditions --- memory pays for itself at trivially low task
-values \emph{when it works}; the practitioner-relevant differences are in
-robustness (\S\ref{sec:ladder}--5.4), not raw affordability, at these model
+With memory-side calls metered, per-episode cost on D1-easy
+(Figure~\ref{fig:cost}): C0 \$0.00046, C4 \$0.00066, C2 \$0.00073, C3
+\$0.00095, C5 \$0.00111, C1 \$0.00126 (2{,}914 tokens/episode ---
+$2.7\times$ C0's cost). CAMU and accuracy rankings differ in every domain
+(H4 supported): the best CAMU is C4 in D1 (4{,}839 points of dependent-task
+success per marginal dollar) and D3 (3{,}245), but \textbf{C2 in D2}
+(6{,}629), where LLM extraction's accuracy regression (\S\ref{sec:swap})
+erased C4's edge. Full replay is never the economical choice
+(1{,}222--1{,}741 pts/\$; 2.7--3.9$\times$ worse than the per-domain best).
+Two starter-generation artifacts vanish under honest metering: C4's headline
+${\sim}17{,}300$ pts/\$ (regex extraction was free) becomes 4{,}839, and its
+\emph{negative} marginal cost in D2 becomes $+\$0.0003$ --- the extraction
+tax, now on the books. Break-even task values remain fractions of a cent for
+all conditions --- memory pays for itself at trivially low task values
+\emph{when it works}; the practitioner-relevant differences are in
+robustness (\S\ref{sec:ladder}--5.5), not raw affordability, at these model
 prices.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/fig4_cost_frontier.pdf}
-\caption{Metered cost per episode vs.\ dependent-task TSR at the easy tier.
-C4 sits at or near the Pareto frontier in all domains; in D2 and D3 its
-compact fact notes make it cheaper than several alternatives while C1 full
-replay pays a 2--3$\times$ token premium for the same or lower TSR.}
+\includegraphics[width=\textwidth]{figures/fig5_cost_frontier.pdf}
+\caption{Metered cost per episode (including memory-side calls) vs.\
+dependent-task TSR at the easy tier, real implementations. C4 stays on the
+Pareto frontier in D1/D3 but cedes it in D2; C1 full replay pays a
+2--3$\times$ cost premium for equal or lower TSR everywhere.}
 \label{fig:cost}
 \end{figure}
 
 \subsection{What the pilot cannot yet say}
 
-Single model, single seed, 10 arcs per cell, and starter implementations of
-C2/C3/C4 (keyword retrieval, truncation summaries, pattern extraction). The
-C3 results in particular are a floor, not an estimate, for LLM-summarization
-memory; C4's pattern extractor required domain-specific patterns (an
-instructive brittleness --- see \S\ref{sec:discussion}). The full run upgrades
-all three and adds models/seeds/arcs. We report the pilot because the
-\emph{dissociations} in \S\ref{sec:ladder} are architectural in origin and
-large (0.4--0.8 absolute TSR), and because the benchmark itself --- not the
-leaderboard --- is the contribution.
+Single model, single seed, 10 arcs per cell. Each real implementation is one
+representative of its family --- one embedding model, one summarization
+prompt, one extraction prompt --- and \S\ref{sec:swap} shows exactly how
+much such choices can matter. The full run adds models, seeds, and arcs. We
+report the pilot because the \emph{dissociations} in \S\ref{sec:ladder} are
+architectural in origin and large (0.3--0.65 absolute TSR between C2 and the
+overwrite-style memories on hard), replicate across implementation
+generations, and because the benchmark itself --- not the leaderboard --- is
+the contribution.
 
 \section{Discussion}\label{sec:discussion}
 
 \paragraph{Practitioner guidance (provisional).}
 If tasks depend on facts that get \emph{revised} (addresses, configs,
-schedules --- most operational facts), prefer update-on-write structured memory
-over retrieval; do not assume a hybrid inherits the better component's
-behavior --- measure it. Full replay is a strong accuracy baseline that fails
-on cost ($3.4\times$ tokens) and on multi-fact composition. Rolling summaries
-need real summarization; truncation is not a memory system.
+schedules --- most operational facts), prefer a memory that \emph{overwrites
+state} --- a structured fact store, or LLM summarization, which turns out to
+be update-robust because it rewrites its summary every episode --- over
+retrieval, which accumulates. Do not assume a hybrid inherits the better
+component's behavior --- measure it. Full replay is a strong accuracy
+baseline that fails on cost ($2.7\times$ tokens) and on multi-fact
+composition. And treat the write path as a first-class risk: swapping
+extraction implementations moved C4 by 60 points in one domain
+(\S\ref{sec:swap}); truncation is not summarization.
 
 \paragraph{Why do agents ignore correct memories?}
 Traces show two patterns: (i)~under retrieval, stale and fresh values
@@ -443,12 +524,14 @@ agents act on the subset of facts nearest the task phrasing. Both suggest
 memory \emph{presentation} (provenance, recency marking, contradiction
 surfacing) matters as much as memory \emph{storage}.
 
-\paragraph{Extraction brittleness as a hidden cost.}
-C4's economics are the best in every domain, but its pattern-based extractor
-was blind outside its home domain until domain patterns were added --- in
-production, extraction quality is the tax that structured memory pays. The
-full run's LLM extractor moves this cost into the metered CAMU, where it
-belongs.
+\paragraph{Extraction brittleness as a hidden cost --- now measured.}
+In the starter generation, C4's pattern extractor was blind outside its home
+domain until hand-tuned patterns were added; the real generation shows the
+converse: generic LLM extraction pays for its generality with a 60-point
+accuracy regression in D2 and greater willingness to ingest stale records
+(\S5.5). In production, extraction quality is the tax that structured memory
+pays --- payable in domain engineering or in metered tokens, but never zero.
+\merit{} puts it on the books (CAMU includes memory-side calls).
 
 \paragraph{A methodological note.}
 Two of our safeguards were added because early runs failed without them:
@@ -462,14 +545,16 @@ conversational QA benchmarks cannot express; we recommend leak checks over
 
 \textbf{Construct:} programmatic checkers may not capture all real-world
 success notions; the MUR tracer is string containment pending the human
-audit. \textbf{Internal:} prompt differences across conditions are confined
-to the memory block; delta scoring removes world-state carryover; the
-mock-model grid guards the pipeline, but mock results are never reported as
-findings. \textbf{External:} one model at pilot scale --- architectural
-dissociations may shift with model strength (the full run tests whether
-stronger models need memory less or exploit it better); three domains;
-synthetic worlds with scripted users (LLM-paraphrase mode mitigates phrasing
-overfit on D1). \textbf{Reproducibility:} deterministic seeded generation,
+audit (the frozen sample is committed). \textbf{Internal:} prompt
+differences across conditions are confined to the memory block; delta
+scoring removes world-state carryover; the mock-model grid guards the
+pipeline, but mock results are never reported as findings.
+\textbf{External:} one model at pilot scale --- architectural dissociations
+may shift with model strength (the full run tests whether stronger models
+need memory less or exploit it better); three domains; synthetic worlds with
+scripted users (LLM-paraphrase mode mitigates phrasing overfit on D1); each
+real memory implementation is a single representative of its family, and
+\S\ref{sec:swap} quantifies how consequential implementation choices are. \textbf{Reproducibility:} deterministic seeded generation,
 pinned model IDs, released traces, \$0 mock mode; API model drift is
 mitigated by the open-weight model in the full run.
 
@@ -478,12 +563,13 @@ mitigated by the open-weight model in the full run.
 \merit{} reframes agent-memory evaluation from ``can the system recall?'' to
 ``does recall change what the agent does, at what cost, and how does it
 fail?''. Even at pilot scale the answer is not monotone: architectures
-indistinguishable on single-fact recall separate by 0.4--0.8 TSR when facts
-must be composed or superseded, agents ignore up to half of correctly
-retrieved facts, and the most accurate memory is $14\times$ less economical
-than the most efficient one. The benchmark, harness, traces, and
-preregistration are public; we invite memory-system authors to evaluate
-against \merit{}.
+indistinguishable on single-fact recall separate by up to 0.65 TSR when
+facts must be superseded, agents ignore nearly half of correctly retrieved
+facts, swapping one memory implementation for another moves task success by
+as much as 1.00 TSR in either direction, and the most accurate memory is
+2.7--3.9$\times$ less economical than the most efficient one. The benchmark,
+harness, traces, and preregistration are public; we invite memory-system
+authors to evaluate against \merit{}.
 
 \begin{thebibliography}{99}
 
