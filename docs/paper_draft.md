@@ -558,6 +558,27 @@ the released traces preserve the reported runs, and the harness accepts any
 OpenAI-compatible endpoint (including locally served open-weight models),
 so the grid is rerunnable even after the reported API models retire.
 
+**Frontier-model spot-check: task success conflates memory use with policy
+prudence.** After the full grid we ran one diagnostic cell (D1-hard, 6
+conditions × 50 episodes) on Claude Opus 4.8, the strongest model available
+to us. The no-memory floor held (C0 = 0.00): frontier capability cannot
+substitute for memory on leak-verified dependent tasks. But the full-replay
+control collapsed to C1 = 0.75 (vs 1.00 for all three grid models), and the
+transcripts show why: on updated-fact probes the model *quotes the
+remembered amounts and then declines to act on them*, observing that the
+update trail "traces back only to my own confirmation messages" repeating
+user-asserted values, and requesting supervisor confirmation for what it
+reads as a chat-escalated refund — arguably correct behavior for a
+production agent, and plausibly a product of safety training. Two
+implications. First, raw TSR comparisons across models conflate memory use
+with policy prudence; the C1 control detects exactly this confound, and
+cross-model numbers should be read relative to each model's own C1. Second,
+MERIT's updated-fact arcs — a user renegotiating an amount across sessions
+— are structurally similar to social-engineering escalations, and
+safety-tuned models may increasingly treat *memory provenance* as part of
+the decision. Benchmarks that score only task completion will under-credit
+such models; we report this cell as a diagnostic, not a leaderboard entry.
+
 ## 8. Conclusion
 
 MERIT reframes agent-memory evaluation from "can the system recall?" to

@@ -1,0 +1,121 @@
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/anthropic/chat/handler.py", line 485, in completion
+    response = client.post(
+               ^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1195, in post
+    _raise_masked_sync_error(e, stream)
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/http_handler.py", line 434, in _raise_masked_sync_error
+    raise MaskedHTTPStatusError(e, message=_text, text=_text) from None
+litellm.llms.custom_httpx.http_handler.MaskedHTTPStatusError: Client error '400 Bad Request' for url 'https://api.anthropic.com/v1/messages'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5449, in completion
+    response = _complete_anthropic(_dispatch_ctx)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 2608, in _complete_anthropic
+    response = anthropic_chat_completions.completion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/anthropic/chat/handler.py", line 501, in completion
+    raise AnthropicError(
+litellm.llms.anthropic.common_utils.AnthropicError: {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CcxTTSZKM75Uwizmii1pq"}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5564, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2499, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2275, in exception_type
+    _map_anthropic_exception(
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 544, in _map_anthropic_exception
+    raise BadRequestError(
+litellm.exceptions.BadRequestError: litellm.BadRequestError: AnthropicException - {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CcxTTSZKM75Uwizmii1pq"}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 192, in <module>
+    main()
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 188, in main
+    run(p.parse_args())
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 96, in run
+    result = run_episode(
+             ^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/runner.py", line 94, in run_episode
+    resp = llm.completion(model=model, messages=messages,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1527, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5598, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1574, in wrapper
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5564, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2499, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2275, in exception_type
+    _map_anthropic_exception(
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 544, in _map_anthropic_exception
+    raise BadRequestError(
+litellm.exceptions.BadRequestError: litellm.BadRequestError: AnthropicException - {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CcxTTWkLKUKyXosVkD2A1"}
