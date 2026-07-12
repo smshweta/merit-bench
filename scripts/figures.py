@@ -270,6 +270,56 @@ def build_cells(runs) -> dict:
     return cells
 
 
+PHASEC_MODELS = [  # slice dir prefix -> plot label
+    ("haiku45", "Haiku 4.5"), ("gpt41", "GPT-4.1"), ("mini3", "gpt-4.1-mini"),
+]
+
+
+def fig6_phasec() -> None:
+    """Hard tier across agent models (Phase C): C2 collapse is model- and
+    domain-idiosyncratic; C3/C4 are robust. mini3 bars carry min-max
+    whiskers across its 3 seeds."""
+    conds = ["C2", "C3", "C4"]
+    rows_by = {}
+    for slice_, _ in PHASEC_MODELS:
+        for dom in DOMAINS:
+            path = Path(f"runs/phasec/{slice_}-{dom}-hard/results.jsonl")
+            rows_by[slice_, dom] = dep_clean(load(str(path), dom, "hard"))
+    fig, axes = plt.subplots(1, 3, figsize=(6.5, 2.1), sharey=True)
+    width = 0.26
+    for ax, dom in zip(axes, DOMAINS):
+        for j, (slice_, mlabel) in enumerate(PHASEC_MODELS):
+            for k, c in enumerate(conds):
+                rs = [r for r in rows_by[slice_, dom] if r["condition"] == c]
+                seeds = sorted({r["seed"] for r in rs})
+                per_seed = [mean(r["success"] for r in rs if r["seed"] == s)
+                            for s in seeds]
+                y = mean(per_seed)
+                x = k + (j - 1) * width
+                hatch = {"haiku45": "", "gpt41": "//", "mini3": "xx"}[slice_]
+                ax.bar(x, y, width * 0.92, color=COLOR[c], hatch=hatch,
+                       edgecolor="white", linewidth=0.4,
+                       label=mlabel if (k == 0 and dom == "d1") else None)
+                if len(per_seed) > 1:
+                    ax.errorbar(x, y, yerr=[[y - min(per_seed)],
+                                            [max(per_seed) - y]],
+                                fmt="none", ecolor="#444", capsize=2,
+                                linewidth=0.9)
+        ax.set_xticks(range(len(conds)))
+        ax.set_xticklabels(conds)
+        ax.set_title(DOMAIN_LABEL[dom])
+        ax.set_ylim(0, 1.03)
+        ax.grid(axis="x", visible=False)
+    axes[0].set_ylabel("dependent-task TSR (hard)")
+    # legend keyed by hatch only (color encodes condition, as elsewhere)
+    handles = [plt.Rectangle((0, 0), 1, 1, facecolor="#b9b9b4", hatch=h,
+                             edgecolor="white")
+               for h in ("", "//", "xx")]
+    fig.legend(handles, [m for _, m in PHASEC_MODELS], loc="upper center",
+               ncol=3, frameon=False, bbox_to_anchor=(0.5, 1.12))
+    save(fig, "fig6_phasec_hard_cross_model")
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     cells = build_cells(RUNS)
@@ -278,6 +328,7 @@ def main() -> None:
     fig3_smh()
     fig4_cost(cells)
     fig5_starter_vs_real(cells, build_cells(STARTER_RUNS))
+    fig6_phasec()
 
 
 if __name__ == "__main__":

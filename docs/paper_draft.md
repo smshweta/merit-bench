@@ -3,12 +3,13 @@
 **Shweta Mishra**
 *Independent Research*
 
-> **STATUS: arXiv preprint draft v1.0 (2026-07-11).** All numbers in §5 are
-> real measured results from the two-generation pilot (9,940 scored episodes,
-> one model): starter memory implementations, then real ones (embedding
-> retrieval, LLM summarization, LLM extraction) on the identical grid. The
-> full preregistered study (3 models × 3 seeds × ≥30 arcs) is in progress;
-> sections marked [FULL RUN] will be updated with the larger study.
+> **STATUS: arXiv preprint draft v1.1 (2026-07-12).** All numbers in §5 are
+> real measured results: a two-generation pilot (9,940 scored episodes,
+> gpt-4.1-mini) — starter memory implementations, then real ones (embedding
+> retrieval, LLM summarization, LLM extraction) on the identical grid —
+> followed by the preregistered full grid (§5.7): 3 agent models × 3 domains
+> × 3 difficulty tiers with 3 seeds on the primary model, 13,500 further
+> episodes. Total: 23,440 scored episodes, $44.82 in API cost.
 
 ---
 
@@ -45,7 +46,14 @@ store and retrieval is worse than the fact store alone in all three domains
 rescues the summary condition on updated facts (0.00–0.15 → 0.70–1.00),
 while swapping pattern extraction for LLM extraction *costs* the fact store
 up to 60 points in one domain — implementation quality is a first-class
-variable, and MERIT measures it. Under explicit cost accounting with
+variable, and MERIT measures it. A three-model replication (gpt-4.1-mini ×
+3 seeds, GPT-4.1, Claude Haiku 4.5; 13,500 further episodes, memory side
+held fixed) sharpens the headline: the updated-fact collapse of embedding
+retrieval is real but *unreliable* — which domains it strikes varies by
+agent model (hard-tier success 0.30–0.95) and by seed (max pairwise seed
+gap 0.45, the largest of any condition) — while LLM summarization stays at
+0.80–1.00 on the hard tier across every model, domain, and seed. Under
+explicit cost accounting with
 memory-side calls metered, full replay is never the economical choice: the
 best condition per domain delivers 2.7–3.9× its marginal utility per dollar.
 We release the benchmark, harness, and all traces for reproducible,
@@ -118,7 +126,10 @@ We address all three with **MERIT**. Our contributions:
    and statistics (paired bootstrap clustered by arc; Holm–Bonferroni),
    demonstrating that the benchmark separates memory architectures that are
    indistinguishable under single-fact recall, and separates *architecture*
-   from *implementation quality*. [FULL RUN: 3 models × 3 seeds × ≥30 arcs.]
+   from *implementation quality* — plus a 3-agent-model × 3-seed replication
+   (13,500 further episodes, §5.7) showing the updated-fact collapse of
+   embedding retrieval is model- and seed-unstable while update-on-write
+   memories are uniformly robust.
 5. **Open-source release** of the benchmark, harness, and all traces, with a
    deterministic $0 mock-model mode that validates the full pipeline.
 
@@ -265,7 +276,7 @@ Holm–Bonferroni within each preregistered hypothesis family (H1–H4,
 committed to the public repository before experiments; commit history is the
 preregistration record).
 
-## 4. Experimental Setup (Pilot)
+## 4. Experimental Setup
 
 Model: gpt-4.1-mini (pinned; temperature 0) on both the agent side and, in
 the real-implementation generation, the memory side (embeddings:
@@ -280,11 +291,19 @@ worlds; scripted simulated users (LLM paraphrase mode with a paraphrase-leak
 check on D1). The mock-model mode replays the entire grid deterministically
 at $0 and is exercised by 62 unit tests, including generation determinism,
 leak checks, and end-to-end pipeline invariants. Unless marked otherwise,
-§5 reports the real-implementation generation. [FULL RUN: + frontier API
-model (GPT-4.1) + cross-vendor model (Claude Haiku 4.5), 3 seeds, ≥30
-arcs, corruption + LLM users on all domains.]
+§5.1–5.6 report the real-implementation generation on gpt-4.1-mini.
 
-## 5. Results (Pilot)
+**Full grid (§5.7).** The preregistered multi-model grid runs the real
+implementations on three agent models — gpt-4.1-mini (3 seeds), GPT-4.1
+(frontier, 1 seed), and Claude Haiku 4.5 (cross-vendor, pinned
+`claude-haiku-4-5-20251001`, 1 seed) — over the identical 3-domain ×
+3-tier grid, 10 arcs × 5 episodes per cell. The memory side is pinned to
+gpt-4.1-mini (embeddings: text-embedding-3-small) for *every* agent model,
+so the agent model is the only varying factor. Totals: **13,500 scored
+episodes, $35.69** ($22.24 OpenAI + $13.45 Anthropic), bringing the study
+to 23,440 episodes and $44.82 overall.
+
+## 5. Results
 
 ### 5.1 Memory helps on dependent tasks; the floor is real
 
@@ -390,8 +409,8 @@ corruption produce small, non-significant effects at pilot scale.
 *Figure 4: Stale-memory harm (TSR clean − corrupted, dependent tasks, D1,
 real implementations) by condition, corruption mode, and corruption rate ρ;
 error bars are paired bootstrap 95% CIs clustered by arc.*
-[FULL RUN: corruption sweeps on all domains with verification-rate
-analysis.]
+(Corruption sweeps beyond D1, with verification-rate analysis, are left
+to future work.)
 
 ### 5.6 Cost and marginal utility
 
@@ -416,16 +435,72 @@ dependent-task TSR at the easy tier, real implementations. C4 stays on the
 Pareto frontier in D1/D3 but cedes it in D2; C1 full replay pays a 2–3×
 cost premium for equal or lower TSR everywhere.*
 
-### 5.7 What the pilot cannot yet say
+### 5.7 The full grid: seed robustness and cross-model generality
 
-Single model, single seed, 10 arcs per cell. Each real implementation is one
-representative of its family — one embedding model, one summarization prompt,
-one extraction prompt — and §5.3 shows exactly how much such choices can
-matter. The full run adds models, seeds, and arcs. We report the pilot
-because the *dissociations* in §5.2 are architectural in origin and large
-(0.3–0.65 absolute TSR between C2 and the overwrite-style memories on hard),
-replicate across implementation generations, and because the benchmark
-itself — not the leaderboard — is the contribution.
+The full grid (§4) asks two questions the pilot could not: do the pilot's
+dissociations survive resampling (3 seeds on gpt-4.1-mini), and do they
+survive a change of agent model (GPT-4.1; Claude Haiku 4.5, a different
+vendor and tier) with the memory side held fixed?
+
+**Seed variance concentrates in embedding retrieval.** Across the 27
+multi-seed cells, the maximum pairwise TSR gap between seeds averages
+0.16 for C2 — the largest of any condition — with a worst cell of 0.45
+(C2, D1-hard: per-seed TSR 0.45 / 0.90 / 0.75). C1 averages 0.07; the
+overwrite-style memories C3 and C4 average 0.11–0.12. A single-seed
+evaluation of embedding retrieval on the hard tier could honestly report
+anywhere from 0.45 to 0.90 for the same system; seed-mean numbers with
+spread are the only defensible summary, and all Phase C numbers below are
+seed means.
+
+**The hard-tier collapse replicates across models — as a reliability
+failure, not a fixed deficit.** Table 5.7 reports the hard (updated-fact)
+tier for all three models. Embedding retrieval (C2) is the only
+architecture that collapses, but *where* it collapses is
+model-idiosyncratic: Haiku 4.5 holds the single-fact domains (0.90 / 0.95
+on D1 / D2) where GPT-4.1 and gpt-4.1-mini drop to 0.38–0.70, yet Haiku
+falls hardest on multi-fact D3 (0.30). No model escapes: every model has
+at least one domain at ≤ 0.60, and the spread across model × domain is
+0.30–0.95. LLM summarization (C3), by contrast, spans 0.80–1.00 on the
+same cells — robust for every model, domain, and seed — and the
+structured fact store (C4) spans 0.70–1.00.
+
+| hard tier, TSR_dep | | Haiku 4.5 | GPT-4.1 | gpt-4.1-mini (±sd) |
+|---|---|---|---|---|
+| **C2** embedding retrieval | D1 | 0.90 | 0.70 | 0.70 ± 0.23 |
+| | D2 | 0.95 | 0.45 | 0.38 ± 0.08 |
+| | D3 | 0.30 | 0.60 | 0.37 ± 0.03 |
+| **C3** LLM summarization | D1 | 1.00 | 1.00 | 0.98 ± 0.03 |
+| | D2 | 1.00 | 0.90 | 0.80 ± 0.10 |
+| | D3 | 1.00 | 1.00 | 1.00 ± 0.00 |
+| **C4** structured fact store | D1 | 1.00 | 1.00 | 0.93 ± 0.08 |
+| | D2 | 1.00 | 1.00 | 0.90 ± 0.05 |
+| | D3 | 0.70 | 0.90 | 0.90 ± 0.09 |
+
+*Table 5.7: hard (updated-fact) tier across agent models, memory side
+pinned to gpt-4.1-mini. C0 floor is 0.00–0.05 and C1 full replay is 1.00
+for every model (omitted). Full per-cell tables for all tiers are in the
+released traces.*
+
+![Figure 6](figures/fig6_phasec_hard_cross_model.png)
+*Figure 6: hard-tier TSR across agent models (bar hatch = model, color =
+condition; whiskers = min–max across the 3 gpt-4.1-mini seeds). Embedding
+retrieval (C2) collapses somewhere for every model, but where is
+model-idiosyncratic; LLM summarization (C3) is robust everywhere.*
+
+The refined claim is stronger than the pilot's: on updated facts,
+embedding retrieval is not merely worse — it is **unpredictable**, both
+across seeds (max gap 0.45) and across agent models (0.30–0.95), because
+success depends on whether that particular agent resolves the
+stale-versus-fresh conflict in retrieved context, an ability that varies
+non-monotonically with model tier. Update-on-write architectures remove
+the conflict at write time and are correspondingly stable everywhere. A
+practitioner choosing a memory system from a single-model, single-seed
+benchmark number would systematically over- or under-estimate embedding
+retrieval; MERIT's grid makes the variance itself measurable.
+
+Each real implementation remains one representative of its family — one
+embedding model, one summarization prompt, one extraction prompt — and
+§5.3 shows how much such choices matter.
 
 ## 6. Discussion
 
