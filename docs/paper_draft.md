@@ -281,8 +281,8 @@ check on D1). The mock-model mode replays the entire grid deterministically
 at $0 and is exercised by 62 unit tests, including generation determinism,
 leak checks, and end-to-end pipeline invariants. Unless marked otherwise,
 §5 reports the real-implementation generation. [FULL RUN: + frontier API
-model + open-weight model via vLLM, 3 seeds, ≥30 arcs, corruption + LLM
-users on all domains.]
+model (GPT-4.1) + cross-vendor model (Claude Haiku 4.5), 3 seeds, ≥30
+arcs, corruption + LLM users on all domains.]
 
 ## 5. Results (Pilot)
 
@@ -478,8 +478,10 @@ mitigates phrasing overfit on D1); each real memory implementation is a
 single representative of its family, and §5.3 quantifies how consequential
 implementation choices are.
 **Reproducibility:** deterministic seeded generation, pinned model IDs,
-released traces, $0 mock mode; API model drift is mitigated by the
-open-weight model in the full run.
+released traces, $0 mock mode. API model deprecation remains a limitation:
+the released traces preserve the reported runs, and the harness accepts any
+OpenAI-compatible endpoint (including locally served open-weight models),
+so the grid is rerunnable even after the reported API models retire.
 
 ## 8. Conclusion
 

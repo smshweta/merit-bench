@@ -314,9 +314,9 @@ scripted simulated users (LLM paraphrase mode with a paraphrase-leak check
 on D1). The mock-model mode replays the entire grid deterministically at \$0
 and is exercised by 62 unit tests, including generation determinism, leak
 checks, and end-to-end pipeline invariants. Unless marked otherwise, \S5
-reports the real-implementation generation. \fullrun{+ frontier API model +
-open-weight model via vLLM, 3 seeds, ${\ge}30$ arcs, corruption + LLM users
-on all domains}
+reports the real-implementation generation. \fullrun{+ frontier API model
+(GPT-4.1) + cross-vendor model (Claude Haiku 4.5), 3 seeds, ${\ge}30$ arcs,
+corruption + LLM users on all domains}
 
 \section{Results (Pilot)}
 
@@ -555,8 +555,11 @@ need memory less or exploit it better); three domains; synthetic worlds with
 scripted users (LLM-paraphrase mode mitigates phrasing overfit on D1); each
 real memory implementation is a single representative of its family, and
 \S\ref{sec:swap} quantifies how consequential implementation choices are. \textbf{Reproducibility:} deterministic seeded generation,
-pinned model IDs, released traces, \$0 mock mode; API model drift is
-mitigated by the open-weight model in the full run.
+pinned model IDs, released traces, \$0 mock mode. API model deprecation
+remains a limitation: the released traces preserve the reported runs, and
+the harness accepts any OpenAI-compatible endpoint (including locally
+served open-weight models), so the grid is rerunnable even after the
+reported API models retire.
 
 \section{Conclusion}
 
