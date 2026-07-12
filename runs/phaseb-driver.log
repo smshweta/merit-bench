@@ -1,0 +1,21 @@
+=== phaseb d1-easy Fri Jul 10 17:16:44 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d1-easy/results.jsonl in 990.0s
+=== phaseb d1-medium Fri Jul 10 17:33:15 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d1-medium/results.jsonl in 1291.8s
+=== phaseb d1-hard Fri Jul 10 17:54:47 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d1-hard/results.jsonl in 1304.8s
+=== phaseb d2-easy Fri Jul 10 18:16:33 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d2-easy/results.jsonl in 954.9s
+=== phaseb d2-medium Fri Jul 10 18:32:28 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d2-medium/results.jsonl in 1047.5s
+=== phaseb d2-hard Fri Jul 10 18:49:57 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d2-hard/results.jsonl in 1263.0s
+=== phaseb d3-easy Fri Jul 10 19:11:01 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d3-easy/results.jsonl in 950.8s
+=== phaseb d3-medium Fri Jul 10 19:26:52 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d3-medium/results.jsonl in 1053.8s
+=== phaseb d3-hard Fri Jul 10 19:44:27 PDT 2026
+wrote 300 scored episodes to runs/phaseb/d3-hard/results.jsonl in 1239.6s
+=== phaseb d1-corrupt Fri Jul 10 20:05:07 PDT 2026
+wrote 1800 scored episodes to runs/phaseb/d1-corrupt/results.jsonl in 6177.9s
+=== phaseb done Fri Jul 10 21:48:07 PDT 2026

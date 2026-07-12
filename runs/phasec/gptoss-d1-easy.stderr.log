@@ -1,0 +1,156 @@
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_sync/connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_sync/http11.py", line 136, in handle_request
+    raise exc
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_sync/http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_sync/http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_sync/http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_backends/sync.py", line 126, in read
+    with map_exceptions(exc_map):
+  File "/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1037, in request
+    response = self._send_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_client.py", line 478, in _send_request
+    response = self._send_with_auth_retry(request, stream=stream, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_client.py", line 456, in _send_with_auth_retry
+    response = super()._send_request(request, stream=stream, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 964, in _send_request
+    return self._client.send(request, stream=stream, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+  File "/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 812, in completion
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 748, in completion
+    ) = self.make_sync_openai_chat_completion_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/logging_utils.py", line 336, in sync_wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 487, in make_sync_openai_chat_completion_request
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 464, in make_sync_openai_chat_completion_request
+    raw_response = openai_client.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_legacy_response.py", line 367, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_utils/_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 1251, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1332, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1055, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5437, in completion
+    response = _complete_custom_openai(_dispatch_ctx)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 2406, in _complete_custom_openai
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 2378, in _complete_custom_openai
+    response = openai_chat_completions.completion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 823, in completion
+    raise OpenAIError(
+litellm.llms.openai.common_utils.OpenAIError: Request timed out.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5564, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2494, in exception_type
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2242, in exception_type
+    raise Timeout(
+litellm.exceptions.Timeout: litellm.Timeout: APITimeoutError - Request timed out. Error_str: Request timed out.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5578, in completion_with_retries
+    import tenacity
+ModuleNotFoundError: No module named 'tenacity'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 192, in <module>
+    main()
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 188, in main
+    run(p.parse_args())
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 96, in run
+    result = run_episode(
+             ^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/runner.py", line 86, in run_episode
+    resp = llm.completion(model=model, messages=messages,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1527, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5580, in completion_with_retries
+    raise Exception(f"tenacity import failed please run `pip install tenacity`. Error{e}")
+Exception: tenacity import failed please run `pip install tenacity`. ErrorNo module named 'tenacity'
