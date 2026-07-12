@@ -65,6 +65,13 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
         # is supported); drop params a model rejects instead of erroring —
         # temperature=0 still reaches every model that accepts it
         llm.drop_params = True
+        # pinned litellm predates claude-sonnet-5; register list pricing so
+        # cost_usd stays exact (harmless no-op once litellm catches up)
+        llm.register_model({k: {
+            "input_cost_per_token": 3e-06, "output_cost_per_token": 1.5e-05,
+            "litellm_provider": "anthropic", "mode": "chat",
+            "supports_function_calling": True,
+        } for k in ("claude-sonnet-5", "anthropic/claude-sonnet-5")})
         # local models (e.g. Ollama on a laptop) can exceed litellm's
         # default 600s request timeout; MERIT_TIMEOUT overrides it (seconds)
         if os.environ.get("MERIT_TIMEOUT"):
