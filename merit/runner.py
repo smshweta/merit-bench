@@ -61,6 +61,10 @@ def run_episode(world: World, memory: MemoryBase, user_messages: list[str],
         # transient network blips must not kill a multi-hour grid run;
         # applies to every litellm completion/embedding call process-wide
         llm.num_retries = 5
+        # Claude 4.7+ removed the temperature parameter (only the default
+        # is supported); drop params a model rejects instead of erroring —
+        # temperature=0 still reaches every model that accepts it
+        llm.drop_params = True
         # local models (e.g. Ollama on a laptop) can exceed litellm's
         # default 600s request timeout; MERIT_TIMEOUT overrides it (seconds)
         if os.environ.get("MERIT_TIMEOUT"):
