@@ -498,6 +498,14 @@ practitioner choosing a memory system from a single-model, single-seed
 benchmark number would systematically over- or under-estimate embedding
 retrieval; MERIT's grid makes the variance itself measurable.
 
+**A latest-generation check.** As a final probe we ran the D1-hard cell on
+Claude Sonnet 5, a 2026-generation agentic model, gated on the same C1
+control that disqualified Opus 4.8 (§7): here the control is clean
+(C1 = 1.00, C0 floor 0.00). The pattern replicates: embedding retrieval
+(C2) drops to 0.75 while LLM summarization (C3) and the fact store (C4)
+hold 1.00 (hybrid C5 0.90). The updated-fact weakness of retrieval-only
+memory is not an artifact of older model generations.
+
 Each real implementation remains one representative of its family — one
 embedding model, one summarization prompt, one extraction prompt — and
 §5.3 shows how much such choices matter.
@@ -578,6 +586,11 @@ MERIT's updated-fact arcs — a user renegotiating an amount across sessions
 safety-tuned models may increasingly treat *memory provenance* as part of
 the decision. Benchmarks that score only task completion will under-credit
 such models; we report this cell as a diagnostic, not a leaderboard entry.
+By contrast, Claude Sonnet 5 — the same vendor's current agentic-tuned
+model — passes the control cleanly (C1 = 1.00) and reproduces the §5.7
+pattern (C2 0.75 vs C3/C4 1.00 on D1-hard): the prudence confound is a
+property of specific safety postures, not of model generation, and the C1
+control suffices to detect it per model.
 
 ## 8. Conclusion
 
