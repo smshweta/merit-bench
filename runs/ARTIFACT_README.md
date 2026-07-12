@@ -1,14 +1,3 @@
-#!/bin/sh
-# Package every run (results + full episode traces) into a versioned
-# tarball for archival deposit (e.g. Zenodo), backing the paper's
-# "released traces" claim. Run AFTER all experiment phases you intend
-# to release are complete.
-set -eu
-cd "$(dirname "$0")/.."
-VERSION=${1:-v1}
-OUT="merit-traces-$VERSION.tar.gz"
-
-cat > runs/ARTIFACT_README.md <<'EOF'
 # MERIT benchmark — released runs and traces
 
 One directory per run. Each contains:
@@ -31,9 +20,3 @@ Run directories:
 
 Reproduction commands: REPRODUCE.md in the code repository
 (https://github.com/smshweta/merit-bench).
-EOF
-
-# exclude the MUR answer key while annotator blinding is in effect
-tar czf "$OUT" --exclude runs/mur_audit/key.csv runs
-shasum -a 256 "$OUT" | tee "$OUT.sha256"
-du -h "$OUT"
