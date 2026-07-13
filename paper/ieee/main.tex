@@ -71,7 +71,10 @@ the updated-fact collapse of embedding retrieval is real but
 \emph{unreliable} --- which domains it strikes varies by agent model
 (hard-tier success 0.30--0.95) and by seed (max pairwise seed gap 0.45,
 the largest of any condition) --- while LLM summarization stays at
-0.80--1.00 on the hard tier across every model, domain, and seed. Under
+0.80--1.00 on the hard tier across every model, domain, and seed. A
+latest-generation spot-check on Claude Sonnet 5 (2026), gated on a clean
+full-replay control, reproduces the hard-tier pattern (embedding retrieval
+0.75 vs.\ update-on-write memories 1.00). Under
 explicit cost accounting with
 memory-side calls metered, full replay is never the economical choice: the
 best condition per domain delivers 2.7--3.9$\times$ its marginal utility per
