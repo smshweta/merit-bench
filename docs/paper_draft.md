@@ -9,7 +9,9 @@
 > retrieval, LLM summarization, LLM extraction) on the identical grid —
 > followed by the preregistered full grid (§5.7): 3 agent models × 3 domains
 > × 3 difficulty tiers with 3 seeds on the primary model, 13,500 further
-> episodes. Total: 23,440 scored episodes, $44.82 in API cost.
+> episodes. Pilot and full grid: 23,440 scored episodes, $44.82 in API
+> cost; latest-generation and frontier spot-checks (Claude Sonnet 5, Opus
+> 4.8) are reported separately as diagnostics in §7.
 
 ---
 
@@ -52,8 +54,10 @@ held fixed) sharpens the headline: the updated-fact collapse of embedding
 retrieval is real but *unreliable* — which domains it strikes varies by
 agent model (hard-tier success 0.30–0.95) and by seed (max pairwise seed
 gap 0.45, the largest of any condition) — while LLM summarization stays at
-0.80–1.00 on the hard tier across every model, domain, and seed. Under
-explicit cost accounting with
+0.80–1.00 on the hard tier across every model, domain, and seed. A
+latest-generation spot-check on Claude Sonnet 5 (2026), gated on a clean
+full-replay control, reproduces the hard-tier pattern (embedding retrieval
+0.75 vs. update-on-write memories 1.00). Under explicit cost accounting with
 memory-side calls metered, full replay is never the economical choice: the
 best condition per domain delivers 2.7–3.9× its marginal utility per dollar.
 We release the benchmark, harness, and all traces for reproducible,
@@ -79,7 +83,7 @@ Yet the evaluation of agent memory has three blind spots:
 
 **Blind spot 1: Conversational QA is not task execution.** The dominant
 benchmarks — LoCoMo (Maharana et al., 2024), LongMemEval (Wu et al., 2025),
-and BEAM (Tavakoli et al., 2026) — test whether a system can answer questions
+and BEAM (Tavakoli et al., 2025) — test whether a system can answer questions
 about long, multi-session *conversations*. Production agents, by contrast,
 must use remembered facts to *choose the correct tool call*: the right
 customer ID, the previously agreed refund amount, the configuration fix
@@ -155,7 +159,7 @@ engineering.
 LoCoMo (Maharana et al., 2024) evaluates QA over very long multi-session
 dialogues. LongMemEval (Wu et al., 2025) covers information extraction,
 multi-session reasoning, temporal reasoning, knowledge updates, and
-abstention over ~115K-token histories. BEAM (Tavakoli et al., 2026) scales
+abstention over ~115K-token histories. BEAM (Tavakoli et al., 2025) scales
 conversational probing to 10M tokens. HaluMem (2025) evaluates hallucination
 at the level of memory operations (extraction, updating, QA). RealMem
 (Bian et al., 2026) moves toward project-oriented interaction. All are *answer-producing*
@@ -627,7 +631,8 @@ traces.
 - Jimenez, C., et al. (2024). SWE-bench: Can Language Models Resolve
   Real-World GitHub Issues? ICLR 2024. arXiv:2310.06770.
 - Kuratov, Y., et al. (2024). BABILong: Testing the Limits of LLMs with
-  Long Context Reasoning-in-a-Haystack. arXiv:2402.10790.
+  Long Context Reasoning-in-a-Haystack. NeurIPS 2024 Datasets and Benchmarks
+  Track. arXiv:2406.10149.
 - Liu, X., et al. (2023). AgentBench: Evaluating LLMs as Agents.
   arXiv:2308.03688.
 - Maharana, A., et al. (2024). Evaluating Very Long-Term Conversational
@@ -640,8 +645,8 @@ traces.
   Wang, H., Chen, R. (2026). RealMem: Benchmarking LLMs in Real-World
   Memory-Driven Interaction. arXiv:2601.06966.
 - Tavakoli, M., Salemi, A., Ye, C., Abdalla, M., Zamani, H., Mitchell, J.R.
-  (2026). Beyond a Million Tokens: Benchmarking and Enhancing Long-Term
-  Memory in LLMs (BEAM). ICLR 2026. arXiv:2510.27246.
+  (2025). Beyond a Million Tokens: Benchmarking and Enhancing Long-Term
+  Memory in LLMs (BEAM). arXiv:2510.27246.
 - Wu, D., et al. (2025). LongMemEval: Benchmarking Chat Assistants on
   Long-Term Interactive Memory. ICLR 2025. arXiv:2410.10813.
 - Xu, W., et al. (2025). A-Mem: Agentic Memory for LLM Agents.

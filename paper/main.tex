@@ -28,8 +28,10 @@ results: a two-generation pilot (9{,}940 scored episodes,
 (embedding retrieval, LLM summarization, LLM extraction) on the identical
 grid --- followed by the preregistered full grid (\S\ref{sec:phasec}):
 3 agent models $\times$ 3 domains $\times$ 3 difficulty tiers with 3 seeds
-on the primary model, 13{,}500 further episodes. Total: 23{,}440 scored
-episodes, \$44.82 in API cost.
+on the primary model, 13{,}500 further episodes. Pilot and full grid:
+23{,}440 scored episodes, \$44.82 in API cost; latest-generation and
+frontier spot-checks (Claude Sonnet 5, Opus 4.8) are reported separately
+as diagnostics in \S\ref{sec:threats}.
 Code, traces, and preregistration: \url{https://github.com/smshweta/merit-bench}.}}
 
 \begin{document}
@@ -76,8 +78,10 @@ the updated-fact collapse of embedding retrieval is real but
 \emph{unreliable} --- which domains it strikes varies by agent model
 (hard-tier success 0.30--0.95) and by seed (max pairwise seed gap 0.45,
 the largest of any condition) --- while LLM summarization stays at
-0.80--1.00 on the hard tier across every model, domain, and seed. Under
-explicit cost accounting with
+0.80--1.00 on the hard tier across every model, domain, and seed. A
+latest-generation spot-check on Claude Sonnet 5 (2026), gated on a clean
+full-replay control, reproduces the hard-tier pattern (embedding retrieval
+0.75 vs.\ update-on-write memories 1.00). Under explicit cost accounting with
 memory-side calls metered, full replay is never the economical choice: the
 best condition per domain delivers 2.7--3.9$\times$ its marginal utility per
 dollar. We release the benchmark, harness, and all traces for reproducible,
@@ -742,7 +746,8 @@ Real-World GitHub Issues? ICLR 2024. arXiv:2310.06770.
 
 \bibitem[Kuratov et al.(2024)]{babilong}
 Kuratov, Y., et al. (2024). BABILong: Testing the Limits of LLMs with Long
-Context Reasoning-in-a-Haystack. arXiv:2402.10790.
+Context Reasoning-in-a-Haystack. NeurIPS 2024 Datasets and Benchmarks Track.
+arXiv:2406.10149.
 
 \bibitem[Liu et al.(2023)]{agentbench}
 Liu, X., et al. (2023). AgentBench: Evaluating LLMs as Agents.
@@ -760,10 +765,10 @@ arXiv:2310.08560.
 Rasmussen, P., et al. (2025). Zep: A Temporal Knowledge Graph Architecture
 for Agent Memory. arXiv:2501.13956.
 
-\bibitem[Tavakoli et al.(2026)]{beam}
+\bibitem[Tavakoli et al.(2025)]{beam}
 Tavakoli, M., Salemi, A., Ye, C., Abdalla, M., Zamani, H., Mitchell, J.R.
-(2026). Beyond a Million Tokens: Benchmarking and Enhancing Long-Term Memory
-in LLMs (BEAM). ICLR 2026. arXiv:2510.27246.
+(2025). Beyond a Million Tokens: Benchmarking and Enhancing Long-Term Memory
+in LLMs (BEAM). arXiv:2510.27246.
 
 \bibitem[Wu et al.(2025)]{longmemeval}
 Wu, D., et al. (2025). LongMemEval: Benchmarking Chat Assistants on
