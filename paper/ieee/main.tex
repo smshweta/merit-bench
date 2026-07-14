@@ -23,63 +23,41 @@
 \thanks{All numbers in \S{}V are measured results: a two-generation pilot
 (9{,}940 scored episodes, \texttt{gpt-4.1-mini}) followed by the
 preregistered full grid (\S{}V-G): 3 agent models $\times$ 3 domains
-$\times$ 3 difficulty tiers, 13{,}500 further episodes; 23{,}440 episodes
-and \$44.82 in API cost in total. Code, data, traces, and preregistration:
+$\times$ 3 difficulty tiers, 13{,}500 further episodes. Pilot and full
+grid: 23{,}440 scored episodes, \$44.82 in API cost; latest-generation and
+frontier spot-checks (Claude Sonnet 5, Opus 4.8) are reported separately
+as diagnostics (\S{}V-G, \S{}VII). Code, data, traces, and preregistration:
 \url{https://github.com/smshweta/merit-bench}.}}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Long-term memory is widely assumed to improve the performance of LLM-based
-agents, and a rapidly growing ecosystem of memory systems --- retrieval-augmented
-stores, rolling summarization, and structured fact memories --- now competes on
-conversational recall benchmarks such as LoCoMo and LongMemEval. These
-benchmarks measure \emph{question answering over dialogue history}, not the
-setting where memory is most consequential in production: \textbf{tool-using
-agents executing multi-step tasks across sessions}. We present \merit{}
-(Memory Evaluation for Realistic Instrumented Tasks), a benchmark and
-evaluation harness that measures the \emph{marginal utility} of memory for
-task-executing agents under explicit cost accounting. \merit{} provides
-(i)~episodic tool-use tasks in three domains where a controllable fraction of
-episodes depend on facts established in earlier episodes, verified
-non-re-derivable by an automated leak check; (ii)~a three-tier
-\textbf{difficulty ladder} --- single-fact, multi-fact, and \emph{updated-fact}
-recall; (iii)~controlled \textbf{memory corruption} (stale, contradiction,
-distractor); and (iv)~full token and dollar accounting for every memory
-operation. In a two-generation pilot (6 memory conditions $\times$ 3 domains
-$\times$ 3 difficulty tiers, run first with starter implementations and then
-with real ones --- embedding retrieval, LLM summarization, LLM extraction ---
-9{,}940 scored episodes, \texttt{gpt-4.1-mini}), memory conditions lift
-dependent-task success from a leak-verified floor of 0.00 (no memory) to
-0.55--1.00 (all Holm-adjusted $p \le 0.001$). The tiers dissociate
-architectures sharply: when a remembered fact is \emph{updated} mid-arc,
-embedding retrieval collapses (success 0.35--0.70; the agent acts on the
-correct value only 55\% of the times that value is retrieved), while stores
-that overwrite --- a structured fact store with update-on-write semantics,
-and, notably, LLM summarization, which rewrites its summary each episode ---
-reach 0.70--1.00; the \emph{hybrid} of fact store and retrieval is worse
-than the fact store alone in all three domains (0.50--0.80). The
-implementation swap is itself diagnostic: LLM summarization rescues the
-summary condition on updated facts (0.00--0.15 $\to$ 0.70--1.00), while
-swapping pattern extraction for LLM extraction \emph{costs} the fact store
-up to 60 points in one domain --- implementation quality is a first-class
-variable, and \merit{} measures it. A three-model replication
-(\texttt{gpt-4.1-mini} $\times$ 3 seeds, GPT-4.1, Claude Haiku 4.5;
-13{,}500 further episodes, memory side held fixed) sharpens the headline:
-the updated-fact collapse of embedding retrieval is real but
-\emph{unreliable} --- which domains it strikes varies by agent model
-(hard-tier success 0.30--0.95) and by seed (max pairwise seed gap 0.45,
-the largest of any condition) --- while LLM summarization stays at
-0.80--1.00 on the hard tier across every model, domain, and seed. A
-latest-generation spot-check on Claude Sonnet 5 (2026), gated on a clean
-full-replay control, reproduces the hard-tier pattern (embedding retrieval
-0.75 vs.\ update-on-write memories 1.00). Under
-explicit cost accounting with
-memory-side calls metered, full replay is never the economical choice: the
-best condition per domain delivers 2.7--3.9$\times$ its marginal utility per
-dollar. We release the benchmark, harness, and all traces for reproducible,
-cost-aware comparison of agent memory systems.
+Long-term memory for LLM agents is evaluated today by conversational recall
+benchmarks (LoCoMo, LongMemEval), which measure question answering over
+dialogue history --- not whether remembered facts change what a
+\emph{tool-using} agent does. We present \merit{} (Memory Evaluation for
+Realistic Instrumented Tasks), a benchmark and harness that measures the
+\emph{marginal utility} of memory for task-executing agents under explicit
+cost accounting. \merit{} provides episodic tool-use tasks in three domains
+whose dependence on earlier-episode facts is verified by an automated leak
+check; a difficulty ladder ending in \emph{updated-fact} recall; controlled
+memory corruption; and full token/dollar metering of every memory
+operation. Across 23{,}440 scored episodes (\$44.82) --- a two-generation
+pilot on \texttt{gpt-4.1-mini} and a preregistered 3-model $\times$ 3-seed
+grid (GPT-4.1, Claude Haiku 4.5; memory side held fixed) --- memory lifts
+dependent-task success from a leak-verified floor of 0.00 to 0.55--1.00.
+On updated facts, embedding retrieval collapses \emph{unpredictably}
+(0.30--0.95 across models; max seed gap 0.45), and agents act on a
+correctly retrieved value only 55\% of the time, while update-on-write
+stores --- a structured fact store and, notably, LLM summarization ---
+remain at 0.70--1.00; the hybrid is worse than the fact store alone. A
+latest-generation spot-check (Claude Sonnet 5, gated on a clean
+full-replay control) reproduces the pattern. Swapping a memory's
+implementation moves task success by up to 60 points, and full replay is
+never economical: the best condition per domain delivers
+2.7--3.9$\times$ its marginal utility per dollar. We release the
+benchmark, harness, and all traces.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -361,7 +339,7 @@ arc).
 \begin{table*}[t]
 \centering
 \caption{Dependent-task TSR by difficulty tier and memory condition, real
-implementations (D1~/~D2~/~D3). See also Figure~\ref{fig:ladder}.}
+implementations (D1~/~D2~/~D3). See also Fig.~\ref{fig:ladder}.}
 \label{tab:ladder}
 \small
 \begin{tabular}{lccccc}
@@ -386,7 +364,7 @@ chronological replay (C1) from retrieval-based memories (C2, C5).}
 \label{fig:ladder}
 \end{figure*}
 
-Table~\ref{tab:ladder} and Figure~\ref{fig:ladder} show three dissociations:
+Table~\ref{tab:ladder} and Fig.~\ref{fig:ladder} show three dissociations:
 (1)~\textbf{Updated facts break retrieval memory --- including embedding
 retrieval}: C2 falls to 0.35--0.70 on hard while C1 stays at 0.95--1.00 and
 C4 at 0.75--1.00 --- retrieval surfaces stale and fresh values side by side
@@ -406,7 +384,7 @@ kinship invisible in the starter generation (\S\ref{sec:swap}).
 \label{sec:swap}
 
 Upgrading C2--C5 in place, on the identical grid, moves conditions in both
-directions (Figure~\ref{fig:swap}):
+directions (Fig.~\ref{fig:swap}):
 
 \begin{itemize}
 \item \textbf{C3 summary, truncation $\to$ LLM:} 0.00 / 0.15 / 0.00 $\to$
@@ -449,7 +427,7 @@ C2's retrieved block in 55 probe episodes; the agent acted on it in 30
 (\textbf{Ignore Rate 0.45}; 0.53 in the starter generation --- upgrading
 retrieval quality barely moves it). Even C1, whose memory block is a clean
 full transcript, ignores up to 0.50 of held facts in multi-fact
-(medium-tier) episodes (Figure~\ref{fig:ignore}). This is Blind spot~2 made
+(medium-tier) episodes (Fig.~\ref{fig:ignore}). This is Blind spot~2 made
 measurable: memory-system accuracy overstates end-task benefit unless
 utilization is measured.
 
@@ -464,9 +442,9 @@ shown by their count only).}
 \label{fig:ignore}
 \end{figure*}
 
-\subsection{Stale-memory harm}
+\subsection{Stale-memory harm}\label{sec:smh}
 
-On D1 with stale corruption (Figure~\ref{fig:smh}), the largest and only
+On D1 with stale corruption (Fig.~\ref{fig:smh}), the largest and only
 Holm-significant harm is again on the hybrid C5 (SMH $+0.25$ at $\rho =
 0.3$, Holm-adjusted $p = 0.030$) --- replicating the starter-generation
 result with real implementations. One shift is instructive: C4 with LLM
@@ -490,7 +468,7 @@ $\rho$; error bars are paired bootstrap 95\% CIs clustered by arc.}
 \subsection{Cost and marginal utility}
 
 With memory-side calls metered, per-episode cost on D1-easy
-(Figure~\ref{fig:cost}): C0 \$0.00046, C4 \$0.00066, C2 \$0.00073, C3
+(Fig.~\ref{fig:cost}): C0 \$0.00046, C4 \$0.00066, C2 \$0.00073, C3
 \$0.00095, C5 \$0.00111, C1 \$0.00126 (2{,}914 tokens/episode ---
 $2.7\times$ C0's cost). CAMU and accuracy rankings differ in every domain
 (H4 supported): the best CAMU is C4 in D1 (4{,}839 points of dependent-task
@@ -504,8 +482,8 @@ ${\sim}17{,}300$ pts/\$ (regex extraction was free) becomes 4{,}839, and its
 tax, now on the books. Break-even task values remain fractions of a cent for
 all conditions --- memory pays for itself at trivially low task values
 \emph{when it works}; the practitioner-relevant differences are in
-robustness (\S\ref{sec:ladder}--5.5), not raw affordability, at these model
-prices.
+robustness (\S\ref{sec:ladder}--\ref{sec:smh}), not raw affordability, at
+these model prices.
 
 \begin{figure*}[t]
 \centering
@@ -525,8 +503,18 @@ dissociations survive resampling (3 seeds on \texttt{gpt-4.1-mini}), and do
 they survive a change of agent model (GPT-4.1; Claude Haiku 4.5, a
 different vendor and tier) with the memory side held fixed?
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig6_phasec_hard_cross_model.pdf}
+\caption{Hard-tier TSR across agent models (bar hatch = model, color =
+condition; whiskers = min--max across the 3 \texttt{gpt-4.1-mini} seeds).
+Embedding retrieval (C2) collapses somewhere for every model, but where is
+model-idiosyncratic; LLM summarization (C3) is robust everywhere.}
+\label{fig:phasec}
+\end{figure*}
+
 \paragraph{Seed variance concentrates in embedding retrieval.} Across the
-27 multi-seed cells, the maximum pairwise TSR gap between seeds averages
+nine 3-seed cells, the maximum pairwise TSR gap between seeds averages
 0.16 for C2 --- the largest of any condition --- with a worst cell of 0.45
 (C2, D1-hard: per-seed TSR 0.45 / 0.90 / 0.75). C1 averages 0.07; the
 overwrite-style memories C3 and C4 average 0.11--0.12. A single-seed
@@ -537,7 +525,7 @@ means.
 
 \paragraph{The hard-tier collapse replicates across models --- as a
 reliability failure, not a fixed deficit.} Table~\ref{tab:phasec} and
-Figure~\ref{fig:phasec} report the hard (updated-fact) tier for all three
+Fig.~\ref{fig:phasec} report the hard (updated-fact) tier for all three
 models. Embedding retrieval (C2) is the only architecture that collapses,
 but \emph{where} it collapses is model-idiosyncratic: Haiku 4.5 holds the
 single-fact domains (0.90 / 0.95 on D1 / D2) where GPT-4.1 and
@@ -575,16 +563,6 @@ C4 structured fact store & D1 & 1.00 & 1.00 & 0.93 $\pm$ 0.08 \\
 \end{tabular}
 \end{table*}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig6_phasec_hard_cross_model.pdf}
-\caption{Hard-tier TSR across agent models (bar hatch = model, color =
-condition; whiskers = min--max across the 3 \texttt{gpt-4.1-mini} seeds).
-Embedding retrieval (C2) collapses somewhere for every model, but where is
-model-idiosyncratic; LLM summarization (C3) is robust everywhere.}
-\label{fig:phasec}
-\end{figure*}
-
 The refined claim is stronger than the pilot's: on updated facts,
 embedding retrieval is not merely worse --- it is \textbf{unpredictable},
 both across seeds (max gap 0.45) and across agent models (0.30--0.95),
@@ -594,7 +572,7 @@ non-monotonically with model tier. Update-on-write architectures remove
 the conflict at write time and are correspondingly stable everywhere. A
 practitioner choosing a memory system from a single-model, single-seed
 benchmark number would systematically over- or under-estimate embedding
-retrieval; MERIT's grid makes the variance itself measurable.
+retrieval; \merit{}'s grid makes the variance itself measurable.
 
 \paragraph{A latest-generation check.} As a final probe we ran the D1-hard
 cell on Claude Sonnet 5, a 2026-generation agentic model, gated on the same
@@ -655,11 +633,14 @@ audit (the frozen sample is committed). \textbf{Internal:} prompt
 differences across conditions are confined to the memory block; delta
 scoring removes world-state carryover; the mock-model grid guards the
 pipeline, but mock results are never reported as findings.
-\textbf{External:} one model at pilot scale --- architectural dissociations
-may shift with model strength (the full run tests whether stronger models
-need memory less or exploit it better); three domains; synthetic worlds with
-scripted users (LLM-paraphrase mode mitigates phrasing overfit on D1); each
-real memory implementation is a single representative of its family, and
+\textbf{External:} the grid spans three agent models plus two gated
+spot-checks, and the spot-checks bound the model-strength question in both
+directions --- frontier capability does not substitute for memory (C0
+$=$ 0.00 even for Claude Opus 4.8 and Sonnet 5), and the C2 collapse
+persists on the newest generation --- but all findings remain within three
+synthetic domains with scripted users (LLM-paraphrase mode mitigates
+phrasing overfit on D1), 10 arcs per cell, and each real memory
+implementation is a single representative of its family;
 \S\ref{sec:swap} quantifies how consequential implementation choices are. \textbf{Reproducibility:} deterministic seeded generation,
 pinned model IDs, released traces, \$0 mock mode. API model deprecation
 remains a limitation: the released traces preserve the reported runs, and
@@ -699,9 +680,10 @@ generation, and the C1 control suffices to detect it per model.
 
 \merit{} reframes agent-memory evaluation from ``can the system recall?'' to
 ``does recall change what the agent does, at what cost, and how does it
-fail?''. Even at pilot scale the answer is not monotone: architectures
-indistinguishable on single-fact recall separate by up to 0.65 TSR when
-facts must be superseded, agents ignore nearly half of correctly retrieved
+fail?''. The answer is not monotone: architectures indistinguishable on
+single-fact recall separate by up to 0.70 TSR when facts must be
+superseded (C3 1.00 vs.\ C2 0.30, Haiku 4.5, D3-hard), agents ignore
+nearly half of correctly retrieved
 facts, swapping one memory implementation for another moves task success by
 as much as 1.00 TSR in either direction, and the most accurate memory is
 2.7--3.9$\times$ less economical than the most efficient one. The benchmark,
