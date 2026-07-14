@@ -116,7 +116,7 @@ HYPOTHESES.md     preregistration (dated via git history)
 @misc{mishra2026merit,
   title   = {When Does Memory Help? A Cost-Aware Evaluation of Long-Term
              Memory in Tool-Using LLM Agents},
-  author  = {Mishra, Shweta},
+  author  = {Mishra, Shweta and Mishra, Shashank},
   year    = {2026},
   url     = {https://github.com/smshweta/merit-bench}
 }

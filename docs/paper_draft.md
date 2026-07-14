@@ -1,6 +1,6 @@
 # When Does Memory Help? A Cost-Aware Evaluation of Long-Term Memory in Tool-Using LLM Agents
 
-**Shweta Mishra**
+**Shweta Mishra** · **Shashank Mishra**
 *Independent Research*
 
 > **STATUS: arXiv preprint draft v1.1 (2026-07-12).** All numbers in §5 are
@@ -614,11 +614,11 @@ authors to evaluate against MERIT.
 
 ## Acknowledgments
 
-The author used Claude (Anthropic) as an assistive tool for drafting text,
+The authors used Claude (Anthropic) as an assistive tool for drafting text,
 developing harness and analysis code (including the figure-generation
 scripts), and preparing this manuscript. All experimental design decisions,
 preregistered hypotheses, data collection, and final content were reviewed
-and are the sole responsibility of the author. All figures are deterministic
+and are the sole responsibility of the authors. All figures are deterministic
 plots of measured experimental data, reproducible from the released code and
 traces.
 
