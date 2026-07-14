@@ -446,8 +446,8 @@ dissociations survive resampling (3 seeds on gpt-4.1-mini), and do they
 survive a change of agent model (GPT-4.1; Claude Haiku 4.5, a different
 vendor and tier) with the memory side held fixed?
 
-**Seed variance concentrates in embedding retrieval.** Across the 27
-multi-seed cells, the maximum pairwise TSR gap between seeds averages
+**Seed variance concentrates in embedding retrieval.** Across the nine
+3-seed cells, the maximum pairwise TSR gap between seeds averages
 0.16 for C2 — the largest of any condition — with a worst cell of 0.45
 (C2, D1-hard: per-seed TSR 0.45 / 0.90 / 0.75). C1 averages 0.07; the
 overwrite-style memories C3 and C4 average 0.11–0.12. A single-seed
@@ -557,13 +557,15 @@ notions; the MUR tracer is string containment pending the human audit (the
 frozen sample is committed). **Internal:** prompt differences across
 conditions are confined to the memory block; delta scoring removes
 world-state carryover; the mock-model grid guards the pipeline, but mock
-results are never reported as findings. **External:** one model at pilot
-scale — architectural dissociations may shift with model strength (the full
-run tests whether stronger models need memory less or exploit it better);
-three domains; synthetic worlds with scripted users (LLM-paraphrase mode
-mitigates phrasing overfit on D1); each real memory implementation is a
-single representative of its family, and §5.3 quantifies how consequential
-implementation choices are.
+results are never reported as findings. **External:** the grid spans three
+agent models plus two gated spot-checks, and the spot-checks bound the
+model-strength question in both directions — frontier capability does not
+substitute for memory (C0 = 0.00 even for Claude Opus 4.8 and Sonnet 5),
+and the C2 collapse persists on the newest generation — but all findings
+remain within three synthetic domains with scripted users (LLM-paraphrase
+mode mitigates phrasing overfit on D1), 10 arcs per cell, and each real
+memory implementation is a single representative of its family; §5.3
+quantifies how consequential implementation choices are.
 **Reproducibility:** deterministic seeded generation, pinned model IDs,
 released traces, $0 mock mode. API model deprecation remains a limitation:
 the released traces preserve the reported runs, and the harness accepts any
@@ -600,9 +602,10 @@ control suffices to detect it per model.
 
 MERIT reframes agent-memory evaluation from "can the system recall?" to
 "does recall change what the agent does, at what cost, and how does it
-fail?". Even at pilot scale the answer is not monotone: architectures
-indistinguishable on single-fact recall separate by up to 0.65 TSR when
-facts must be superseded, agents ignore nearly half of correctly retrieved
+fail?". The answer is not monotone: architectures indistinguishable on
+single-fact recall separate by up to 0.70 TSR when facts must be
+superseded (C3 1.00 vs. C2 0.30, Haiku 4.5, D3-hard), agents ignore
+nearly half of correctly retrieved
 facts, swapping one memory implementation for another moves task success by
 as much as 1.00 TSR in either direction, and the most accurate memory is
 2.7–3.9× less economical than the most efficient one. The benchmark,

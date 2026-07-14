@@ -1,7 +1,8 @@
-% MERIT — IEEE conference submission version (IEEEtran).
+% MERIT — IEEE Transactions on Artificial Intelligence (TAI) submission.
+% Journal (not conference) IEEEtran layout + TAI-required Impact Statement.
 % Generated from paper/main.tex (arXiv source of truth); keep in sync.
 % Build: tectonic paper/ieee/main.tex
-\documentclass[conference]{IEEEtran}
+\documentclass[journal]{IEEEtran}
 \IEEEoverridecommandlockouts
 
 \usepackage[utf8]{inputenc}
@@ -15,11 +16,22 @@
 
 \newcommand{\merit}{\textsc{MERIT}}
 
+% TAI's template provides IEEEImpStatement; defined here compatibly so the
+% paper builds with vanilla IEEEtran (swap in the TAI class at submission)
+\providecommand{\IEEEImpStatementDefined}{}
+\makeatletter
+\@ifundefined{IEEEImpStatement}{%
+\newenvironment{IEEEImpStatement}%
+{\par\addvspace{0.6\baselineskip}\noindent\small%
+\textbf{\textit{Impact Statement}---}\bfseries}%
+{\par\addvspace{0.6\baselineskip}}}{}
+\makeatother
+
 \title{When Does Memory Help? A Cost-Aware Evaluation of Long-Term Memory in Tool-Using LLM Agents}
 
-\author{\IEEEauthorblockN{Shweta Mishra}
-\IEEEauthorblockA{Independent Researcher\\
-1196shweta@gmail.com}
+\author{Shweta~Mishra%
+\thanks{The author is an independent researcher (e-mail:
+1196shweta@gmail.com).}%
 \thanks{All numbers in \S{}V are measured results: a two-generation pilot
 (9{,}940 scored episodes, \texttt{gpt-4.1-mini}) followed by the
 preregistered full grid (\S{}V-G): 3 agent models $\times$ 3 domains
@@ -28,6 +40,10 @@ grid: 23{,}440 scored episodes, \$44.82 in API cost; latest-generation and
 frontier spot-checks (Claude Sonnet 5, Opus 4.8) are reported separately
 as diagnostics (\S{}V-G, \S{}VII). Code, data, traces, and preregistration:
 \url{https://github.com/smshweta/merit-bench}.}}
+
+\markboth{Submitted to IEEE Transactions on Artificial
+Intelligence}{Mishra: When Does Memory Help? A Cost-Aware Evaluation of
+Long-Term Memory in Tool-Using LLM Agents}
 
 \begin{document}
 \maketitle
@@ -60,9 +76,27 @@ never economical: the best condition per domain delivers
 benchmark, harness, and all traces.
 \end{abstract}
 
+\begin{IEEEImpStatement}
+Organizations deploying LLM-based agents for customer support, IT
+operations, and personal assistance must decide whether to add long-term
+memory, which kind, and at what cost. Existing benchmarks cannot answer
+this: they test whether a system recalls conversational facts, not whether
+an agent acts correctly on them. MERIT provides an action-level,
+cost-accounted comparison of memory architectures. Its central practical
+finding is that the most widely deployed choice --- retrieval-augmented
+memory --- fails unpredictably precisely when facts change, the common case
+in operations, while overwrite-based designs remain reliable across models
+and seeds; implementation quality moves outcomes as much as architecture
+choice. The released benchmark, harness, and full traces let practitioners
+measure these trade-offs on their own stacks before deployment, reducing
+the risk of confidently wrong agent actions in production.
+\end{IEEEImpStatement}
+
 \begin{IEEEkeywords}
 LLM agents, long-term memory, benchmark, evaluation, tool use, cost analysis
 \end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
 
 \section{Introduction}
 
