@@ -186,7 +186,12 @@ conversational QA (LoCoMo, LongMemEval); none evaluate task-execution utility
 under cost accounting. \merit{}'s conditions C1--C5 are deliberately
 \emph{reimplementations of these architecture families} under one interface,
 so that architectural mechanisms (retrieval, summarization, update-on-write,
-hybrid) can be compared in isolation from product engineering.
+hybrid) can be compared in isolation from product engineering. We
+deliberately evaluate reimplementations rather than the shipped products:
+a product's score conflates its architectural mechanism with proprietary
+retrieval tuning, prompting, and engineering, preventing causal
+attribution to the mechanism; benchmarking shipped systems on \merit{} is
+a natural follow-up enabled by the released harness.
 
 \subsection{Benchmarks for agent memory}
 
@@ -597,6 +602,16 @@ C4 structured fact store & D1 & 1.00 & 1.00 & 0.93 $\pm$ 0.08 \\
 \bottomrule
 \end{tabular}
 \end{table*}
+
+The dissociation is significant for every model. Pooling domains on the
+hard tier, the paired arc-clustered bootstrap gives C3$-$C2 $= +0.44$
+$[+0.36, +0.53]$ for \texttt{gpt-4.1-mini}, $+0.38$ $[+0.23, +0.53]$ for
+GPT-4.1, and $+0.28$ $[+0.15, +0.43]$ for Haiku 4.5 (all $p \le 0.0002$;
+C4$-$C2 positive for all, $p \le 0.009$), and $+0.25$ $[+0.10, +0.40]$
+($p = 0.002$) for the Sonnet 5 spot-check cell. The per-domain contrasts
+localize Haiku's entire deficit in D3 ($+0.70$ $[+0.45, +0.95]$; D1/D2
+not significant) --- the significance structure itself traces the
+model-idiosyncratic locus of collapse.
 
 The refined claim is stronger than the pilot's: on updated facts,
 embedding retrieval is not merely worse --- it is \textbf{unpredictable},

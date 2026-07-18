@@ -148,5 +148,36 @@ def main(root: str) -> None:
                 print(f"    {c:6} " + " ".join(cells))
 
 
+def hard_tier_contrasts(root: str = "runs/phasec") -> None:
+    """Paired arc-clustered bootstrap for the pivotal hard-tier contrasts
+    (C3-C2, C4-C2) per model, pooled across domains — the preregistered
+    statistical machinery from analyze.py applied to the full grid."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "analyze", str(Path(__file__).parent / "analyze.py"))
+    az = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(az)
+
+    by_model: dict[str, dict[str, list[dict]]] = defaultdict(
+        lambda: defaultdict(list))
+    for f in sorted(Path(root).glob("*-hard/results.jsonl")):
+        dom = f.parent.name.rsplit("-", 2)[1]
+        for line in f.read_text().splitlines():
+            r = json.loads(line)
+            if r["dependent"] and r["corrupt_mode"] == "none":
+                r["arc_id"] = f"{dom}:{r['arc_id']}"  # keep domains distinct
+                by_model[r["model"]][r["condition"]].append(r)
+
+    print("\n=== hard tier: paired bootstrap, clustered by arc, "
+          "pooled domains ===")
+    for m, conds in sorted(by_model.items()):
+        for label, a in (("C3-C2", "C3"), ("C4-C2", "C4")):
+            pt, ci, p = az.boot_ci_delta(conds[a], conds["C2"],
+                                         key=lambda r: r["success"])
+            print(f"  {m}: {label} = {pt:+.2f} "
+                  f"[{ci[0]:+.2f}, {ci[1]:+.2f}]  p={p:.4f}")
+
+
 if __name__ == "__main__":
     main(sys.argv[1] if len(sys.argv) > 1 else "runs/phasec")
+    hard_tier_contrasts(sys.argv[1] if len(sys.argv) > 1 else "runs/phasec")

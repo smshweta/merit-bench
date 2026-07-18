@@ -491,6 +491,15 @@ condition; whiskers = min–max across the 3 gpt-4.1-mini seeds). Embedding
 retrieval (C2) collapses somewhere for every model, but where is
 model-idiosyncratic; LLM summarization (C3) is robust everywhere.*
 
+The dissociation is significant for every model. Pooling domains on the
+hard tier, the paired arc-clustered bootstrap gives C3−C2 = +0.44
+[+0.36, +0.53] for gpt-4.1-mini, +0.38 [+0.23, +0.53] for GPT-4.1, and
++0.28 [+0.15, +0.43] for Haiku 4.5 (all p ≤ 0.0002; C4−C2 positive for
+all, p ≤ 0.009), and +0.25 [+0.10, +0.40] (p = 0.002) for the Sonnet 5
+spot-check cell. The per-domain contrasts localize Haiku's entire deficit
+in D3 (+0.70 [+0.45, +0.95]; D1/D2 not significant) — the significance
+structure itself traces the model-idiosyncratic locus of collapse.
+
 The refined claim is stronger than the pilot's: on updated facts,
 embedding retrieval is not merely worse — it is **unpredictable**, both
 across seeds (max gap 0.45) and across agent models (0.30–0.95), because
