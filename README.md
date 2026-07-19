@@ -5,8 +5,7 @@ Existing memory benchmarks test conversational recall; MERIT tests whether
 memory changes what an agent *does* — and what that costs.
 
 **Paper:** [docs/paper_draft.md](docs/paper_draft.md) (arXiv source in
-[paper/main.tex](paper/main.tex); IEEE conference version in
-[paper/ieee/main.tex](paper/ieee/main.tex)) · **Preregistered hypotheses:**
+[paper/main.tex](paper/main.tex)) · **Preregistered hypotheses:**
 [HYPOTHESES.md](HYPOTHESES.md) (committed before the experiments) ·
 **Protocol:** [docs/experiment_protocol.md](docs/experiment_protocol.md) ·
 **Reproduce:** [REPRODUCE.md](REPRODUCE.md)

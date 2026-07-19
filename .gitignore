@@ -9,3 +9,4 @@ merit-traces-*.tar.gz*
 runs/mur_audit/key.csv
 paper/ieee/tai-submission/node_modules/
 paper/ieee/tai-submission/package*.json
+paper/ieee/
