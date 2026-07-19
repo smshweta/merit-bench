@@ -432,6 +432,11 @@ free) becomes 4,839, and its *negative* marginal cost in D2 becomes +$0.0003
 fractions of a cent for all conditions — memory pays for itself at trivially
 low task values *when it works*; the practitioner-relevant differences are
 in robustness (§5.2–5.5), not raw affordability, at these model prices.
+The absolute CAMU figures are tied to mid-2026 API pricing and will drift
+as prices change; the qualitative result — that robustness rather than
+per-episode cost is the deciding factor, and that full replay never leads
+on CAMU — is price-independent, since it rests on the ratio of success
+gains to cost *differences* between conditions.
 
 ![Figure 5](figures/fig5_cost_frontier.png)
 *Figure 5: Metered cost per episode (including memory-side calls) vs
@@ -559,7 +564,7 @@ runs failed without them: eager agents leaked gold facts into world state
 channels that conversational QA benchmarks cannot express; we recommend leak
 checks over *world state*, not just prompts, as standard practice.
 
-## 7. Threats to Validity
+## 7. Limitations and Threats to Validity
 
 **Construct:** programmatic checkers may not capture all real-world success
 notions; the MUR tracer is string containment pending the human audit (the
@@ -606,6 +611,24 @@ model — passes the control cleanly (C1 = 1.00) and reproduces the §5.7
 pattern (C2 0.75 vs C3/C4 1.00 on D1-hard): the prudence confound is a
 property of specific safety postures, not of model generation, and the C1
 control suffices to detect it per model.
+
+We flag this as more than a measurement nuisance. It suggests a distinct
+axis that action-level memory evaluation must contend with as models are
+increasingly safety-tuned: *memory-provenance skepticism*, in which an
+agent that correctly recalls a value nonetheless declines to act because it
+cannot establish that the value was legitimately authorized rather than
+user-asserted. On MERIT's updated-fact arcs this manifests as a lower
+ceiling on TSR that is not a memory failure at all (the fact is retrieved
+and quoted) and that a naive leaderboard would misread as a weaker agent.
+Whether the behavior is desirable (it plausibly prevents social-engineering
+in production) or over-cautious is context-dependent and beyond our scope;
+our claim is narrower: the C1 full-replay control isolates it from genuine
+memory failure, so cross-model TSR should always be read relative to each
+model's own C1. This observation rests on a single diagnostic cell (one
+domain, 50 episodes) and two frontier models; characterizing provenance
+skepticism across domains, prompts, and model families is left to future
+work, but MERIT's control structure already makes it visible and
+separable.
 
 ## 8. Conclusion
 

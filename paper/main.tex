@@ -452,7 +452,7 @@ shown by their count only).}
 \label{fig:ignore}
 \end{figure}
 
-\subsection{Stale-memory harm}
+\subsection{Stale-memory harm}\label{sec:smh}
 
 On D1 with stale corruption (Figure~\ref{fig:smh}), the largest and only
 Holm-significant harm is again on the hybrid C5 (SMH $+0.25$ at $\rho =
@@ -492,8 +492,12 @@ ${\sim}17{,}300$ pts/\$ (regex extraction was free) becomes 4{,}839, and its
 tax, now on the books. Break-even task values remain fractions of a cent for
 all conditions: memory pays for itself at trivially low task values
 \emph{when it works}; the practitioner-relevant differences are in
-robustness (\S\ref{sec:ladder}--5.5), not raw affordability, at these model
-prices.
+robustness (\S\ref{sec:ladder}--\ref{sec:smh}), not raw affordability, at
+these model prices. The absolute CAMU figures are tied to mid-2026 API
+pricing and will drift as prices change; the qualitative result, that
+robustness rather than per-episode cost is the deciding factor and that
+full replay never leads on CAMU, is price-independent, since it rests on
+the ratio of success gains to cost \emph{differences} between conditions.
 
 \begin{figure}[t]
 \centering
@@ -645,7 +649,7 @@ uniqueness). Task-execution memory benchmarks have leak channels that
 conversational QA benchmarks cannot express; we recommend leak checks over
 \emph{world state}, not just prompts, as standard practice.
 
-\section{Threats to Validity}\label{sec:threats}
+\section{Limitations and Threats to Validity}\label{sec:threats}
 
 \textbf{Construct:} programmatic checkers may not capture all real-world
 success notions; the MUR tracer is string containment pending the human
@@ -694,6 +698,25 @@ model, passes the control cleanly (C1 $=$ 1.00) and reproduces the
 pattern of \S\ref{sec:phasec} (C2 0.75 vs C3/C4 1.00 on D1-hard): the
 prudence confound is a property of specific safety postures, not of model
 generation, and the C1 control suffices to detect it per model.
+
+We flag this as more than a measurement nuisance. It suggests a distinct
+axis that action-level memory evaluation must contend with as models are
+increasingly safety-tuned: \emph{memory-provenance skepticism}, in which an
+agent that correctly recalls a value nonetheless declines to act because it
+cannot establish that the value was legitimately authorized rather than
+user-asserted. On \merit{}'s updated-fact arcs this manifests as a lower
+ceiling on TSR that is not a memory failure at all (the fact is retrieved
+and quoted) and that a naive leaderboard would misread as a weaker agent.
+Whether the behavior is desirable (it plausibly prevents social-engineering
+in production) or over-cautious (it blocks legitimate task completion) is
+context-dependent and beyond our scope; our claim is narrower: the C1
+full-replay control isolates it from genuine memory failure, so cross-model
+TSR should always be read relative to each model's own C1. This observation
+rests on a single diagnostic cell (one domain, 50 episodes) and two
+frontier models; characterizing provenance skepticism across domains,
+prompts, and model families is left to future work, but \merit{}'s control
+structure already makes it visible and separable, which we believe is a
+prerequisite for studying it at all.
 
 
 \section{Conclusion}
