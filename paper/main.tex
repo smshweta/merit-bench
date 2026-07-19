@@ -42,54 +42,31 @@ Code, traces, and preregistration: \url{https://github.com/smshweta/merit-bench}
 \maketitle
 
 \begin{abstract}
-Long-term memory is widely assumed to improve the performance of LLM-based
-agents, and a rapidly growing ecosystem of memory systems (retrieval-augmented
-stores, rolling summarization, and structured fact memories) now competes on
-conversational recall benchmarks such as LoCoMo and LongMemEval. These
-benchmarks measure \emph{question answering over dialogue history}, not the
-setting where memory is most consequential in production: \textbf{tool-using
-agents executing multi-step tasks across sessions}. We present \merit{}
-(Memory Evaluation for Realistic Instrumented Tasks), a benchmark and
-evaluation harness that measures the \emph{marginal utility} of memory for
-task-executing agents under explicit cost accounting. \merit{} provides
-(i)~episodic tool-use tasks in three domains where a controllable fraction of
-episodes depend on facts established in earlier episodes, verified
-non-re-derivable by an automated leak check; (ii)~a three-tier
-\textbf{difficulty ladder} of single-fact, multi-fact, and \emph{updated-fact}
-recall; (iii)~controlled \textbf{memory corruption} (stale, contradiction,
-distractor); and (iv)~full token and dollar accounting for every memory
-operation. In a two-generation pilot (6 memory conditions $\times$ 3 domains
-$\times$ 3 difficulty tiers, run first with starter implementations and then
-with real ones (embedding retrieval, LLM summarization, LLM extraction);
-9{,}940 scored episodes, \texttt{gpt-4.1-mini}), memory conditions lift
-dependent-task success from a leak-verified floor of 0.00 (no memory) to
-0.55--1.00 (all Holm-adjusted $p \le 0.001$). The tiers dissociate
-architectures sharply: when a remembered fact is \emph{updated} mid-arc,
-embedding retrieval collapses (success 0.35--0.70; the agent acts on the
-correct value only 55\% of the times that value is retrieved), while stores
-that overwrite (a structured fact store with update-on-write semantics,
-and, notably, LLM summarization, which rewrites its summary each episode)
-reach 0.70--1.00; the \emph{hybrid} of fact store and retrieval is worse
-than the fact store alone in all three domains (0.50--0.80). The
-implementation swap is itself diagnostic: LLM summarization rescues the
-summary condition on updated facts (0.00--0.15 $\to$ 0.70--1.00), while
-swapping pattern extraction for LLM extraction \emph{costs} the fact store
-up to 60 points in one domain; implementation quality is a first-class
-variable, and \merit{} measures it. A three-model replication
-(\texttt{gpt-4.1-mini} $\times$ 3 seeds, GPT-4.1, Claude Haiku 4.5;
-13{,}500 further episodes, memory side held fixed) sharpens the headline.
-The updated-fact collapse of embedding retrieval is real but
-\emph{unreliable}: which domains it strikes varies by agent model
-(hard-tier success 0.30--0.95) and by seed (max pairwise seed gap 0.45,
-the largest of any condition), while LLM summarization stays at
-0.80--1.00 on the hard tier across every model, domain, and seed. A
-latest-generation spot-check on Claude Sonnet 5 (2026), gated on a clean
-full-replay control, reproduces the hard-tier pattern (embedding retrieval
-0.75 vs.\ update-on-write memories 1.00). Under explicit cost accounting with
-memory-side calls metered, full replay is never the economical choice: the
-best condition per domain delivers 2.7--3.9$\times$ its marginal utility per
-dollar. We release the benchmark, harness, and all traces for reproducible,
-cost-aware comparison of agent memory systems.
+Long-term memory for LLM agents is evaluated today by conversational
+recall benchmarks (LoCoMo, LongMemEval), which measure question answering
+over dialogue history, not whether remembered facts change what a
+\emph{tool-using} agent does. We present \merit{} (Memory Evaluation for
+Realistic Instrumented Tasks), a benchmark and harness that measures the
+\emph{marginal utility} of memory for task-executing agents under explicit
+cost accounting. \merit{} provides episodic tool-use tasks in three
+domains whose dependence on earlier-episode facts is verified by an
+automated leak check; a difficulty ladder ending in \emph{updated-fact}
+recall; controlled memory corruption; and full token and dollar metering
+of every memory operation. Across 23{,}440 scored episodes (\$44.82), a
+two-generation pilot on \texttt{gpt-4.1-mini} and a preregistered 3-model
+$\times$ 3-seed grid (GPT-4.1, Claude Haiku 4.5; memory side held fixed),
+memory lifts dependent-task success from a leak-verified floor of 0.00 to
+0.55--1.00. On updated facts, embedding retrieval collapses
+\emph{unpredictably} (0.30--0.95 across models; max seed gap 0.45), and
+agents act on a correctly retrieved value only 55\% of the time, while
+update-on-write stores (a structured fact store and, notably, LLM
+summarization) remain at 0.70--1.00; the hybrid is worse than the fact
+store alone. A latest-generation spot-check (Claude Sonnet 5, gated on a
+clean full-replay control) reproduces the pattern. Swapping a memory's
+implementation moves task success by up to 60 points, and full replay is
+never economical: the best condition per domain delivers
+2.7--3.9$\times$ its marginal utility per dollar. We release the
+benchmark, harness, and all traces.
 \end{abstract}
 
 \section{Introduction}
