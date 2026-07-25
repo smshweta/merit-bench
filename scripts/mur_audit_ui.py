@@ -88,8 +88,16 @@ HTML = r"""<!doctype html><meta charset="utf-8">
 </main>
 <script>
 const ITEMS = __DATA__;
-const KEY = "merit_mur_labels";
-const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+// storage is namespaced per annotator name so a second annotator on the
+// same browser starts blank instead of inheriting the first one's answers
+// (independence is the whole point of a two-annotator audit)
+let WHO = "";
+let saved = {};
+const keyFor = w => "merit_mur_labels::" + (w || "").trim().toLowerCase();
+function loadFor(w){
+  WHO = w;
+  saved = JSON.parse(localStorage.getItem(keyFor(w)) || "{}");
+}
 const root = document.getElementById("items");
 function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
 ITEMS.forEach(it=>{
@@ -114,14 +122,18 @@ function paint(){
   document.getElementById("prog").textContent =
     Object.keys(saved).length + " / " + ITEMS.length + " answered";
 }
+const whoBox=document.getElementById("who");
+whoBox.addEventListener("change",()=>{ loadFor(whoBox.value); paint(); });
 root.addEventListener("click",e=>{
   const b=e.target.closest("button[data-v]"); if(!b) return;
+  if(!whoBox.value.trim()){ alert("Enter your name at the top first — answers are saved per annotator."); whoBox.focus(); return; }
+  if(WHO!==whoBox.value) loadFor(whoBox.value);
   saved[b.parentElement.dataset.id]=b.dataset.v;
-  localStorage.setItem(KEY, JSON.stringify(saved));
+  localStorage.setItem(keyFor(WHO), JSON.stringify(saved));
   paint();
 });
 document.getElementById("dl").onclick=()=>{
-  const who=(document.getElementById("who").value||"annotator").trim();
+  const who=(whoBox.value||"annotator").trim();
   const miss=ITEMS.filter(it=>!saved[it.id]).map(it=>it.id);
   if(miss.length && !confirm(miss.length+" items unanswered ("+miss.slice(0,5).join(", ")+"...). Download anyway?")) return;
   let csv="item,label\n"+ITEMS.map(it=>it.id+","+(saved[it.id]||"")).join("\n")+"\n";

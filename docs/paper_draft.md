@@ -264,8 +264,14 @@ memory block), tools, and decoding (temperature 0).
 - **MUR**: among dependent episodes where all gold values were present in the
   retrieved memory block, the fraction where every gold value appears in the
   executed tool-call arguments (value tracing). A frozen, stratified
-  100-episode audit sample is committed to the repository; two-annotator
-  labeling (Cohen's κ) is in progress.
+  100-episode audit sample is committed to the repository. A human
+  annotator labeled all 100 items blind to the tracer's output: the tracer
+  agrees with human judgment on 93% of items (Cohen's κ = 0.63,
+  substantial agreement). All seven disagreements are in the same
+  direction, with the tracer scoring *not utilized* where the human judged
+  the value was used, so the tracer under-counts utilization and the
+  Ignore Rates we report are conservative upper bounds. Independent
+  second-annotator labeling is left to future work.
 - **Ignore Rate** = 1 − MUR on episodes with correct memory present.
 - **SMH**: TSR(clean) − TSR(corrupted) at ρ ∈ {0.1, 0.3} for stale /
   contradiction / distractor corruption.
@@ -567,7 +573,9 @@ checks over *world state*, not just prompts, as standard practice.
 ## 7. Limitations and Threats to Validity
 
 **Construct:** programmatic checkers may not capture all real-world success
-notions; the MUR tracer is string containment pending the human audit (the
+notions; the MUR tracer is string containment, validated against a single
+human annotator (κ = 0.63, conservative direction) but not yet by
+independent double annotation (the
 frozen sample is committed). **Internal:** prompt differences across
 conditions are confined to the memory block; delta scoring removes
 world-state carryover; the mock-model grid guards the pipeline, but mock

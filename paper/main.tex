@@ -281,8 +281,15 @@ by dependent/independent.
 \item \textbf{MUR}: among dependent episodes where all gold values were
 present in the retrieved memory block, the fraction where every gold value
 appears in the executed tool-call arguments (value tracing). A frozen,
-stratified 100-episode audit sample is committed to the repository;
-two-annotator labeling (Cohen's $\kappa$) is in progress.
+stratified 100-episode audit sample is committed to the repository. A
+human annotator labeled all 100 items blind to the tracer's output: the
+tracer agrees with human judgment on 93\% of items (Cohen's $\kappa =
+0.63$, substantial agreement). All seven disagreements are in the same
+direction, with the tracer scoring \emph{not utilized} where the human
+judged the value was used (typically reformatted values the containment
+check misses), so the tracer under-counts utilization and the Ignore
+Rates we report are conservative upper bounds. Independent
+second-annotator labeling is left to future work.
 \item \textbf{Ignore Rate} $= 1 - \mathrm{MUR}$ on episodes with correct
 memory present.
 \item \textbf{SMH}: $\mathrm{TSR}(\text{clean}) -
@@ -652,7 +659,9 @@ conversational QA benchmarks cannot express; we recommend leak checks over
 \section{Limitations and Threats to Validity}\label{sec:threats}
 
 \textbf{Construct:} programmatic checkers may not capture all real-world
-success notions; the MUR tracer is string containment pending the human
+success notions; the MUR tracer is string containment, validated against a
+single human annotator ($\kappa = 0.63$, conservative direction) but not
+yet by independent double annotation; the human
 audit (the frozen sample is committed). \textbf{Internal:} prompt
 differences across conditions are confined to the memory block; delta
 scoring removes world-state carryover; the mock-model grid guards the
