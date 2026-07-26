@@ -9,7 +9,7 @@
 > retrieval, LLM summarization, LLM extraction) on the identical grid —
 > followed by the preregistered full grid (§5.7): 3 agent models × 3 domains
 > × 3 difficulty tiers with 3 seeds on the primary model, 13,500 further
-> episodes. Pilot and full grid: 23,440 scored episodes, $44.82 in API
+> episodes. Pilot and full grid: 23,440 scored episodes, $42.57 in API
 > cost; latest-generation and frontier spot-checks (Claude Sonnet 5, Opus
 > 4.8) are reported separately as diagnostics in §7.
 
@@ -220,7 +220,7 @@ arc-wide. **Delta scoring** marks an episode successful only if its checker
 predicate flips from false to true *during* that episode — in early gate
 runs, eager agents processed refunds during plant episodes, and probes then
 "succeeded" off inherited world state; delta scoring eliminates this world-
-state leak channel entirely (across 9,940 episodes, the 6 probes that
+state leak channel entirely (across 9,940 episodes, the 22 probes that
 arrived with their checker already satisfied score as failures, never as
 inherited successes).
 
@@ -293,7 +293,7 @@ the real-implementation generation, the memory side (embeddings:
 text-embedding-3-small). Scale per generation: 10 arcs × 5 episodes per
 (domain × difficulty × condition); dependent-task ratio 0.5; corruption
 sweep (3 modes × ρ ∈ {0.1, 0.3}) with LLM-paraphrased users on D1. Totals:
-**9,940 scored episodes, $9.13 in API cost** — starter generation 5,440
+**9,940 scored episodes, $9.12 in API cost** — starter generation 5,440
 episodes / $4.61, real generation 4,500 episodes / $4.52 (~$0.001/episode
 including memory-side calls, which are metered into all cost figures).
 Harness: Python, LiteLLM for provider-agnostic calls and metering; SQLite
@@ -310,8 +310,8 @@ implementations on three agent models — gpt-4.1-mini (3 seeds), GPT-4.1
 3-tier grid, 10 arcs × 5 episodes per cell. The memory side is pinned to
 gpt-4.1-mini (embeddings: text-embedding-3-small) for *every* agent model,
 so the agent model is the only varying factor. Totals: **13,500 scored
-episodes, $35.69** ($22.24 OpenAI + $13.45 Anthropic), bringing the study
-to 23,440 episodes and $44.82 overall.
+episodes, $33.45** ($20.46 OpenAI + $12.99 Anthropic), bringing the study
+to 23,440 episodes and $42.57 overall.
 
 ## 5. Results
 

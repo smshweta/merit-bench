@@ -33,7 +33,7 @@ results: a two-generation pilot (9{,}940 scored episodes,
 grid, followed by the preregistered full grid (\S\ref{sec:phasec}):
 3 agent models $\times$ 3 domains $\times$ 3 difficulty tiers with 3 seeds
 on the primary model, 13{,}500 further episodes. Pilot and full grid:
-23{,}440 scored episodes, \$44.82 in API cost; latest-generation and
+23{,}440 scored episodes, \$42.57 in API cost; latest-generation and
 frontier spot-checks (Claude Sonnet 5, Opus 4.8) are reported separately
 as diagnostics in \S\ref{sec:threats}.
 Code, traces, and preregistration: \url{https://github.com/smshweta/merit-bench}.}}
@@ -52,7 +52,7 @@ cost accounting. \merit{} provides episodic tool-use tasks in three
 domains whose dependence on earlier-episode facts is verified by an
 automated leak check; a difficulty ladder ending in \emph{updated-fact}
 recall; controlled memory corruption; and full token and dollar metering
-of every memory operation. Across 23{,}440 scored episodes (\$44.82), a
+of every memory operation. Across 23{,}440 scored episodes (\$42.57), a
 two-generation pilot on \texttt{gpt-4.1-mini} and a preregistered 3-model
 $\times$ 3-seed grid (GPT-4.1, Claude Haiku 4.5; memory side held fixed),
 memory lifts dependent-task success from a leak-verified floor of 0.00 to
@@ -230,7 +230,7 @@ unique arc-wide. \textbf{Delta scoring} marks an episode successful only if
 its checker predicate flips from false to true \emph{during} that episode:
 in early gate runs, eager agents processed refunds during plant episodes, and
 probes then ``succeeded'' off inherited world state; delta scoring eliminates
-this world-state leak channel entirely (across 9{,}940 episodes, the 6 probes
+this world-state leak channel entirely (across 9{,}940 episodes, the 22 probes
 that arrived with their checker already satisfied score as failures, never as
 inherited successes).
 
@@ -315,7 +315,7 @@ and, in the real-implementation generation, the memory side (embeddings:
 \texttt{text-embedding-3-small}). Scale per generation: 10 arcs $\times$ 5
 episodes per (domain $\times$ difficulty $\times$ condition); dependent-task
 ratio 0.5; corruption sweep (3 modes $\times$ $\rho \in \{0.1, 0.3\}$) with
-LLM-paraphrased users on D1. Totals: \textbf{9{,}940 scored episodes, \$9.13
+LLM-paraphrased users on D1. Totals: \textbf{9{,}940 scored episodes, \$9.12
 in API cost}; starter generation 5{,}440 episodes / \$4.61, real
 generation 4{,}500 episodes / \$4.52 (${\sim}\$0.001$/episode including
 memory-side calls, which are metered into all cost figures). Harness:
@@ -335,8 +335,8 @@ seed), over the identical 3-domain $\times$ 3-tier grid, 10 arcs
 $\times$ 5 episodes per cell. The memory side is pinned to
 \texttt{gpt-4.1-mini} (embeddings: \texttt{text-embedding-3-small}) for
 \emph{every} agent model, so the agent model is the only varying factor.
-Totals: \textbf{13{,}500 scored episodes, \$35.69} (\$22.24 OpenAI +
-\$13.45 Anthropic), bringing the study to 23{,}440 episodes and \$44.82
+Totals: \textbf{13{,}500 scored episodes, \$33.45} (\$20.46 OpenAI +
+\$12.99 Anthropic), bringing the study to 23{,}440 episodes and \$42.57
 overall.
 
 \section{Results}
