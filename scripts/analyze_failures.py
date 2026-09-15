@@ -135,11 +135,14 @@ def classify(domain: str, stale: str, latest: str, first_msg: str,
         action = "stale"
     else:
         action = "other_value"
-    order = None
+    order = freq = None
     if state == "both":
         order = ("stale_last" if block.rfind(stale) > block.rfind(latest)
                  else "latest_last")
-    return {"state": state, "action": action, "order": order}
+        ns, nl = block.count(stale), block.count(latest)
+        freq = ("stale_more" if ns > nl else "latest_more" if nl > ns
+                else "equal")
+    return {"state": state, "action": action, "order": order, "freq": freq}
 
 
 def load_group(patterns: list[str]) -> list[dict]:
@@ -239,6 +242,27 @@ def fisher_two_sided(a: int, b: int, c: int, d: int) -> float:
                         if hyp(x) <= p_obs * (1 + 1e-9)))
 
 
+def cmh_odds_ratio(rows: list[dict], stratum) -> float:
+    """Mantel-Haenszel common odds ratio of a stale action for 'stale value
+    last' vs 'latest value last', pooled over strata (e.g. model x domain,
+    or model x domain x which value occurs more often in the block)."""
+    tables = defaultdict(lambda: [0, 0, 0, 0])
+    for r in rows:
+        t = tables[stratum(r)]
+        stale = r["action"] == "stale"
+        if r["order"] == "stale_last":
+            t[0 if stale else 1] += 1
+        else:
+            t[2 if stale else 3] += 1
+    num = den = 0.0
+    for a, b, c, d in tables.values():
+        n = a + b + c + d
+        if n:
+            num += a * d / n
+            den += b * c / n
+    return num / den if den else float("inf")
+
+
 def order_effect(rows: list[dict], conds: tuple[str, ...],
                  n_boot: int = 10_000, seed: int = 0) -> dict:
     """Exploratory: among probes whose block held both values, is a stale
@@ -268,7 +292,12 @@ def order_effect(rows: list[dict], conds: tuple[str, ...],
             diffs.append(sum(s1) / len(s1) - sum(s2) / len(s2))
     diffs.sort()
     ci = (diffs[int(0.025 * len(diffs))], diffs[int(0.975 * len(diffs)) - 1])
+    by_md = cmh_odds_ratio(both, lambda r: (r["model"], r["domain"]))
+    by_mdf = cmh_odds_ratio(both, lambda r: (r["model"], r["domain"],
+                                             r["freq"]))
     return {"conds": conds, "stale_last": [a, a + b],
+            "cmh_or_model_domain": by_md,
+            "cmh_or_model_domain_frequency": by_mdf,
             "latest_last": [c, c + d],
             "diff": a / (a + b) - c / (c + d), "diff_ci95": ci,
             "fisher_p": fisher_two_sided(a, b, c, d),
@@ -298,7 +327,10 @@ def main() -> None:
               f"{e['latest_last'][1]}: diff {e['diff']:+.2f} "
               f"[{e['diff_ci95'][0]:+.2f}, {e['diff_ci95'][1]:+.2f}] "
               f"arc-clustered, Fisher p = {e['fisher_p']:.2g} "
-              f"({e['n_clusters']} arcs)")
+              f"({e['n_clusters']} arcs); Mantel-Haenszel OR "
+              f"{e['cmh_or_model_domain']:.1f} (model x domain), "
+              f"{e['cmh_or_model_domain_frequency']:.1f} "
+              f"(+ value-frequency strata)")
     if args.json:
         Path(args.json).write_text(json.dumps(out, indent=2))
         print(f"\nwrote {args.json}")
