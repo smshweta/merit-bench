@@ -63,9 +63,12 @@ COLOR = {
     "C0": "#8a8a85", "C1": "#2a78d6", "C2": "#1baf7a",
     "C3": "#eda100", "C4": "#008300", "C5": "#4a3aa7",
 }
+# redundant marker encoding so conditions stay distinguishable without color
+MARKER = {"C0": "o", "C1": "s", "C2": "^", "C3": "D", "C4": "v", "C5": "P"}
 TIERS = ["easy", "medium", "hard"]
 DOMAINS = ["d1", "d2", "d3"]
-DOMAIN_LABEL = {"d1": "D1 commerce", "d2": "D2 IT ops", "d3": "D3 assistant"}
+DOMAIN_LABEL = {"d1": "D1 customer support", "d2": "D2 IT operations",
+                "d3": "D3 personal assistant"}
 
 plt.rcParams.update({
     "font.size": 8, "axes.titlesize": 8.5, "axes.labelsize": 8,
@@ -105,7 +108,7 @@ def fig1_ladder(cells: dict) -> None:
                        if r["condition"] == c) for t in TIERS]
             # small x-dodge so conditions tied at the same TSR stay visible
             xs = [i + (k - 2.5) * 0.014 for i in range(len(TIERS))]
-            ax.plot(xs, ys, marker="o", markersize=4, color=COLOR[c],
+            ax.plot(xs, ys, marker=MARKER[c], markersize=4, color=COLOR[c],
                     label=COND_LABEL[c], zorder=3 if c in ("C2", "C4") else 2,
                     clip_on=False)
         ax.set_xticks(range(len(TIERS)))
@@ -137,8 +140,10 @@ def fig2_ignore(cells: dict) -> None:
                 ign = 1 - mean(r["memory_utilized"] for r in had)
                 x = i + (j - (n_dom - 1) / 2) * width
                 # per-domain shading = ordinal steps of the condition's hue
+                # hatch repeats the domain encoding for readers without color
                 ax.bar(x, ign, width=width * 0.92, color=COLOR[c],
-                       alpha=(0.45, 0.7, 1.0)[j], edgecolor="none")
+                       alpha=(0.45, 0.7, 1.0)[j], edgecolor="white",
+                       linewidth=0.3, hatch=("", "////", "....")[j])
                 ax.annotate(f"{len(had)}", (x, ign), ha="center",
                             va="bottom", fontsize=6, color="#6b6b66",
                             xytext=(0, 1), textcoords="offset points")
@@ -148,8 +153,9 @@ def fig2_ignore(cells: dict) -> None:
         ax.set_ylim(0, 1.0)
         ax.grid(axis="x", visible=False)
     axes[0].set_ylabel("Ignore Rate")
-    handles = [plt.Rectangle((0, 0), 1, 1, color="#555550", alpha=a)
-               for a in (0.45, 0.7, 1.0)]
+    handles = [plt.Rectangle((0, 0), 1, 1, facecolor="#555550", alpha=a,
+                             edgecolor="white", hatch=h)
+               for a, h in ((0.45, ""), (0.7, "////"), (1.0, "...."))]
     fig.legend(handles, [DOMAIN_LABEL[d] for d in DOMAINS], frameon=False,
                loc="upper center", ncol=3, handlelength=1.0,
                bbox_to_anchor=(0.5, 1.12))
@@ -239,7 +245,7 @@ def fig5_starter_vs_real(cells: dict, starter: dict) -> None:
                            if r["condition"] == c)
                       for src in (starter, cells)]
                 xs = [i + (k - 1.5) * 0.02 for i in range(2)]
-                ax.plot(xs, ys, marker="o", markersize=4, color=COLOR[c],
+                ax.plot(xs, ys, marker=MARKER[c], markersize=4, color=COLOR[c],
                         label=COND_LABEL[c], clip_on=False)
             if row == 0:
                 ax.set_title(DOMAIN_LABEL[dom])
