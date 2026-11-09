@@ -87,9 +87,11 @@ executed tool calls with arguments and outputs).
 | `runs/pilot-*`, `runs/sweep/` | starter-implementation generation (gen 1) + difficulty sweep |
 | `runs/phaseb/` | real implementations on gpt-4.1-mini (gen 2, headline pilot numbers) |
 | `runs/phasec/mini3-*` | full grid, gpt-4.1-mini × 3 seeds |
-| `runs/phasec/gpt41-*` | full grid, GPT-4.1 |
-| `runs/phasec/haiku45-*` | full grid, Claude Haiku 4.5 (agent side; memory side stays gpt-4.1-mini) |
-| `runs/mur_audit/` | frozen 100-episode stratified sample for the human MUR audit (answer key withheld until labeling completes) |
+| `runs/phasec/gpt41-*` | full grid, GPT-4.1 (seed 0) |
+| `runs/phasec/haiku45-*` | full grid, Claude Haiku 4.5, seed 0 (agent side; memory side stays gpt-4.1-mini) |
+| `runs/revision/` | added during peer review: seeds 1–2 for GPT-4.1 and Haiku 4.5, temporal retrieval conditions C2T/C2TR, corruption sweeps in D2/D3, 20-episode long-history test (`scripts/analyze_revision.py`) |
+| `runs/intervention/` | counterfactual replay of C2 hard-tier probes |
+| `runs/mur_audit/` | frozen 100-episode stratified sample for the human MUR audit: two annotators' labels (`labels.csv`) and the tracer key (`key.csv`) |
 
 Analysis: `scripts/analyze.py` (single run, H1–H4 readout),
 `scripts/analyze_phasec.py` (multi-model grid: seed robustness +

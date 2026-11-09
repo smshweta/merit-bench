@@ -11,11 +11,19 @@ Run directories:
 - `phaseb/*`               real implementations (embedding retrieval, LLM
                            summarization/extraction); headline numbers
 - `phasec/mini3-*`         gpt-4.1-mini x 3 seeds
-- `phasec/gpt41-*`         gpt-4.1 x 1 seed
-- `phasec/haiku45-*`       Claude Haiku 4.5 x 1 seed (agent side; memory
+- `phasec/gpt41-*`         gpt-4.1, seed 0 (preregistered grid)
+- `phasec/haiku45-*`       Claude Haiku 4.5, seed 0 (agent side; memory
                            side stays gpt-4.1-mini across all models)
-- `mur_audit/`             frozen 100-episode human-audit sample (answer
-                           key withheld until labeling completes)
+- `revision/*`             experiments added during peer review (not
+                           preregistered): `*-s12-*` seeds 1-2 for GPT-4.1
+                           and Haiku 4.5; `*-temporal-*` temporal retrieval
+                           conditions C2T/C2TR; `corrupt-*` corruption
+                           sweeps; `long-mini-*` 20-episode arcs.
+                           Analysis: scripts/analyze_revision.py
+- `intervention/`          counterfactual replay of C2 hard-tier probes
+- `mur_audit/`             frozen 100-episode human-audit sample:
+                           labels.csv (two annotators, blind to the tracer)
+                           and key.csv (item -> episode and tracer label)
 - `gate20*`                early gate runs (kept for the leak-fix record)
 
 Reproduction commands: REPRODUCE.md in the code repository
