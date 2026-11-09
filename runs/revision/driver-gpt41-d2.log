@@ -1,0 +1,98 @@
+=== gpt41 seed0 temporal d2-easy Sun Nov  8 12:27:23 PST 2026
+wrote 100 scored episodes to runs/revision/gpt41-temporal-d2-easy/results.jsonl in 248.1s
+=== gpt41 seeds1-2 d2-easy Sun Nov  8 12:31:33 PST 2026
+wrote 800 scored episodes to runs/revision/gpt41-s12-d2-easy/results.jsonl in 1946.5s
+=== gpt41 seed0 temporal d2-medium Sun Nov  8 13:04:01 PST 2026
+wrote 100 scored episodes to runs/revision/gpt41-temporal-d2-medium/results.jsonl in 239.6s
+=== gpt41 seeds1-2 d2-medium Sun Nov  8 13:08:02 PST 2026
+wrote 800 scored episodes to runs/revision/gpt41-s12-d2-medium/results.jsonl in 1963.7s
+=== gpt41 seed0 temporal d2-hard Sun Nov  8 13:40:47 PST 2026
+wrote 100 scored episodes to runs/revision/gpt41-temporal-d2-hard/results.jsonl in 273.1s
+=== gpt41 seeds1-2 d2-hard Sun Nov  8 13:45:21 PST 2026
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! cell runs/revision/gpt41-s12-d2-hard failed (attempt 1), see runs/revision/gpt41-s12-d2-hard.stderr.log
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! cell runs/revision/gpt41-s12-d2-hard failed (attempt 2), see runs/revision/gpt41-s12-d2-hard.stderr.log
+=== gpt41 seed0 temporal d2-easy Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/gpt41-temporal-d2-easy (done)
+=== gpt41 seeds1-2 d2-easy Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/gpt41-s12-d2-easy (done)
+=== gpt41 seed0 temporal d2-medium Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/gpt41-temporal-d2-medium (done)
+=== gpt41 seeds1-2 d2-medium Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/gpt41-s12-d2-medium (done)
+=== gpt41 seed0 temporal d2-hard Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/gpt41-temporal-d2-hard (done)
+=== gpt41 seeds1-2 d2-hard Sun Nov  8 14:25:06 PST 2026
+wrote 800 scored episodes to runs/revision/gpt41-s12-d2-hard/results.jsonl in 2084.7s
+=== gpt41-d2 done Sun Nov  8 14:59:53 PST 2026

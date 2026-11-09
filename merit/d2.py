@@ -424,11 +424,22 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
         pending[plant_pos] = _merge(pending.get(plant_pos), plant)
         pending[pos] = _merge(pending.get(pos), probe)
 
+    # long arcs recycle services that no dependent task uses (default arcs
+    # never reach the fallback, so their generation is unchanged)
+    leftovers = list(svc_iter)
+    svc_iter = iter(leftovers)
+    recycled = 0
     for i in range(n_episodes):
         if i in pending:
             arc.episodes.append(EpisodeSpec(index=i, task=pending[i]))
             continue
-        svc = next(svc_iter)
+        try:
+            svc = next(svc_iter)
+        except StopIteration:
+            if not leftovers:
+                raise
+            svc = leftovers[recycled % len(leftovers)]
+            recycled += 1
         if rng.random() < 0.5:
             key = rng.choice(CONFIG_KEYS)
             val = str(rng.randrange(1000, 9000, 500))

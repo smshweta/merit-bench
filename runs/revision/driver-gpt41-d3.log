@@ -1,0 +1,13 @@
+=== gpt41 seed0 temporal d3-easy Sun Nov  8 12:27:23 PST 2026
+wrote 100 scored episodes to runs/revision/gpt41-temporal-d3-easy/results.jsonl in 215.0s
+=== gpt41 seeds1-2 d3-easy Sun Nov  8 12:30:59 PST 2026
+wrote 800 scored episodes to runs/revision/gpt41-s12-d3-easy/results.jsonl in 1741.9s
+=== gpt41 seed0 temporal d3-medium Sun Nov  8 13:00:03 PST 2026
+wrote 100 scored episodes to runs/revision/gpt41-temporal-d3-medium/results.jsonl in 218.3s
+=== gpt41 seeds1-2 d3-medium Sun Nov  8 13:03:41 PST 2026
+wrote 800 scored episodes to runs/revision/gpt41-s12-d3-medium/results.jsonl in 1784.2s
+=== gpt41 seed0 temporal d3-hard Sun Nov  8 13:33:27 PST 2026
+wrote 100 scored episodes to runs/revision/gpt41-temporal-d3-hard/results.jsonl in 265.4s
+=== gpt41 seeds1-2 d3-hard Sun Nov  8 13:37:53 PST 2026
+wrote 800 scored episodes to runs/revision/gpt41-s12-d3-hard/results.jsonl in 1963.2s
+=== gpt41-d3 done Sun Nov  8 14:10:38 PST 2026

@@ -1,0 +1,15 @@
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d2-easy/results.jsonl in 285.5s
+wrote 800 scored episodes to runs/revision/haiku45-s12-d2-easy/results.jsonl in 2524.5s
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d2-medium/results.jsonl in 334.3s
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! cell runs/revision/haiku45-s12-d2-medium failed (attempt 1), see runs/revision/haiku45-s12-d2-medium.stderr.log
+skip runs/revision/haiku45-temporal-d2-easy (done)
+skip runs/revision/haiku45-s12-d2-easy (done)
+skip runs/revision/haiku45-temporal-d2-medium (done)
+wrote 800 scored episodes to runs/revision/haiku45-s12-d2-medium/results.jsonl in 2168.4s
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d2-hard/results.jsonl in 401.5s
+wrote 800 scored episodes to runs/revision/haiku45-s12-d2-hard/results.jsonl in 3030.9s
+=== haiku-d2 done Sun Nov  8 15:58:37 PST 2026

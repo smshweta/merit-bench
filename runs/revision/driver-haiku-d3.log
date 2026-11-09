@@ -1,0 +1,22 @@
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d3-easy/results.jsonl in 300.4s
+wrote 800 scored episodes to runs/revision/haiku45-s12-d3-easy/results.jsonl in 2418.3s
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d3-medium/results.jsonl in 284.6s
+wrote 800 scored episodes to runs/revision/haiku45-s12-d3-medium/results.jsonl in 2464.1s
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d3-hard/results.jsonl in 352.8s
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! cell runs/revision/haiku45-s12-d3-hard failed (attempt 1), see runs/revision/haiku45-s12-d3-hard.stderr.log
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! cell runs/revision/haiku45-s12-d3-hard failed (attempt 2), see runs/revision/haiku45-s12-d3-hard.stderr.log
+skip runs/revision/haiku45-temporal-d3-easy (done)
+skip runs/revision/haiku45-s12-d3-easy (done)
+skip runs/revision/haiku45-temporal-d3-medium (done)
+skip runs/revision/haiku45-s12-d3-medium (done)
+skip runs/revision/haiku45-temporal-d3-hard (done)
+wrote 800 scored episodes to runs/revision/haiku45-s12-d3-hard/results.jsonl in 2674.6s
+=== haiku-d3 done Sun Nov  8 15:09:43 PST 2026

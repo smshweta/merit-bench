@@ -268,14 +268,29 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
         pending[plant_pos] = _merge(pending.get(plant_pos), plant)
         pending[pos] = _merge(pending.get(pos), probe)
 
-    # fill remaining episodes with independent tasks
+    # fill remaining episodes with independent tasks. Long arcs (more
+    # episodes than the world has orders) recycle orders that no dependent
+    # task uses, with address updates only, since a second full refund of
+    # the same order would be pre-satisfied. Default arcs never reach the
+    # fallback, so their generation is unchanged.
+    leftovers = list(order_iter)
+    order_iter = iter(leftovers)
+    recycled = 0
     for i in range(n_episodes):
         if i in pending:
             arc.episodes.append(EpisodeSpec(index=i, task=pending[i]))
             continue
-        oid, cid, amount = next(order_iter)
+        try:
+            oid, cid, amount = next(order_iter)
+            reuse = False
+        except StopIteration:
+            if not leftovers:
+                raise
+            oid, cid, amount = leftovers[recycled % len(leftovers)]
+            recycled += 1
+            reuse = True
         r = rng.random()
-        if r < 0.5:
+        if r < 0.5 and not reuse:
             task = TaskSpec(
                 task_id=f"{arc_id}-e{i}-indep-refund",
                 dependent=False, kind="I_refund",

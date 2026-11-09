@@ -1,0 +1,132 @@
+--- attempt 1 Sun Nov  8 13:31:29 PST 2026
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 812, in completion
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 748, in completion
+    ) = self.make_sync_openai_chat_completion_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/logging_utils.py", line 336, in sync_wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 487, in make_sync_openai_chat_completion_request
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 464, in make_sync_openai_chat_completion_request
+    raw_response = openai_client.chat.completions.with_raw_response.create(**data, timeout=timeout)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_legacy_response.py", line 367, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_utils/_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/resources/chat/completions/completions.py", line 1251, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1332, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1105, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5437, in completion
+    response = _complete_custom_openai(_dispatch_ctx)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 2406, in _complete_custom_openai
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 2378, in _complete_custom_openai
+    response = openai_chat_completions.completion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 823, in completion
+    raise OpenAIError(
+litellm.llms.openai.common_utils.OpenAIError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5564, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2499, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2265, in exception_type
+    _map_openai_exception(
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 281, in _map_openai_exception
+    raise RateLimitError(
+litellm.exceptions.RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 195, in <module>
+    main()
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 191, in main
+    run(p.parse_args())
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 135, in run
+    memory.write(f"{arc.arc_id}-e{ep.index}",
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory.py", line 108, in write
+    + self.summarize(transcript))[-self.max_chars:]
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory_llm.py", line 226, in summarize
+    text, pt, ct = self.llm_fn(SUMMARY_SYSTEM, transcript)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory_llm.py", line 78, in llm
+    hit, was_cached = _cached(f"llm|{model}", f"{system}\x00{user}",
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory_llm.py", line 41, in _cached
+    value = compute()
+            ^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory_llm.py", line 71, in compute
+    resp = litellm.completion(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1527, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5598, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1574, in wrapper
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5564, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2499, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2265, in exception_type
+    _map_openai_exception(
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 281, in _map_openai_exception
+    raise RateLimitError(
+litellm.exceptions.RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.
+--- attempt 2 Sun Nov  8 14:13:31 PST 2026
+--- attempt 1 Sun Nov  8 14:25:06 PST 2026

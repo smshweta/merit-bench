@@ -61,7 +61,8 @@ def run(args: argparse.Namespace) -> Path:
         corruption_settings += [(m, r) for m in args.corrupt_modes.split(",")
                                 for r in (0.1, 0.3)]
 
-    for seed in range(args.seeds):
+    seed_start = getattr(args, "seed_start", 0)
+    for seed in range(seed_start, seed_start + args.seeds):
         arcs = domain.generate_suite(
             n_arcs=args.arcs, episodes_per_arc=args.episodes,
             dep_ratio=args.dep_ratio, base_seed=seed,
@@ -172,6 +173,8 @@ def main() -> None:
     p.add_argument("--arcs", type=int, default=10)
     p.add_argument("--episodes", type=int, default=5)
     p.add_argument("--seeds", type=int, default=1)
+    p.add_argument("--seed-start", type=int, default=0,
+                   help="first seed (to add seeds to an existing grid)")
     p.add_argument("--dep-ratio", type=float, default=0.5)
     p.add_argument("--conditions", default="C0,C1,C2,C3,C4,C5")
     p.add_argument("--corrupt", action="store_true",

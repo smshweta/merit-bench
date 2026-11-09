@@ -134,6 +134,76 @@ class EmbeddingRAG(KeywordRAG):
         return "\n---\n".join(out)
 
 
+TEMPORAL_HEADER = ("Retrieved notes, oldest first. If notes disagree, the "
+                   "most recent note supersedes earlier ones.")
+
+
+class TemporalRAG(EmbeddingRAG):
+    """C2-T (revision-stage condition): the same cosine top-k retrieval as
+    C2, but the selected chunks are presented oldest-to-newest, each labelled
+    with the session after which it was saved, under a header telling the
+    agent that later notes supersede earlier ones. This gives retrieval the
+    temporal signals that C1 (order) and C3/C4 (keep-latest prompts) have.
+    """
+    name = "C2T_rag_temporal"
+
+    def _session_of(self) -> list[int]:
+        order: dict[str, int] = {}
+        out = []
+        for r in self.records:
+            if r.episode_id not in order:
+                order[r.episode_id] = len(order) + 1
+            out.append(order[r.episode_id])
+        return out
+
+    def _scores(self, qvec: list[float], sessions: list[int]) -> list[float]:
+        return [_cosine(qvec, v) for v in self._vectors]
+
+    def read(self, current_context: str, budget_chars: int = 4000) -> str:
+        if not self.records:
+            return ""
+        if len(self._vectors) < len(self.records):
+            vecs, toks = self.embed_fn(
+                [r.text for r in self.records[len(self._vectors):]])
+            self._vectors.extend(vecs)
+            self.meter["embedding_tokens"] += toks
+        (qvec,), toks = self.embed_fn([current_context])
+        self.meter["embedding_tokens"] += toks
+        sessions = self._session_of()
+        scores = self._scores(qvec, sessions)
+        ranked = sorted(range(len(self.records)), key=lambda i: -scores[i])
+        chosen, used = [], 0
+        for i in ranked[: self.top_k]:
+            text = self.records[i].text
+            if used + len(text) > budget_chars:
+                break
+            chosen.append(i)
+            used += len(text)
+        chosen.sort()  # write order == chronological order
+        parts = [f"[saved after session {sessions[i]}]\n{self.records[i].text}"
+                 for i in chosen]
+        return TEMPORAL_HEADER + "\n" + "\n---\n".join(parts)
+
+
+class RecencyRAG(TemporalRAG):
+    """C2-TR (revision-stage condition): C2-T plus recency-weighted ranking,
+    score = (1 - alpha) * cosine + alpha * 0.5 ** (age / half_life), where
+    age is the number of sessions since the chunk was saved."""
+    name = "C2TR_rag_recency"
+
+    def __init__(self, embed_fn, alpha: float = 0.3,
+                 half_life: float = 2.0, **kw) -> None:
+        super().__init__(embed_fn, **kw)
+        self.alpha = alpha
+        self.half_life = half_life
+
+    def _scores(self, qvec: list[float], sessions: list[int]) -> list[float]:
+        latest = max(sessions)
+        return [(1 - self.alpha) * _cosine(qvec, v)
+                + self.alpha * 0.5 ** ((latest - s) / self.half_life)
+                for v, s in zip(self._vectors, sessions)]
+
+
 SUMMARY_SYSTEM = (
     "You maintain the agent's running notes across customer/ops sessions. "
     "Summarize the episode transcript in at most 8 short lines. You MUST "
@@ -226,4 +296,7 @@ def upgraded_conditions(llm_model: str, embed_model: str) -> dict:
         "C3": lambda: LLMSummary(llm),
         "C4": lambda: LLMFacts(llm),
         "C5": lambda: LLMHybrid(llm, emb),
+        # revision-stage (not preregistered) temporally aware retrieval
+        "C2T": lambda: TemporalRAG(emb),
+        "C2TR": lambda: RecencyRAG(emb),
     }

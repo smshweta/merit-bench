@@ -62,6 +62,7 @@ COND_LABEL = {
 COLOR = {
     "C0": "#8a8a85", "C1": "#2a78d6", "C2": "#1baf7a",
     "C3": "#eda100", "C4": "#008300", "C5": "#4a3aa7",
+    "C2T": "#62c9d6", "C2TR": "#0b5f73",
 }
 # redundant marker encoding so conditions stay distinguishable without color
 MARKER = {"C0": "o", "C1": "s", "C2": "^", "C3": "D", "C4": "v", "C5": "P"}
@@ -282,17 +283,23 @@ PHASEC_MODELS = [  # slice dir prefix -> plot label
 
 
 def fig6_phasec() -> None:
-    """Hard tier across agent models (Phase C): C2 collapse is model- and
-    domain-idiosyncratic; C3/C4 are robust. mini3 bars carry min-max
-    whiskers across its 3 seeds."""
-    conds = ["C2", "C3", "C4"]
+    """Hard tier across agent models: preregistered grid (runs/phasec) plus
+    the revision-stage seeds 1-2 and temporal retrieval conditions
+    (runs/revision). Every model now has 3 seeds; bars are seed means with
+    min-max whiskers across seeds."""
+    conds = ["C2", "C2T", "C2TR", "C3", "C4"]
+    extra = {"mini3": ["mini3-temporal"], "gpt41": ["gpt41-temporal", "gpt41-s12"],
+             "haiku45": ["haiku45-temporal", "haiku45-s12"]}
     rows_by = {}
     for slice_, _ in PHASEC_MODELS:
         for dom in DOMAINS:
-            path = Path(f"runs/phasec/{slice_}-{dom}-hard/results.jsonl")
-            rows_by[slice_, dom] = dep_clean(load(str(path), dom, "hard"))
-    fig, axes = plt.subplots(1, 3, figsize=(6.5, 2.1), sharey=True)
-    width = 0.26
+            paths = [Path(f"runs/phasec/{slice_}-{dom}-hard/results.jsonl")]
+            paths += [Path(f"runs/revision/{e}-{dom}-hard/results.jsonl")
+                      for e in extra[slice_]]
+            rows_by[slice_, dom] = [r for path in paths if path.exists()
+                                    for r in dep_clean(load(str(path), dom, "hard"))]
+    fig, axes = plt.subplots(1, 3, figsize=(6.5, 2.3), sharey=True)
+    width = 0.27
     for ax, dom in zip(axes, DOMAINS):
         for j, (slice_, mlabel) in enumerate(PHASEC_MODELS):
             for k, c in enumerate(conds):
@@ -304,20 +311,18 @@ def fig6_phasec() -> None:
                 x = k + (j - 1) * width
                 hatch = {"haiku45": "", "gpt41": "//", "mini3": "xx"}[slice_]
                 ax.bar(x, y, width * 0.92, color=COLOR[c], hatch=hatch,
-                       edgecolor="white", linewidth=0.4,
-                       label=mlabel if (k == 0 and dom == "d1") else None)
+                       edgecolor="white", linewidth=0.4)
                 if len(per_seed) > 1:
                     ax.errorbar(x, y, yerr=[[y - min(per_seed)],
                                             [max(per_seed) - y]],
-                                fmt="none", ecolor="#444", capsize=2,
-                                linewidth=0.9)
+                                fmt="none", ecolor="#444", capsize=1.5,
+                                linewidth=0.7)
         ax.set_xticks(range(len(conds)))
-        ax.set_xticklabels(conds)
+        ax.set_xticklabels(conds, fontsize=7)
         ax.set_title(DOMAIN_LABEL[dom])
         ax.set_ylim(0, 1.03)
         ax.grid(axis="x", visible=False)
     axes[0].set_ylabel("dependent-task TSR (hard)")
-    # legend keyed by hatch only (color encodes condition, as elsewhere)
     handles = [plt.Rectangle((0, 0), 1, 1, facecolor="#b9b9b4", hatch=h,
                              edgecolor="white")
                for h in ("", "//", "xx")]

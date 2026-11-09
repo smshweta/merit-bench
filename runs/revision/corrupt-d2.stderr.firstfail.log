@@ -1,0 +1,52 @@
+--- attempt 1 Sun Nov  8 12:27:23 PST 2026
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 195, in <module>
+    main()
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 191, in main
+    run(p.parse_args())
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 99, in run
+    user_messages=user.turns(),
+                  ^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/user_sim.py", line 46, in turns
+    return [self._llm_turn(t) for t in self.script]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/user_sim.py", line 46, in <listcomp>
+    return [self._llm_turn(t) for t in self.script]
+            ^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/user_sim.py", line 58, in _llm_turn
+    resp = litellm.completion(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1574, in wrapper
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 4804, in completion
+    raise ValueError("model param not passed in.")
+ValueError: model param not passed in.
+--- attempt 2 Sun Nov  8 12:27:31 PST 2026
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 195, in <module>
+    main()
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 191, in main
+    run(p.parse_args())
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 99, in run
+    user_messages=user.turns(),
+                  ^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/user_sim.py", line 46, in turns
+    return [self._llm_turn(t) for t in self.script]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/user_sim.py", line 46, in <listcomp>
+    return [self._llm_turn(t) for t in self.script]
+            ^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/user_sim.py", line 58, in _llm_turn
+    resp = litellm.completion(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1574, in wrapper
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 4804, in completion
+    raise ValueError("model param not passed in.")
+ValueError: model param not passed in.

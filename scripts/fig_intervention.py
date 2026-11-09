@@ -19,7 +19,8 @@ VARIANTS = [("original", "similarity order\n(as in grid)", "#8a8a85", ""),
             ("antichrono", "newest first\n(stale last)", "#d64545", "//"),
             ("stamped", "similarity order\n+ session labels", "#eda100", ".."),
             ("chrono", "oldest first\n(latest last)", "#2a78d6", "xx")]
-MODELS = [("mini3", "gpt-4.1-mini (180 probes)"), ("gpt41", "GPT-4.1 (60 probes)")]
+MODELS = [("mini3", "gpt-4.1-mini\n(180 probes)"), ("gpt41", "GPT-4.1\n(60 probes)"),
+          ("haiku45", "Haiku 4.5\n(60 probes)")]
 
 
 def main() -> None:

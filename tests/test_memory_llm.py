@@ -102,3 +102,44 @@ def test_llm_hybrid_combines_and_meters():
     assert m.meter["embedding_tokens"] > 0
     assert corrupt_records(m, rate=1.0, rng=random.Random(0),
                            mode="stale") > 0
+
+# ---------------- C2-T / C2-TR (revision-stage conditions) ----------------
+
+from merit.memory_llm import RecencyRAG, TemporalRAG, TEMPORAL_HEADER
+
+
+def test_temporal_rag_orders_oldest_first_with_session_labels():
+    m = TemporalRAG(fake_embed, chunk_chars=10_000, top_k=2)
+    m.write("arc-e0", "agreed refund is 4287 for the order")
+    m.write("arc-e1", "unrelated room booking")
+    m.write("arc-e2", "refund refund renegotiated refund now 5150")
+    got = m.read("refund")
+    assert got.startswith(TEMPORAL_HEADER)
+    # both refund chunks retrieved; chronological, not similarity, order
+    assert got.index("4287") < got.index("5150")
+    assert "[saved after session 1]" in got
+    assert "[saved after session 3]" in got
+    assert "room booking" not in got
+
+
+def test_recency_rag_prefers_recent_on_ties():
+    m = RecencyRAG(fake_embed, chunk_chars=10_000, top_k=1)
+    m.write("e0", "refund amount 4287")
+    m.write("e1", "refund amount 5150")
+    got = m.read("refund")
+    assert "5150" in got and "4287" not in got
+    # plain temporal RAG with the same tie keeps the first-ranked (older)
+    t = TemporalRAG(fake_embed, chunk_chars=10_000, top_k=1)
+    t.write("e0", "refund amount 4287")
+    t.write("e1", "refund amount 5150")
+    assert "4287" in t.read("refund")
+
+
+def test_upgraded_conditions_expose_temporal_variants(monkeypatch):
+    import merit.memory_llm as ml
+    monkeypatch.setattr(ml, "default_embed_fn", lambda m: fake_embed)
+    monkeypatch.setattr(ml, "default_llm_fn", lambda m: fake_llm_summary)
+    conds = ml.upgraded_conditions("x", "y")
+    assert isinstance(conds["C2T"](), TemporalRAG)
+    assert isinstance(conds["C2TR"](), RecencyRAG)
+    assert list(conds)[:6] == ["C0", "C1", "C2", "C3", "C4", "C5"]

@@ -1,0 +1,68 @@
+=== temporal mini3 d1-easy Sun Nov  8 12:27:23 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d1-easy/results.jsonl in 773.9s
+=== temporal mini3 d1-medium Sun Nov  8 12:40:19 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d1-medium/results.jsonl in 1018.4s
+=== temporal mini3 d1-hard Sun Nov  8 12:57:18 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d1-hard/results.jsonl in 961.1s
+=== temporal mini3 d2-easy Sun Nov  8 13:13:20 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d2-easy/results.jsonl in 711.4s
+=== temporal mini3 d2-medium Sun Nov  8 13:25:13 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d2-medium/results.jsonl in 793.9s
+=== temporal mini3 d2-hard Sun Nov  8 13:38:30 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d2-hard/results.jsonl in 1056.0s
+=== temporal mini3 d3-easy Sun Nov  8 13:56:08 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d3-easy/results.jsonl in 769.2s
+=== temporal mini3 d3-medium Sun Nov  8 14:08:58 PST 2026
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! cell runs/revision/mini3-temporal-d3-medium failed (attempt 1), see runs/revision/mini3-temporal-d3-medium.stderr.log
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! cell runs/revision/mini3-temporal-d3-medium failed (attempt 2), see runs/revision/mini3-temporal-d3-medium.stderr.log
+=== temporal mini3 d1-easy Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/mini3-temporal-d1-easy (done)
+=== temporal mini3 d1-medium Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/mini3-temporal-d1-medium (done)
+=== temporal mini3 d1-hard Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/mini3-temporal-d1-hard (done)
+=== temporal mini3 d2-easy Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/mini3-temporal-d2-easy (done)
+=== temporal mini3 d2-medium Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/mini3-temporal-d2-medium (done)
+=== temporal mini3 d2-hard Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/mini3-temporal-d2-hard (done)
+=== temporal mini3 d3-easy Sun Nov  8 14:25:06 PST 2026
+skip runs/revision/mini3-temporal-d3-easy (done)
+=== temporal mini3 d3-medium Sun Nov  8 14:25:06 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d3-medium/results.jsonl in 746.0s
+=== temporal mini3 d3-hard Sun Nov  8 14:37:34 PST 2026
+wrote 300 scored episodes to runs/revision/mini3-temporal-d3-hard/results.jsonl in 871.7s
+=== temporal done Sun Nov  8 14:52:07 PST 2026

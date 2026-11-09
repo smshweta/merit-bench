@@ -1,0 +1,35 @@
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d1-easy/results.jsonl in 310.2s
+wrote 800 scored episodes to runs/revision/haiku45-s12-d1-easy/results.jsonl in 2616.3s
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d1-medium/results.jsonl in 456.0s
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! cell runs/revision/haiku45-s12-d1-medium failed (attempt 1), see runs/revision/haiku45-s12-d1-medium.stderr.log
+skip runs/revision/haiku45-temporal-d1-easy (done)
+skip runs/revision/haiku45-s12-d1-easy (done)
+skip runs/revision/haiku45-temporal-d1-medium (done)
+wrote 800 scored episodes to runs/revision/haiku45-s12-d1-medium/results.jsonl in 3275.4s
+wrote 100 scored episodes to runs/revision/haiku45-temporal-d1-hard/results.jsonl in 389.3s
+wrote 800 scored episodes to runs/revision/haiku45-s12-d1-hard/results.jsonl in 3112.1s
+=== haiku-d1 done Sun Nov  8 16:18:08 PST 2026
