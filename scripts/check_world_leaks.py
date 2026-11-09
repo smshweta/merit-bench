@@ -22,12 +22,18 @@ READ_TOOLS = {"get_order", "get_policy", "search_logs", "get_deploy_history",
 CELLS = (sorted(Path("runs/phaseb").glob("d?-*"))
          + sorted(Path("runs/phasec").glob("*-d?-*"))
          + sorted(Path("runs/sweep").glob("d?-*")))
+# --revision: also audit the revision-stage cells with 5-episode arcs (the
+# long-history cells use a different arc length and are not regenerated here)
+REVISION_CELLS = [p for p in sorted(Path("runs/revision").glob("*"))
+                  if p.is_dir() and not p.name.startswith(("long-", "logs"))]
 
 
 def main() -> None:
+    import sys
+    cells = CELLS + (REVISION_CELLS if "--revision" in sys.argv else [])
     cache: dict = {}
     exposed, total, c0_n, c0_succ = Counter(), Counter(), 0, 0
-    for cell in CELLS:
+    for cell in cells:
         res = cell / "results.jsonl"
         if not res.exists():
             continue

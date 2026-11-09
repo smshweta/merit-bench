@@ -105,7 +105,15 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
       hard    UPDATED-FACT probes: the fact is planted, then CHANGED in a
               later episode; the probe requires the latest value. Stresses
               update-on-write vs. stores that retain both values.
+      implicit  revision-stage variant of hard: IDENTICAL arcs and values
+              (same RNG stream), but the update restates the fact with the
+              new value and no supersession cue ("now", "replacing"), and
+              the probe does not ask for the "current" value. Only the
+              order of the two statements says which value is live.
     """
+    implicit = difficulty == "implicit"
+    if implicit:
+        difficulty = "hard"
     rng = random.Random((seed, arc_id, difficulty).__repr__()
                         if difficulty != "easy"
                         else (seed, arc_id).__repr__())
@@ -189,16 +197,25 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                 checker="check_message_sent",
                 checker_args={"customer_id": cid,
                               "must_contain": str(agreed1)})
+            upd_msg = (
+                f"Customer {cid} again about order {oid}: we "
+                f"re-negotiated with your colleague — the agreed partial "
+                f"refund is now exactly {agreed2} cents, replacing the "
+                f"earlier figure. Still do NOT process it yet. Just send "
+                f"me a message confirming this agreed amount of "
+                f"{agreed2} cents for order {oid}.")
+            if implicit:
+                upd_msg = (
+                    f"Hello, customer {cid} here, about order {oid} and the "
+                    f"damaged item. I spoke with your colleague and the "
+                    f"partial refund will be exactly {agreed2} cents. Do "
+                    f"NOT process the refund yet. Just send me a message "
+                    f"confirming this agreed amount of {agreed2} cents for "
+                    f"order {oid}.")
             update = TaskSpec(
                 task_id=f"{arc_id}-e{upd_pos}-update-refund",
                 dependent=False, kind="I_note",
-                user_messages=[
-                    f"Customer {cid} again about order {oid}: we "
-                    f"re-negotiated with your colleague — the agreed partial "
-                    f"refund is now exactly {agreed2} cents, replacing the "
-                    f"earlier figure. Still do NOT process it yet. Just send "
-                    f"me a message confirming this agreed amount of "
-                    f"{agreed2} cents for order {oid}."],
+                user_messages=[upd_msg],
                 checker="check_message_sent",
                 checker_args={"customer_id": cid,
                               "must_contain": str(agreed2)})
@@ -206,6 +223,9 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                 task_id=f"{arc_id}-e{pos}-probe-refund-upd",
                 dependent=True, kind="T_refund_upd",
                 user_messages=[
+                    f"Hi, following up on order {oid} — please now process "
+                    f"the partial refund we agreed on."
+                    if implicit else
                     f"Hi, following up on order {oid} — please now process "
                     f"the partial refund we agreed on. Use the CURRENT "
                     f"agreed amount from your notes."],

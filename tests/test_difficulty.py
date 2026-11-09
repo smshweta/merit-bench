@@ -14,7 +14,7 @@ DOMAIN_MODULES = {"d1": d1, "d2": d2, "d3": d3}
 
 
 @pytest.mark.parametrize("dom", ["d1", "d2", "d3"])
-@pytest.mark.parametrize("difficulty", ["easy", "medium", "hard"])
+@pytest.mark.parametrize("difficulty", ["easy", "medium", "hard", "implicit"])
 def test_generation_deterministic_and_leak_free(dom, difficulty):
     mod = DOMAIN_MODULES[dom]
     s1 = mod.generate_suite(n_arcs=4, dep_ratio=0.75, difficulty=difficulty)
@@ -68,7 +68,7 @@ def test_memory_utilized_requires_all_golds():
 
 
 @pytest.mark.parametrize("dom", ["d1", "d2", "d3"])
-@pytest.mark.parametrize("difficulty", ["easy", "medium", "hard"])
+@pytest.mark.parametrize("difficulty", ["easy", "medium", "hard", "implicit"])
 def test_mock_pilot_grid(tmp_path, dom, difficulty):
     sys.path.insert(0, "scripts")
     from run_pilot import run
@@ -92,9 +92,31 @@ def test_mock_pilot_grid(tmp_path, dom, difficulty):
     # memory must help; C4 (update-on-write) must ace the hard tier
     assert tsr("C1", dep=True) > 0.0
     assert tsr("C4", dep=True) > 0.0
-    if difficulty == "hard":
+    if difficulty in ("hard", "implicit"):
         assert tsr("C4", dep=True) == 1.0
     # independent tasks are solvable without memory
     assert tsr("C0", dep=False) == 1.0
     # delta scoring invariant
     assert not any(r["success"] and r["pre_satisfied"] for r in rows)
+
+CUES = ("CURRENT", "replac", "now exactly", "re-negotiated", "moved")
+
+
+@pytest.mark.parametrize("dom", ["d1", "d2", "d3"])
+def test_implicit_tier_matches_hard_without_cues(dom):
+    """The implicit tier reuses the hard arcs and values exactly (paired
+    comparison); only update/probe wording differs, with no supersession
+    cue in the update or probe."""
+    mod = DOMAIN_MODULES[dom]
+    hard = mod.generate_suite(n_arcs=5, dep_ratio=0.75, difficulty="hard")
+    impl = mod.generate_suite(n_arcs=5, dep_ratio=0.75, difficulty="implicit")
+    for ah, ai in zip(hard, impl):
+        assert ([e.task.task_id for e in ah.episodes]
+                == [e.task.task_id for e in ai.episodes])
+        for eh, ei in zip(ah.episodes, ai.episodes):
+            th, ti = eh.task, ei.task
+            assert th.golds() == ti.golds()
+            assert th.checker_args == ti.checker_args
+            if ti.dependent or "update" in ti.task_id:
+                for m in ti.user_messages:
+                    assert not any(c in m for c in CUES), m

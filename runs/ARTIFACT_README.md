@@ -19,7 +19,13 @@ Run directories:
                            and Haiku 4.5; `*-temporal-*` temporal retrieval
                            conditions C2T/C2TR; `corrupt-*` corruption
                            sweeps; `long-mini-*` 20-episode arcs.
-                           Analysis: scripts/analyze_revision.py
+                           Analysis: scripts/analyze_revision.py.
+                           Second round: `*-c2c-*` conflict-aware
+                           retrieval C2C on the grid; `*-implicit-<dom>-<g>`
+                           implicit-update tier (groups a/b/c split the
+                           nine conditions). Analysis:
+                           scripts/analyze_rev2.py (output in
+                           revision/analysis_rev2.txt)
 - `intervention/`          counterfactual replay of C2 hard-tier probes
 - `mur_audit/`             frozen 100-episode human-audit sample:
                            labels.csv (two annotators, blind to the tracer)

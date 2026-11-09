@@ -142,4 +142,34 @@ def test_upgraded_conditions_expose_temporal_variants(monkeypatch):
     conds = ml.upgraded_conditions("x", "y")
     assert isinstance(conds["C2T"](), TemporalRAG)
     assert isinstance(conds["C2TR"](), RecencyRAG)
+    from merit.memory_llm import ConflictRAG
+    assert isinstance(conds["C2C"](), ConflictRAG)
     assert list(conds)[:6] == ["C0", "C1", "C2", "C3", "C4", "C5"]
+
+
+# ---------------- C2-C (conflict-aware retrieval) ----------------
+
+from merit.memory_llm import ConflictRAG, RESOLVE_HEADER
+
+
+def test_conflict_rag_resolves_via_llm_and_meters():
+    seen = {}
+
+    def fake_resolver(system, user):
+        seen["user"] = user
+        # keep the value from the latest-labelled note
+        return "ORD-1 agreed refund: 5150 cents", 80, 10
+
+    m = ConflictRAG(fake_embed, fake_resolver, chunk_chars=10_000, top_k=2)
+    m.write("e0", "agreed refund is 4287 for ORD-1")
+    m.write("e1", "refund refund renegotiated 5150 for ORD-1")
+    got = m.read("refund")
+    assert got.startswith(RESOLVE_HEADER)
+    assert "5150" in got and "4287" not in got
+    # resolver saw both chunks, oldest first, with session labels
+    assert seen["user"].index("4287") < seen["user"].index("5150")
+    assert "[saved after session 2]" in seen["user"]
+    assert not seen["user"].startswith(TEMPORAL_HEADER)
+    assert m.meter["prompt_tokens"] == 80
+    assert m.meter["completion_tokens"] == 10
+    assert ConflictRAG(fake_embed, fake_resolver).read("x") == ""

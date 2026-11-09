@@ -1,0 +1,9 @@
+=== rev2 gpt41 c2c d2-hard Sun Nov  8 20:17:47 PST 2026
+wrote 150 scored episodes to runs/revision/gpt41-c2c-d2-hard/results.jsonl in 676.3s
+=== rev2 gpt41 c2c d2-easy Sun Nov  8 20:29:07 PST 2026
+wrote 150 scored episodes to runs/revision/gpt41-c2c-d2-easy/results.jsonl in 599.3s
+=== rev2 gpt41 c2c d2-medium Sun Nov  8 20:39:16 PST 2026
+wrote 150 scored episodes to runs/revision/gpt41-c2c-d2-medium/results.jsonl in 526.2s
+=== rev2 gpt41 implicit d2 Sun Nov  8 20:48:03 PST 2026
+skip runs/revision/gpt41-implicit-d2 (done)
+=== rev2-gpt41-d2 done Sun Nov  8 20:48:03 PST 2026

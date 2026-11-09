@@ -7,6 +7,10 @@
 #   gpt41-<dom> GPT-4.1: C2T/C2TR on seed 0, all 8 conditions on seeds 1-2
 #   long        long-history stress test: hard tier, 20 episodes/arc,
 #               3 probes/arc, all 8 conditions              (gpt-4.1-mini)
+#   rev2-<model>-<dom>  second round: C2C on the 3x3 grid and the
+#               implicit-update tier, 3 seeds (the implicit tier was run
+#               split by condition group with run_rev2_implicit.sh, and
+#               resumed with resume_rev2.sh after an API-credit outage)
 # Usage: scripts/run_revision.sh <part>   (parts run as separate processes)
 # Memory side pinned to gpt-4.1-mini + text-embedding-3-small, as in Phase C.
 set -eu
@@ -93,6 +97,27 @@ case "$part" in
       cell $OUT/haiku45-s12-$dom-$tier --model $H --seeds 2 --seed-start 1 \
         --domain $dom --difficulty $tier --conditions $ALL
     done
+    ;;
+  rev2-*)
+    # second revision round: conflict-aware retrieval (C2C) on the 3x3
+    # grid, and the implicit-update tier (hard arcs without supersession
+    # cues) with all nine conditions; 3 seeds. Usage: rev2-<model>-<dom>
+    #   model: mini | gpt41 | haiku45
+    rest=${part#rev2-}; mk=${rest%-*}; dom=${rest##*-}
+    case "$mk" in
+      mini) M=gpt-4.1-mini ;;
+      gpt41) M=gpt-4.1 ;;
+      haiku45) M=anthropic/claude-haiku-4-5-20251001 ;;
+      *) echo "unknown model $mk"; exit 2 ;;
+    esac
+    for tier in hard easy medium; do
+      echo "=== rev2 $mk c2c $dom-$tier $(date)"
+      cell $OUT/$mk-c2c-$dom-$tier --model $M --seeds 3 \
+        --domain $dom --difficulty $tier --conditions C2C
+    done
+    echo "=== rev2 $mk implicit $dom $(date)"
+    cell $OUT/$mk-implicit-$dom --model $M --seeds 3 --domain $dom \
+      --difficulty implicit --conditions $ALL,C2C
     ;;
   *) echo "unknown part $part"; exit 2 ;;
 esac

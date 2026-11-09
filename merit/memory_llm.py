@@ -204,6 +204,46 @@ class RecencyRAG(TemporalRAG):
                 for v, s in zip(self._vectors, sessions)]
 
 
+RESOLVE_SYSTEM = (
+    "You resolve conflicts in notes retrieved from an agent's memory. The "
+    "notes are listed oldest first; each is labelled with the session after "
+    "which it was saved. Two notes CONFLICT when they give different values "
+    "for the same attribute of the same entity (for example an agreed amount "
+    "for an order, an address, a planned config fix, a rollback target, a "
+    "usual room, or the place, day or time of an event). For every conflict "
+    "keep only the value from the most recent note. Output the resulting "
+    "current facts, one per line, preserving verbatim every identifier, "
+    "amount, address, version, room, place, day and time, and every "
+    "agreed-but-not-yet-executed action. Do not output superseded values. "
+    "Output only the facts.")
+
+RESOLVE_HEADER = ("Current facts from memory (conflicting notes resolved; "
+                  "superseded values removed):")
+
+
+class ConflictRAG(TemporalRAG):
+    """C2-C (revision-stage condition): conflict-aware retrieval. The same
+    cosine top-k selection as C2/C2T; the selected chunks, with session
+    labels, are passed to a memory-side LLM that detects conflicting values
+    for the same entity attribute and keeps only the most recent one. The
+    agent sees only the resolved facts. The resolver call is metered."""
+    name = "C2C_rag_conflict"
+
+    def __init__(self, embed_fn, llm_fn, **kw) -> None:
+        super().__init__(embed_fn, **kw)
+        self.llm_fn = llm_fn
+
+    def read(self, current_context: str, budget_chars: int = 4000) -> str:
+        notes = super().read(current_context, budget_chars)
+        if not notes:
+            return ""
+        body = notes[len(TEMPORAL_HEADER) + 1:]
+        text, pt, ct = self.llm_fn(RESOLVE_SYSTEM, body)
+        self.meter["prompt_tokens"] += pt
+        self.meter["completion_tokens"] += ct
+        return RESOLVE_HEADER + "\n" + text.strip()[:budget_chars]
+
+
 SUMMARY_SYSTEM = (
     "You maintain the agent's running notes across customer/ops sessions. "
     "Summarize the episode transcript in at most 8 short lines. You MUST "
@@ -299,4 +339,6 @@ def upgraded_conditions(llm_model: str, embed_model: str) -> dict:
         # revision-stage (not preregistered) temporally aware retrieval
         "C2T": lambda: TemporalRAG(emb),
         "C2TR": lambda: RecencyRAG(emb),
+        # revision-stage conflict-aware retrieval (LLM resolver at read)
+        "C2C": lambda: ConflictRAG(emb, llm),
     }

@@ -241,7 +241,12 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
     """Deterministic given (arc_id, seed, n_episodes, dep_ratio, difficulty).
     Difficulty tiers: easy = single fact (room) or the already-multi-fact
     dinner; medium = usual room AND usual meeting time, probe requires both;
-    hard = the usual room CHANGES mid-arc and the probe needs the latest."""
+    hard = the usual room CHANGES mid-arc and the probe needs the latest.
+    implicit = the hard arcs and values unchanged, but the change carries no
+    supersession cue and the probe does not ask for the current details."""
+    implicit = difficulty == "implicit"
+    if implicit:
+        difficulty = "hard"
     rng = random.Random((seed, arc_id, difficulty).__repr__()
                         if difficulty != "easy"
                         else (seed, arc_id).__repr__())
@@ -356,6 +361,11 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                 task_id=f"{arc_id}-e{upd_pos}-update-dinner",
                 dependent=False, kind="I_note",
                 user_messages=[
+                    f"About my dinner with {person}: still waiting on the "
+                    f"babysitter, so don't create the event yet. Just send "
+                    f"me an email confirming dinner with {person} at "
+                    f"{place2} on {day} at {time}."
+                    if implicit else
                     f"Heads up — my dinner with {person} moved: same day "
                     f"and time, different spot. Don't add it to the "
                     f"calendar yet; just send me an email confirming "
@@ -366,6 +376,9 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                 task_id=f"{arc_id}-e{pos}-probe-dinner-upd",
                 dependent=True, kind="T_dinner_upd",
                 user_messages=[
+                    f"The babysitter is confirmed — please add my dinner "
+                    f"with {person} to the calendar now."
+                    if implicit else
                     f"The babysitter is confirmed — please add my dinner "
                     f"with {person} to the calendar now, using the CURRENT "
                     f"details from your notes."],

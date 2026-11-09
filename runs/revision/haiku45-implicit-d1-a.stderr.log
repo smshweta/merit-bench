@@ -1,0 +1,173 @@
+--- attempt 1 Sun Nov  8 20:19:45 PST 2026
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 1308, in embedding
+    headers, sync_embedding_response = self.make_sync_openai_embedding_request(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/logging_utils.py", line 336, in sync_wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 1183, in make_sync_openai_embedding_request
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 1177, in make_sync_openai_embedding_request
+    raw_response = openai_client.embeddings.with_raw_response.create(**data, timeout=timeout)  # type: ignore
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_legacy_response.py", line 367, in wrapped
+    return cast(LegacyAPIResponse[R], func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/resources/embeddings.py", line 136, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1332, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/openai/_base_client.py", line 1105, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 6038, in embedding
+    response = openai_chat_completions.embedding(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/openai/openai.py", line 1339, in embedding
+    raise OpenAIError(status_code=status_code, message=error_text, headers=error_headers)
+litellm.llms.openai.common_utils.OpenAIError: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 195, in <module>
+    main()
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 191, in main
+    run(p.parse_args())
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 135, in run
+    memory.write(f"{arc.arc_id}-e{ep.index}",
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory_llm.py", line 110, in write
+    vecs, toks = self.embed_fn(new_texts)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory_llm.py", line 57, in embed
+    hit, was_cached = _cached(f"emb|{model}", t, compute)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory_llm.py", line 41, in _cached
+    value = compute()
+            ^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/memory_llm.py", line 54, in compute
+    resp = litellm.embedding(model=model, input=[t])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1574, in wrapper
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 6853, in embedding
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2499, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2265, in exception_type
+    _map_openai_exception(
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 281, in _map_openai_exception
+    raise RateLimitError(
+litellm.exceptions.RateLimitError: litellm.RateLimitError: RateLimitError: OpenAIException - Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+--- attempt 2 Sun Nov  8 20:50:32 PST 2026
+--- resume Sun Nov  8 20:52:43 PST 2026
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/anthropic/chat/handler.py", line 485, in completion
+    response = client.post(
+               ^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1195, in post
+    _raise_masked_sync_error(e, stream)
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/custom_httpx/http_handler.py", line 434, in _raise_masked_sync_error
+    raise MaskedHTTPStatusError(e, message=_text, text=_text) from None
+litellm.llms.custom_httpx.http_handler.MaskedHTTPStatusError: Client error '400 Bad Request' for url 'https://api.anthropic.com/v1/messages'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5449, in completion
+    response = _complete_anthropic(_dispatch_ctx)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 2608, in _complete_anthropic
+    response = anthropic_chat_completions.completion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/llms/anthropic/chat/handler.py", line 501, in completion
+    raise AnthropicError(
+litellm.llms.anthropic.common_utils.AnthropicError: {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CgrnAub7CkQ5EtH8W89Aa"}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5564, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2499, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2275, in exception_type
+    _map_anthropic_exception(
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 544, in _map_anthropic_exception
+    raise BadRequestError(
+litellm.exceptions.BadRequestError: litellm.BadRequestError: AnthropicException - {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CgrnAub7CkQ5EtH8W89Aa"}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 235, in <module>
+    main()
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 231, in main
+    run(p.parse_args())
+  File "/Users/shwetamishra/Downloads/merit-bench/scripts/run_pilot.py", line 134, in run
+    result = run_episode(
+             ^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/merit/runner.py", line 101, in run_episode
+    resp = llm.completion(model=model, messages=messages,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1527, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5598, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.11/3.11.13/Frameworks/Python.framework/Versions/3.11/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1574, in wrapper
+    raise e
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/utils.py", line 1422, in wrapper
+    result = original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/main.py", line 5564, in completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2499, in exception_type
+    raise e  # it's already mapped
+    ^^^^^^^
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2275, in exception_type
+    _map_anthropic_exception(
+  File "/Users/shwetamishra/Downloads/merit-bench/.venv/lib/python3.11/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 544, in _map_anthropic_exception
+    raise BadRequestError(
+litellm.exceptions.BadRequestError: litellm.BadRequestError: AnthropicException - {"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."},"request_id":"req_011CgrnAz6jG9WgWVS1Txsqb"}
+--- resume Sun Nov  8 21:14:53 PST 2026

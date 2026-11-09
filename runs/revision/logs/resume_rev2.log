@@ -1,0 +1,81 @@
+resume: kept 80 rows in 16 complete arcs, dropped 2 rows of partial arcs
+resume: kept 140 rows in 28 complete arcs, dropped 1 rows of partial arcs
+resume: kept 115 rows in 23 complete arcs, dropped 0 rows of partial arcs
+resume: kept 420 rows in 84 complete arcs, dropped 2 rows of partial arcs
+resume: kept 430 rows in 86 complete arcs, dropped 3 rows of partial arcs
+resume: kept 0 rows in 0 complete arcs, dropped 3 rows of partial arcs
+resume: kept 325 rows in 65 complete arcs, dropped 1 rows of partial arcs
+resume: kept 360 rows in 72 complete arcs, dropped 3 rows of partial arcs
+resume: kept 440 rows in 88 complete arcs, dropped 2 rows of partial arcs
+resume: kept 375 rows in 75 complete arcs, dropped 2 rows of partial arcs
+resume: kept 415 rows in 83 complete arcs, dropped 4 rows of partial arcs
+resume: kept 0 rows in 0 complete arcs, dropped 2 rows of partial arcs
+resume: kept 385 rows in 77 complete arcs, dropped 4 rows of partial arcs
+resume: kept 370 rows in 74 complete arcs, dropped 2 rows of partial arcs
+resume: kept 435 rows in 87 complete arcs, dropped 2 rows of partial arcs
+resume: kept 0 rows in 0 complete arcs, dropped 2 rows of partial arcs
+resume: kept 395 rows in 79 complete arcs, dropped 1 rows of partial arcs
+resume: kept 400 rows in 80 complete arcs, dropped 2 rows of partial arcs
+resume: kept 415 rows in 83 complete arcs, dropped 2 rows of partial arcs
+wrote 10 scored episodes to runs/revision/haiku45-c2c-d3-medium/results.jsonl in 50.1s
+wrote 10 scored episodes to runs/revision/haiku45-implicit-d2-a/results.jsonl in 50.0s
+=== resumed runs/revision/haiku45-c2c-d3-medium done Sun Nov  8 20:53:34 PST 2026
+=== resumed runs/revision/haiku45-implicit-d2-a done Sun Nov  8 20:53:34 PST 2026
+wrote 15 scored episodes to runs/revision/mini-implicit-d1-b/results.jsonl in 58.6s
+=== resumed runs/revision/mini-implicit-d1-b done Sun Nov  8 20:53:43 PST 2026
+wrote 20 scored episodes to runs/revision/gpt41-implicit-d2-c/results.jsonl in 82.4s
+=== resumed runs/revision/gpt41-implicit-d2-c done Sun Nov  8 20:54:06 PST 2026
+wrote 30 scored episodes to runs/revision/gpt41-implicit-d1-c/results.jsonl in 128.9s
+=== resumed runs/revision/gpt41-implicit-d1-c done Sun Nov  8 20:54:52 PST 2026
+wrote 35 scored episodes to runs/revision/haiku45-implicit-d3-b/results.jsonl in 134.9s
+=== resumed runs/revision/haiku45-implicit-d3-b done Sun Nov  8 20:54:59 PST 2026
+wrote 35 scored episodes to runs/revision/haiku45-c2c-d2-medium/results.jsonl in 136.1s
+=== resumed runs/revision/haiku45-c2c-d2-medium done Sun Nov  8 20:55:00 PST 2026
+wrote 35 scored episodes to runs/revision/mini-implicit-d3-c/results.jsonl in 152.6s
+=== resumed runs/revision/mini-implicit-d3-c done Sun Nov  8 20:55:17 PST 2026
+wrote 50 scored episodes to runs/revision/mini-implicit-d2-c/results.jsonl in 202.1s
+=== resumed runs/revision/mini-implicit-d2-c done Sun Nov  8 20:56:06 PST 2026
+wrote 65 scored episodes to runs/revision/haiku45-implicit-d2-b/results.jsonl in 215.6s
+=== resumed runs/revision/haiku45-implicit-d2-b done Sun Nov  8 20:56:20 PST 2026
+wrote 55 scored episodes to runs/revision/mini-implicit-d1-c/results.jsonl in 229.0s
+=== resumed runs/revision/mini-implicit-d1-c done Sun Nov  8 20:56:33 PST 2026
+wrote 75 scored episodes to runs/revision/haiku45-implicit-d2-c/results.jsonl in 283.9s
+=== resumed runs/revision/haiku45-implicit-d2-c done Sun Nov  8 20:57:28 PST 2026
+wrote 80 scored episodes to runs/revision/haiku45-implicit-d3-c/results.jsonl in 308.6s
+=== resumed runs/revision/haiku45-implicit-d3-c done Sun Nov  8 20:57:53 PST 2026
+wrote 70 scored episodes to runs/revision/haiku45-c2c-d1-medium/results.jsonl in 338.0s
+=== resumed runs/revision/haiku45-c2c-d1-medium done Sun Nov  8 20:58:22 PST 2026
+wrote 90 scored episodes to runs/revision/haiku45-implicit-d1-b/results.jsonl in 358.2s
+=== resumed runs/revision/haiku45-implicit-d1-b done Sun Nov  8 20:58:42 PST 2026
+wrote 125 scored episodes to runs/revision/haiku45-implicit-d1-c/results.jsonl in 548.3s
+=== resumed runs/revision/haiku45-implicit-d1-c done Sun Nov  8 21:01:52 PST 2026
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+!!! resume runs/revision/haiku45-implicit-d1-a failed
+wrote 450 scored episodes to runs/revision/mini-implicit-d3-b/results.jsonl in 1308.1s
+=== resumed runs/revision/mini-implicit-d3-b done Sun Nov  8 21:14:32 PST 2026
+wrote 450 scored episodes to runs/revision/mini-implicit-d2-b/results.jsonl in 1448.1s
+=== resumed runs/revision/mini-implicit-d2-b done Sun Nov  8 21:16:52 PST 2026
+=== resume_rev2 finished Sun Nov  8 21:16:52 PST 2026

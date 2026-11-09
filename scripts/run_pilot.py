@@ -42,6 +42,38 @@ def episode_cost_usd(model: str, prompt_tokens: int,
         return 0.0  # tokens are always logged; price can be applied later
 
 
+def _group(r: dict) -> tuple:
+    return (r["seed"], r["condition"], r["corrupt_mode"], r["corrupt_rate"],
+            r["arc_id"])
+
+
+def _resume(out_dir: Path, n_episodes: int) -> set:
+    """--resume: keep only (seed, condition, corruption, arc) groups whose
+    every episode is already scored, drop rows and traces of partial arcs
+    (memory state cannot be restored mid-arc), and return the complete
+    groups so the run skips them. Episodes are independent across groups
+    and fully seeded, so a resumed run equals an uninterrupted one."""
+    results = out_dir / "results.jsonl"
+    if not results.exists():
+        return set()
+    rows = [json.loads(l) for l in results.read_text().splitlines() if l]
+    count: dict[tuple, int] = {}
+    for r in rows:
+        count[_group(r)] = count.get(_group(r), 0) + 1
+    done = {g for g, n in count.items() if n == n_episodes}
+    keep = [r for r in rows if _group(r) in done]
+    results.write_text("".join(json.dumps(r) + "\n" for r in keep))
+    ids = {r["episode_id"] for r in keep}
+    traces = out_dir / "traces" / "episodes.jsonl"
+    if traces.exists():
+        lines = [l for l in traces.read_text().splitlines()
+                 if l and json.loads(l).get("episode_id") in ids]
+        traces.write_text("".join(l + "\n" for l in lines))
+    print(f"resume: kept {len(keep)} rows in {len(done)} complete arcs, "
+          f"dropped {len(rows) - len(keep)} rows of partial arcs")
+    return done
+
+
 def run(args: argparse.Namespace) -> Path:
     domain = DOMAINS[args.domain]
     memory_llm = getattr(args, "memory_llm", None)
@@ -55,6 +87,8 @@ def run(args: argparse.Namespace) -> Path:
     results_path = out_dir / "results.jsonl"
     t_start = time.time()
     n_rows = 0
+    done_groups = _resume(out_dir, args.episodes) if getattr(
+        args, "resume", False) else set()
 
     corruption_settings = [("none", 0.0)]
     if args.corrupt:
@@ -74,6 +108,9 @@ def run(args: argparse.Namespace) -> Path:
                 if cond_key == "C0" and corrupt_mode != "none":
                     continue  # nothing to corrupt
                 for arc in arcs:
+                    if (seed, cond_key, corrupt_mode, corrupt_rate,
+                            arc.arc_id) in done_groups:
+                        continue  # --resume: arc already complete
                     world = arc.make_world()
                     memory = cond_cls()
                     crng = random.Random(f"{arc.arc_id}|{corrupt_mode}")
@@ -169,7 +206,7 @@ def main() -> None:
                         "(set OPENAI_API_KEY=ollama)")
     p.add_argument("--domain", default="d1", choices=sorted(DOMAINS))
     p.add_argument("--difficulty", default="easy",
-                   choices=["easy", "medium", "hard"])
+                   choices=["easy", "medium", "hard", "implicit"])
     p.add_argument("--arcs", type=int, default=10)
     p.add_argument("--episodes", type=int, default=5)
     p.add_argument("--seeds", type=int, default=1)
@@ -188,6 +225,9 @@ def main() -> None:
                         "LiteLLM model for the memory-side calls")
     p.add_argument("--embed-model", default="text-embedding-3-small")
     p.add_argument("--out", default="runs/pilot")
+    p.add_argument("--resume", action="store_true",
+                   help="keep complete arcs already in --out and run only "
+                        "the rest (partial arcs are re-run from scratch)")
     run(p.parse_args())
 
 

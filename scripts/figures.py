@@ -62,7 +62,7 @@ COND_LABEL = {
 COLOR = {
     "C0": "#8a8a85", "C1": "#2a78d6", "C2": "#1baf7a",
     "C3": "#eda100", "C4": "#008300", "C5": "#4a3aa7",
-    "C2T": "#62c9d6", "C2TR": "#0b5f73",
+    "C2T": "#62c9d6", "C2TR": "#0b5f73", "C2C": "#b5487e",
 }
 # redundant marker encoding so conditions stay distinguishable without color
 MARKER = {"C0": "o", "C1": "s", "C2": "^", "C3": "D", "C4": "v", "C5": "P"}
@@ -285,11 +285,13 @@ PHASEC_MODELS = [  # slice dir prefix -> plot label
 def fig6_phasec() -> None:
     """Hard tier across agent models: preregistered grid (runs/phasec) plus
     the revision-stage seeds 1-2 and temporal retrieval conditions
-    (runs/revision). Every model now has 3 seeds; bars are seed means with
+    (runs/revision), including conflict-aware retrieval (C2C). Every model
+    now has 3 seeds; bars are seed means with
     min-max whiskers across seeds."""
-    conds = ["C2", "C2T", "C2TR", "C3", "C4"]
-    extra = {"mini3": ["mini3-temporal"], "gpt41": ["gpt41-temporal", "gpt41-s12"],
-             "haiku45": ["haiku45-temporal", "haiku45-s12"]}
+    conds = ["C2", "C2T", "C2TR", "C2C", "C3", "C4"]
+    extra = {"mini3": ["mini3-temporal", "mini-c2c"],
+             "gpt41": ["gpt41-temporal", "gpt41-s12", "gpt41-c2c"],
+             "haiku45": ["haiku45-temporal", "haiku45-s12", "haiku45-c2c"]}
     rows_by = {}
     for slice_, _ in PHASEC_MODELS:
         for dom in DOMAINS:
@@ -318,7 +320,7 @@ def fig6_phasec() -> None:
                                 fmt="none", ecolor="#444", capsize=1.5,
                                 linewidth=0.7)
         ax.set_xticks(range(len(conds)))
-        ax.set_xticklabels(conds, fontsize=7)
+        ax.set_xticklabels(conds, fontsize=6.5, rotation=35)
         ax.set_title(DOMAIN_LABEL[dom])
         ax.set_ylim(0, 1.03)
         ax.grid(axis="x", visible=False)

@@ -278,7 +278,12 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
     """Deterministic given (arc_id, seed, n_episodes, dep_ratio, difficulty).
     Difficulty tiers mirror D1: easy = single fact; medium = one plant with
     BOTH a config fix and a rollback target, probe requires both; hard = the
-    rollback target is later REVISED and the probe needs the latest value."""
+    rollback target is later REVISED and the probe needs the latest value.
+    implicit = the hard arcs and values unchanged, but the revision carries
+    no supersession cue and the probe does not ask for the current value."""
+    implicit = difficulty == "implicit"
+    if implicit:
+        difficulty = "hard"
     rng = random.Random((seed, arc_id, difficulty).__repr__()
                         if difficulty != "easy"
                         else (seed, arc_id).__repr__())
@@ -353,6 +358,11 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                 task_id=f"{arc_id}-e{upd_pos}-update-ver",
                 dependent=False, kind="I_note",
                 user_messages=[
+                    f"Postmortem note for {svc}: QA checked the release "
+                    f"history. Do NOT roll back yet — approval is pending. "
+                    f"Just update the ticket noting the rollback target "
+                    f"{gv2} for {svc}."
+                    if implicit else
                     f"Revision on the {svc} postmortem: QA found the earlier "
                     f"target also affected. The correct rollback target "
                     f"{gv2} for {svc} replaces the previous one. Still do "
@@ -364,6 +374,9 @@ def generate_arc(arc_id: str, seed: int, n_episodes: int = 5,
                 task_id=f"{arc_id}-e{pos}-probe-ver-upd",
                 dependent=True, kind="T_ver_upd",
                 user_messages=[
+                    f"Approval came through for {svc} — roll it back now to "
+                    f"the rollback target from the ticket."
+                    if implicit else
                     f"Approval came through for {svc} — roll it back now to "
                     f"the CURRENT rollback target from the ticket."],
                 checker="check_version_deployed",

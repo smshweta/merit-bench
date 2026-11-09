@@ -1,0 +1,9 @@
+=== rev2 mini c2c d2-hard Sun Nov  8 20:17:47 PST 2026
+wrote 150 scored episodes to runs/revision/mini-c2c-d2-hard/results.jsonl in 638.8s
+=== rev2 mini c2c d2-easy Sun Nov  8 20:28:59 PST 2026
+wrote 150 scored episodes to runs/revision/mini-c2c-d2-easy/results.jsonl in 549.3s
+=== rev2 mini c2c d2-medium Sun Nov  8 20:38:12 PST 2026
+wrote 150 scored episodes to runs/revision/mini-c2c-d2-medium/results.jsonl in 557.5s
+=== rev2 mini implicit d2 Sun Nov  8 20:47:31 PST 2026
+skip runs/revision/mini-implicit-d2 (done)
+=== rev2-mini-d2 done Sun Nov  8 20:47:31 PST 2026
