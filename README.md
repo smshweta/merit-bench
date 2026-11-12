@@ -89,7 +89,7 @@ executed tool calls with arguments and outputs).
 | `runs/phasec/mini3-*` | full grid, gpt-4.1-mini × 3 seeds |
 | `runs/phasec/gpt41-*` | full grid, GPT-4.1 (seed 0) |
 | `runs/phasec/haiku45-*` | full grid, Claude Haiku 4.5, seed 0 (agent side; memory side stays gpt-4.1-mini) |
-| `runs/revision/` | added during peer review: seeds 1–2 for GPT-4.1 and Haiku 4.5, temporal retrieval conditions C2T/C2TR, corruption sweeps in D2/D3, 20-episode long-history test (`scripts/analyze_revision.py`); second round: conflict-aware retrieval C2C and the implicit-update tier (`scripts/analyze_rev2.py`) |
+| `runs/revision/` | added during peer review: seeds 1–2 for GPT-4.1 and Haiku 4.5, temporal retrieval conditions C2T/C2TR, corruption sweeps in D2/D3, 20-episode long-history test (`scripts/analyze_revision.py`); second round: conflict-aware retrieval C2C and the implicit-update tier (`scripts/analyze_rev2.py`); third round: seeds 1–2 and C2C for the corruption sweeps (D1–D3) and the long-history test (`scripts/run_rev3.sh`, `scripts/analyze_rev3.py`) |
 | `runs/intervention/` | counterfactual replay of C2 hard-tier probes |
 | `runs/mur_audit/` | frozen 100-episode stratified sample for the human MUR audit: two annotators' labels (`labels.csv`) and the tracer key (`key.csv`) |
 

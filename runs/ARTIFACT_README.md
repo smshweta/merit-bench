@@ -26,6 +26,12 @@ Run directories:
                            nine conditions). Analysis:
                            scripts/analyze_rev2.py (output in
                            revision/analysis_rev2.txt)
+                           Third round: `corrupt-<dom>-s1|s2|c2c` and
+                           `long-mini-<dom>-s1|s2|c2c` add seeds 1-2 and
+                           C2C to the corruption sweeps and the
+                           long-history test (scripts/run_rev3.sh).
+                           Analysis: scripts/analyze_rev3.py (output in
+                           revision/analysis_rev3.txt)
 - `intervention/`          counterfactual replay of C2 hard-tier probes
 - `mur_audit/`             frozen 100-episode human-audit sample:
                            labels.csv (two annotators, blind to the tracer)

@@ -1,0 +1,184 @@
+
+=== I: corruption sweeps, seeds 0-2, nine conditions ===
+
+  d1: seeds [0, 1, 2], 8550 episodes, $7.62
+    clean dependent TSR C0=0.00(n=60)  C1=0.80(n=60)  C2=0.73(n=60)  C2T=0.72(n=60)  C2TR=0.77(n=60)  C2C=0.70(n=60)  C3=0.75(n=60)  C4=0.78(n=60)  C5=0.82(n=60)
+    C1   stale         rho=0.3: +0.25 [+0.12, +0.38] p=0.0002 holm(domain)=0.0096 *
+    C2   stale         rho=0.3: +0.22 [+0.10, +0.33] p=0.0004 holm(domain)=0.0172 *
+    C2T  stale         rho=0.3: +0.18 [+0.05, +0.33] p=0.0102 holm(domain)=0.3978  
+    C2TR stale         rho=0.3: +0.25 [+0.13, +0.38] p=0.0002 holm(domain)=0.0096 *
+    C2C  stale         rho=0.3: +0.18 [+0.07, +0.28] p=0.0028 holm(domain)=0.1148  
+    C3   stale         rho=0.3: +0.28 [+0.15, +0.42] p=0.0004 holm(domain)=0.0172 *
+    C4   stale         rho=0.1: +0.15 [+0.07, +0.23] p=0.0002 holm(domain)=0.0096 *
+    C4   stale         rho=0.3: +0.33 [+0.20, +0.47] p=0.0002 holm(domain)=0.0096 *
+    C5   stale         rho=0.3: +0.23 [+0.13, +0.33] p=0.0002 holm(domain)=0.0096 *
+    significant after Holm within d1: 7 of 48: C1/stale/0.3, C2/stale/0.3, C2TR/stale/0.3, C3/stale/0.3, C4/stale/0.1, C4/stale/0.3, C5/stale/0.3
+
+  d2: seeds [0, 1, 2], 8550 episodes, $7.28
+    clean dependent TSR C0=0.00(n=60)  C1=1.00(n=60)  C2=1.00(n=60)  C2T=0.98(n=60)  C2TR=1.00(n=60)  C2C=0.97(n=60)  C3=1.00(n=60)  C4=0.45(n=60)  C5=0.87(n=60)
+    C1   stale         rho=0.1: +0.27 [+0.15, +0.40] p=0.0002 holm(domain)=0.0096 *
+    C1   stale         rho=0.3: +0.52 [+0.35, +0.67] p=0.0002 holm(domain)=0.0096 *
+    C2   stale         rho=0.1: +0.15 [+0.07, +0.23] p=0.0002 holm(domain)=0.0096 *
+    C2   stale         rho=0.3: +0.58 [+0.45, +0.72] p=0.0002 holm(domain)=0.0096 *
+    C2T  stale         rho=0.1: +0.22 [+0.10, +0.33] p=0.0002 holm(domain)=0.0096 *
+    C2T  stale         rho=0.3: +0.53 [+0.40, +0.67] p=0.0002 holm(domain)=0.0096 *
+    C2TR stale         rho=0.1: +0.27 [+0.17, +0.38] p=0.0002 holm(domain)=0.0096 *
+    C2TR stale         rho=0.3: +0.57 [+0.47, +0.67] p=0.0002 holm(domain)=0.0096 *
+    C2C  stale         rho=0.1: +0.22 [+0.08, +0.35] p=0.0012 holm(domain)=0.0432 *
+    C2C  stale         rho=0.3: +0.48 [+0.35, +0.62] p=0.0002 holm(domain)=0.0096 *
+    C3   stale         rho=0.1: +0.27 [+0.12, +0.42] p=0.0002 holm(domain)=0.0096 *
+    C3   stale         rho=0.3: +0.55 [+0.40, +0.68] p=0.0002 holm(domain)=0.0096 *
+    C4   stale         rho=0.3: +0.22 [+0.07, +0.37] p=0.0062 holm(domain)=0.2170  
+    C5   stale         rho=0.3: +0.40 [+0.25, +0.55] p=0.0002 holm(domain)=0.0096 *
+    significant after Holm within d2: 13 of 48: C1/stale/0.1, C1/stale/0.3, C2/stale/0.1, C2/stale/0.3, C2T/stale/0.1, C2T/stale/0.3, C2TR/stale/0.1, C2TR/stale/0.3, C2C/stale/0.1, C2C/stale/0.3, C3/stale/0.1, C3/stale/0.3, C5/stale/0.3
+
+  d3: seeds [0, 1, 2], 8550 episodes, $7.24
+    clean dependent TSR C0=0.10(n=60)  C1=0.87(n=60)  C2=0.85(n=60)  C2T=0.82(n=60)  C2TR=0.88(n=60)  C2C=0.93(n=60)  C3=0.90(n=60)  C4=0.75(n=60)  C5=0.98(n=60)
+    C1   stale         rho=0.3: +0.28 [+0.18, +0.40] p=0.0002 holm(domain)=0.0096 *
+    C2   stale         rho=0.3: +0.18 [+0.08, +0.28] p=0.0002 holm(domain)=0.0096 *
+    C2T  stale         rho=0.3: +0.20 [+0.10, +0.30] p=0.0002 holm(domain)=0.0096 *
+    C2TR stale         rho=0.3: +0.23 [+0.12, +0.35] p=0.0004 holm(domain)=0.0164 *
+    C2C  stale         rho=0.3: +0.30 [+0.18, +0.42] p=0.0002 holm(domain)=0.0096 *
+    C3   stale         rho=0.3: +0.47 [+0.35, +0.58] p=0.0002 holm(domain)=0.0096 *
+    C4   stale         rho=0.3: +0.33 [+0.23, +0.43] p=0.0002 holm(domain)=0.0096 *
+    C5   stale         rho=0.3: +0.22 [+0.12, +0.32] p=0.0002 holm(domain)=0.0096 *
+    significant after Holm within d3: 8 of 48: C1/stale/0.3, C2/stale/0.3, C2T/stale/0.3, C2TR/stale/0.3, C2C/stale/0.3, C3/stale/0.3, C4/stale/0.3, C5/stale/0.3
+
+  joint Holm across domains (144 tests): 27 significant
+    ('d1', 'C1', 'stale', 0.3): +0.25 [+0.12, +0.38] p=0.0002 holm=0.0288
+    ('d1', 'C2', 'stale', 0.3): +0.22 [+0.10, +0.33] p=0.0004 holm=0.0480
+    ('d1', 'C2TR', 'stale', 0.3): +0.25 [+0.13, +0.38] p=0.0002 holm=0.0288
+    ('d1', 'C3', 'stale', 0.3): +0.28 [+0.15, +0.42] p=0.0004 holm=0.0480
+    ('d1', 'C4', 'stale', 0.1): +0.15 [+0.07, +0.23] p=0.0002 holm=0.0288
+    ('d1', 'C4', 'stale', 0.3): +0.33 [+0.20, +0.47] p=0.0002 holm=0.0288
+    ('d1', 'C5', 'stale', 0.3): +0.23 [+0.13, +0.33] p=0.0002 holm=0.0288
+    ('d2', 'C1', 'stale', 0.1): +0.27 [+0.15, +0.40] p=0.0002 holm=0.0288
+    ('d2', 'C1', 'stale', 0.3): +0.52 [+0.35, +0.67] p=0.0002 holm=0.0288
+    ('d2', 'C2', 'stale', 0.1): +0.15 [+0.07, +0.23] p=0.0002 holm=0.0288
+    ('d2', 'C2', 'stale', 0.3): +0.58 [+0.45, +0.72] p=0.0002 holm=0.0288
+    ('d2', 'C2C', 'stale', 0.3): +0.48 [+0.35, +0.62] p=0.0002 holm=0.0288
+    ('d2', 'C2T', 'stale', 0.1): +0.22 [+0.10, +0.33] p=0.0002 holm=0.0288
+    ('d2', 'C2T', 'stale', 0.3): +0.53 [+0.40, +0.67] p=0.0002 holm=0.0288
+    ('d2', 'C2TR', 'stale', 0.1): +0.27 [+0.17, +0.38] p=0.0002 holm=0.0288
+    ('d2', 'C2TR', 'stale', 0.3): +0.57 [+0.47, +0.67] p=0.0002 holm=0.0288
+    ('d2', 'C3', 'stale', 0.1): +0.27 [+0.12, +0.42] p=0.0002 holm=0.0288
+    ('d2', 'C3', 'stale', 0.3): +0.55 [+0.40, +0.68] p=0.0002 holm=0.0288
+    ('d2', 'C5', 'stale', 0.3): +0.40 [+0.25, +0.55] p=0.0002 holm=0.0288
+    ('d3', 'C1', 'stale', 0.3): +0.28 [+0.18, +0.40] p=0.0002 holm=0.0288
+    ('d3', 'C2', 'stale', 0.3): +0.18 [+0.08, +0.28] p=0.0002 holm=0.0288
+    ('d3', 'C2C', 'stale', 0.3): +0.30 [+0.18, +0.42] p=0.0002 holm=0.0288
+    ('d3', 'C2T', 'stale', 0.3): +0.20 [+0.10, +0.30] p=0.0002 holm=0.0288
+    ('d3', 'C2TR', 'stale', 0.3): +0.23 [+0.12, +0.35] p=0.0004 holm=0.0480
+    ('d3', 'C3', 'stale', 0.3): +0.47 [+0.35, +0.58] p=0.0002 holm=0.0288
+    ('d3', 'C4', 'stale', 0.3): +0.33 [+0.23, +0.43] p=0.0002 holm=0.0288
+    ('d3', 'C5', 'stale', 0.3): +0.22 [+0.12, +0.32] p=0.0002 holm=0.0288
+
+  stale rho=0.3 pooled over domains and seeds (paired, arc-clustered; Holm over the 8 conditions)
+    C1   clean 0.89 corrupted 0.54  +0.35 [+0.27, +0.43] p=0.0002 p_Holm=0.0016 n=180
+    C2   clean 0.86 corrupted 0.53  +0.33 [+0.25, +0.41] p=0.0002 p_Holm=0.0016 n=180
+    C2T  clean 0.84 corrupted 0.53  +0.31 [+0.23, +0.39] p=0.0002 p_Holm=0.0016 n=180
+    C2TR clean 0.88 corrupted 0.53  +0.35 [+0.28, +0.42] p=0.0002 p_Holm=0.0016 n=180
+    C2C  clean 0.87 corrupted 0.54  +0.32 [+0.24, +0.39] p=0.0002 p_Holm=0.0016 n=180
+    C3   clean 0.88 corrupted 0.45  +0.43 [+0.36, +0.51] p=0.0002 p_Holm=0.0016 n=180
+    C4   clean 0.66 corrupted 0.37  +0.29 [+0.22, +0.37] p=0.0002 p_Holm=0.0016 n=180
+    C5   clean 0.89 corrupted 0.61  +0.28 [+0.21, +0.36] p=0.0002 p_Holm=0.0016 n=180
+
+  stale rho=0.1 pooled over domains and seeds (paired, arc-clustered; Holm over the 8 conditions)
+    C1   clean 0.89 corrupted 0.73  +0.16 [+0.09, +0.23] p=0.0002 p_Holm=0.0016 n=180
+    C2   clean 0.86 corrupted 0.78  +0.08 [+0.03, +0.13] p=0.0022 p_Holm=0.0060 n=180
+    C2T  clean 0.84 corrupted 0.73  +0.11 [+0.04, +0.18] p=0.0020 p_Holm=0.0060 n=180
+    C2TR clean 0.88 corrupted 0.73  +0.16 [+0.09, +0.22] p=0.0002 p_Holm=0.0016 n=180
+    C2C  clean 0.87 corrupted 0.71  +0.16 [+0.09, +0.23] p=0.0002 p_Holm=0.0016 n=180
+    C3   clean 0.88 corrupted 0.72  +0.16 [+0.09, +0.24] p=0.0002 p_Holm=0.0016 n=180
+    C4   clean 0.66 corrupted 0.53  +0.13 [+0.07, +0.20] p=0.0004 p_Holm=0.0016 n=180
+    C5   clean 0.89 corrupted 0.82  +0.07 [+0.02, +0.12] p=0.0042 p_Holm=0.0060 n=180
+
+  contradiction rho=0.3 pooled over domains and seeds (paired, arc-clustered; Holm over the 8 conditions)
+    C1   clean 0.89 corrupted 0.91  -0.02 [-0.04, -0.01] p=0.0350 p_Holm=0.2800 n=180
+    C2   clean 0.86 corrupted 0.89  -0.03 [-0.07, +0.00] p=0.0950 p_Holm=0.6649 n=180
+    C2T  clean 0.84 corrupted 0.86  -0.02 [-0.06, +0.02] p=0.3102 p_Holm=1.0000 n=180
+    C2TR clean 0.88 corrupted 0.87  +0.02 [-0.02, +0.06] p=0.5091 p_Holm=1.0000 n=180
+    C2C  clean 0.87 corrupted 0.86  +0.01 [-0.03, +0.04] p=0.8885 p_Holm=1.0000 n=180
+    C3   clean 0.88 corrupted 0.86  +0.02 [-0.02, +0.06] p=0.3302 p_Holm=1.0000 n=180
+    C4   clean 0.66 corrupted 0.63  +0.03 [-0.03, +0.09] p=0.3122 p_Holm=1.0000 n=180
+    C5   clean 0.89 corrupted 0.89  -0.01 [-0.03, +0.02] p=0.8213 p_Holm=1.0000 n=180
+
+  distractor rho=0.3 pooled over domains and seeds (paired, arc-clustered; Holm over the 8 conditions)
+    C1   clean 0.89 corrupted 0.88  +0.01 [-0.02, +0.03] p=0.8469 p_Holm=1.0000 n=180
+    C2   clean 0.86 corrupted 0.87  -0.01 [-0.05, +0.04] p=0.9147 p_Holm=1.0000 n=180
+    C2T  clean 0.84 corrupted 0.87  -0.03 [-0.07, +0.01] p=0.1546 p_Holm=1.0000 n=180
+    C2TR clean 0.88 corrupted 0.85  +0.03 [+0.01, +0.07] p=0.0130 p_Holm=0.1040 n=180
+    C2C  clean 0.87 corrupted 0.84  +0.02 [-0.02, +0.06] p=0.2914 p_Holm=1.0000 n=180
+    C3   clean 0.88 corrupted 0.86  +0.03 [-0.01, +0.06] p=0.1576 p_Holm=1.0000 n=180
+    C4   clean 0.66 corrupted 0.69  -0.03 [-0.08, +0.03] p=0.3488 p_Holm=1.0000 n=180
+    C5   clean 0.89 corrupted 0.91  -0.02 [-0.04, +0.01] p=0.2312 p_Holm=1.0000 n=180
+
+  stale rho=0.3 harm per seed (pooled over domains)
+    C1   +0.38 +0.28 +0.38
+    C2   +0.38 +0.27 +0.33
+    C2T  +0.42 +0.20 +0.30
+    C2TR +0.42 +0.33 +0.30
+    C2C  +0.30 +0.25 +0.42
+    C3   +0.45 +0.38 +0.47
+    C4   +0.28 +0.20 +0.40
+    C5   +0.28 +0.22 +0.35
+
+  independent-task TSR, clean vs any corruption: 0.891 vs 0.888
+  total: 25650 episodes, $22.14
+
+=== J: long-history test, seeds 0-2, nine conditions ===
+  long: seeds [0, 1, 2], 16200 episodes, $32.58
+
+  5-episode arcs, hard tier, gpt-4.1-mini, seeds 0-2
+  cond   TSR_dep    sd    n  TSR_ind  tok/ep $/ep(1e-4)    CAMU   had   ign
+  C0        0.00  0.00  180     0.99    1199        6.1     nan  0.00   nan   seeds: 0.00 0.00 0.00
+  C1        1.00  0.00  180     0.99    4351       18.8     786  1.00  0.00   seeds: 1.00 1.00 1.00
+  C2        0.48  0.07  180     0.99    2349       10.9    1002  0.96  0.49   seeds: 0.40 0.52 0.53
+  C2T       0.86  0.03  180     0.99    2352       10.9    1795  0.93  0.07   seeds: 0.85 0.83 0.90
+  C2TR      0.94  0.03  180     0.99    2352       10.9    1971  0.99  0.04   seeds: 0.92 0.97 0.95
+  C2C       0.91  0.02  180     0.99    1165        8.4    3888  0.94  0.00   seeds: 0.90 0.93 0.90
+  C3        0.93  0.03  180     0.99    1729       12.0    1578  1.00  0.07   seeds: 0.95 0.93 0.90
+  C4        0.91  0.03  180     0.99    1179        8.0    4889  0.97  0.05   seeds: 0.88 0.93 0.92
+  C5        0.76  0.04  180     0.99    2250       14.2     934  0.99  0.22   seeds: 0.72 0.77 0.80
+
+  20-episode arcs, hard tier, gpt-4.1-mini, seeds 0-2
+  cond   TSR_dep    sd    n  TSR_ind  tok/ep $/ep(1e-4)    CAMU   had   ign
+  C0        0.00  0.00  270     0.94     760        3.8     nan  0.00   nan   seeds: 0.00 0.00 0.00
+  C1        0.96  0.04  270     0.94   25464      102.7      97  1.00  0.04   seeds: 0.98 0.99 0.92
+  C2        0.50  0.04  270     0.94    1941        8.8    1025  0.79  0.36   seeds: 0.51 0.46 0.54
+  C2T       0.72  0.03  270     0.93    2047        9.2    1357  0.78  0.08   seeds: 0.69 0.74 0.73
+  C2TR      0.78  0.07  270     0.94    2080        9.3    1429  0.86  0.10   seeds: 0.71 0.77 0.86
+  C2C       0.81  0.05  270     0.93     913        7.9    1973  0.86  0.01   seeds: 0.76 0.84 0.82
+  C3        0.88  0.04  270     0.93    2506       17.2     659  1.00  0.10   seeds: 0.86 0.86 0.92
+  C4        0.77  0.04  270     0.93    1125        7.6    2030  0.97  0.20   seeds: 0.72 0.80 0.79
+  C5        0.58  0.06  270     0.93    2159       14.5     546  0.86  0.32   seeds: 0.62 0.51 0.61
+
+  pooled contrasts on long arcs (paired, arc-clustered; Holm)
+    C3 - C2     +0.37 [+0.29, +0.45] p=0.0002 p_Holm=0.0022
+    C4 - C2     +0.27 [+0.17, +0.36] p=0.0002 p_Holm=0.0022
+    C2T - C2    +0.22 [+0.13, +0.30] p=0.0002 p_Holm=0.0022
+    C2TR - C2   +0.27 [+0.20, +0.35] p=0.0002 p_Holm=0.0022
+    C2C - C2    +0.30 [+0.22, +0.39] p=0.0002 p_Holm=0.0022
+    C1 - C2     +0.46 [+0.39, +0.53] p=0.0002 p_Holm=0.0022
+    C3 - C2T    +0.16 [+0.07, +0.24] p=0.0010 p_Holm=0.0040
+    C3 - C2C    +0.07 [-0.01, +0.15] p=0.0976 p_Holm=0.2928
+    C4 - C2C    -0.04 [-0.14, +0.06] p=0.4640 p_Holm=0.9279
+    C2C - C2TR  +0.03 [-0.05, +0.11] p=0.4830 p_Holm=0.9279
+    C4 - C5     +0.19 [+0.10, +0.28] p=0.0004 p_Holm=0.0022
+
+  long minus short per condition (unpaired point difference)
+    C1   0.96 vs 1.00
+    C2   0.50 vs 0.48
+    C2T  0.72 vs 0.86
+    C2TR 0.78 vs 0.94
+    C2C  0.81 vs 0.91
+    C3   0.88 vs 0.93
+    C4   0.77 vs 0.91
+    C5   0.58 vs 0.76
+
+  per-domain dependent TSR on long arcs
+    d1: C0=0.00  C1=1.00  C2=0.62  C2T=0.62  C2TR=0.90  C2C=0.79  C3=0.94  C4=0.80  C5=0.63
+    d2: C0=0.00  C1=0.92  C2=0.51  C2T=0.88  C2TR=0.71  C2C=0.97  C3=0.69  C4=0.54  C5=0.53
+    d3: C0=0.00  C1=0.97  C2=0.38  C2T=0.67  C2TR=0.72  C2C=0.67  C3=1.00  C4=0.97  C5=0.58
+
+  no-memory successes on long arcs: 0 of 270

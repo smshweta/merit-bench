@@ -1,0 +1,37 @@
+wrote 200 scored episodes to runs/revision/long-mini-d2-c2c/results.jsonl in 625.2s
+=== runs/revision/long-mini-d2-c2c done Wed Nov 11 15:29:43 PST 2026
+wrote 200 scored episodes to runs/revision/long-mini-d3-c2c/results.jsonl in 632.9s
+=== runs/revision/long-mini-d3-c2c done Wed Nov 11 15:29:51 PST 2026
+wrote 200 scored episodes to runs/revision/long-mini-d1-c2c/results.jsonl in 704.4s
+=== runs/revision/long-mini-d1-c2c done Wed Nov 11 15:31:02 PST 2026
+wrote 350 scored episodes to runs/revision/corrupt-d2-c2c/results.jsonl in 936.0s
+=== runs/revision/corrupt-d2-c2c done Wed Nov 11 15:34:55 PST 2026
+wrote 350 scored episodes to runs/revision/corrupt-d1-c2c/results.jsonl in 958.8s
+=== runs/revision/corrupt-d1-c2c done Wed Nov 11 15:35:17 PST 2026
+wrote 350 scored episodes to runs/revision/corrupt-d3-c2c/results.jsonl in 974.4s
+=== runs/revision/corrupt-d3-c2c done Wed Nov 11 15:35:33 PST 2026
+wrote 1800 scored episodes to runs/revision/long-mini-d3-s2/results.jsonl in 5028.4s
+=== runs/revision/long-mini-d3-s2 done Wed Nov 11 16:43:08 PST 2026
+wrote 1800 scored episodes to runs/revision/long-mini-d3-s1/results.jsonl in 5211.8s
+=== runs/revision/long-mini-d3-s1 done Wed Nov 11 16:46:11 PST 2026
+wrote 1800 scored episodes to runs/revision/long-mini-d2-s1/results.jsonl in 5274.2s
+=== runs/revision/long-mini-d2-s1 done Wed Nov 11 16:47:13 PST 2026
+wrote 1800 scored episodes to runs/revision/long-mini-d2-s2/results.jsonl in 5335.9s
+=== runs/revision/long-mini-d2-s2 done Wed Nov 11 16:48:15 PST 2026
+wrote 1800 scored episodes to runs/revision/long-mini-d1-s2/results.jsonl in 5428.8s
+=== runs/revision/long-mini-d1-s2 done Wed Nov 11 16:49:48 PST 2026
+wrote 1800 scored episodes to runs/revision/long-mini-d1-s1/results.jsonl in 5467.0s
+=== runs/revision/long-mini-d1-s1 done Wed Nov 11 16:50:26 PST 2026
+wrote 2850 scored episodes to runs/revision/corrupt-d2-s2/results.jsonl in 7513.4s
+=== runs/revision/corrupt-d2-s2 done Wed Nov 11 17:24:31 PST 2026
+wrote 2850 scored episodes to runs/revision/corrupt-d1-s1/results.jsonl in 7560.3s
+=== runs/revision/corrupt-d1-s1 done Wed Nov 11 17:25:19 PST 2026
+wrote 2850 scored episodes to runs/revision/corrupt-d3-s2/results.jsonl in 7683.7s
+=== runs/revision/corrupt-d3-s2 done Wed Nov 11 17:27:23 PST 2026
+wrote 2850 scored episodes to runs/revision/corrupt-d2-s1/results.jsonl in 7846.3s
+=== runs/revision/corrupt-d2-s1 done Wed Nov 11 17:30:05 PST 2026
+wrote 2850 scored episodes to runs/revision/corrupt-d3-s1/results.jsonl in 8094.1s
+=== runs/revision/corrupt-d3-s1 done Wed Nov 11 17:34:13 PST 2026
+wrote 2850 scored episodes to runs/revision/corrupt-d1-s2/results.jsonl in 8565.2s
+=== runs/revision/corrupt-d1-s2 done Wed Nov 11 17:42:05 PST 2026
+=== rev3 all finished Wed Nov 11 17:42:05 PST 2026
